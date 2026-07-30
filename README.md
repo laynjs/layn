@@ -8,7 +8,7 @@ Compute your layout once, render it anywhere. Deterministic on the server, virtu
 
 [![npm](https://img.shields.io/npm/v/@laynjs/core.svg)](https://www.npmjs.com/package/@laynjs/core)
 [![CI](https://github.com/laynjs/layn/actions/workflows/ci.yml/badge.svg)](https://github.com/laynjs/layn/actions/workflows/ci.yml)
-[![license](https://img.shields.io/npm/l/@laynjs/core.svg)](./LICENSE)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 [Documentation](https://docs.layn.io) · [Playground](https://play.layn.io) · [Website](https://layn.io)
 
