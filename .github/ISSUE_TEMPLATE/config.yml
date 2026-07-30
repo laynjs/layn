@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://docs.layn.io
+    about: Read the guides and API reference before opening an issue.
+  - name: Playground
+    url: https://play.layn.io
+    about: Reproduce the behavior interactively.

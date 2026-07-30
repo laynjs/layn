@@ -1,0 +1,36 @@
+name: Bug report
+description: Report a problem with layn
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to file a bug. Please fill out the sections below.
+  - type: input
+    id: package
+    attributes:
+      label: Package and version
+      description: Which "@laynjs/*" package(s) and version(s)?
+      placeholder: '@laynjs/react 0.1.0'
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug, and what you expected instead.
+    validations:
+      required: true
+  - type: input
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: A link to a minimal reproduction (StackBlitz, a repo, or the playground).
+    validations:
+      required: false
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Framework and version, bundler, Node version, browser.
+    validations:
+      required: false

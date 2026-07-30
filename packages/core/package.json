@@ -1,0 +1,49 @@
+{
+  "name": "@laynjs/core",
+  "version": "0.1.0",
+  "description": "Framework-agnostic, dependency-free layout engine core with SSR-deterministic positioning.",
+  "keywords": [
+    "layout",
+    "masonry",
+    "justified",
+    "packing",
+    "layout-engine",
+    "virtualization",
+    "headless",
+    "ssr",
+    "grid",
+    "algorithm"
+  ],
+  "type": "module",
+  "license": "MIT",
+  "author": "majovkovic <majovkovic@gmail.com>",
+  "homepage": "https://layn.io",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laynjs/layn.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/laynjs/layn/issues"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.tsbuildinfo",
+    "!dist/**/*.map"
+  ],
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "clean": "rm -rf dist"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

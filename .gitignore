@@ -1,0 +1,15 @@
+node_modules
+dist
+coverage
+*.tsbuildinfo
+.server-render.mjs
+playwright-report
+test-results
+.DS_Store
+*.log
+.idea
+.vscode/*
+!.vscode/extensions.json
+
+# astro generated cache/types
+.astro/

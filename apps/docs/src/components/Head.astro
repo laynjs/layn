@@ -1,0 +1,31 @@
+---
+const route = Astro.locals.starlightRoute
+const pageTitle = route.entry.data.title
+const ogImage = new URL('og.png', Astro.site ?? 'https://docs.layn.io').href
+
+const metaKey = (attrs: Record<string, string | boolean | undefined> | undefined) => {
+  const property = attrs?.property
+  const name = attrs?.name
+  if (typeof property === 'string') return property
+  if (typeof name === 'string') return name
+  return ''
+}
+const dropped = new Set([
+  'og:image',
+  'og:image:width',
+  'og:image:height',
+  'twitter:card',
+  'twitter:image',
+])
+
+const head = route.head
+  .map((item) => (item.tag === 'title' ? { ...item, content: `layn - ${pageTitle}` } : item))
+  .filter((item) => !(item.tag === 'meta' && dropped.has(metaKey(item.attrs))))
+---
+
+{head.map(({ tag: Tag, attrs, content }) => <Tag {...attrs} set:html={content} />)}
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content={ogImage} />

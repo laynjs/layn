@@ -1,0 +1,123 @@
+import type { LayoutEngine, Size } from '@laynjs/core'
+import { resolveEnvironment } from '../environment/index.js'
+import { createSizeObserver } from '../measure/index.js'
+import { rafThrottle } from '../scroll/index.js'
+import { isElement, readOrigin, readScrollWindow, readViewportSize } from '../target/index.js'
+import type { BindOptions, EngineBinding, ScrollTarget } from '../types/index.js'
+
+const sameIndices = (a: readonly number[], b: readonly number[]): boolean => {
+  if (a.length !== b.length) {
+    return false
+  }
+  for (let i = 0; i < a.length; i += 1) {
+    if (a[i] !== b[i]) {
+      return false
+    }
+  }
+  return true
+}
+
+const sizeChanged = (previous: Size | undefined, next: Size): boolean =>
+  previous === undefined || previous.width !== next.width || previous.height !== next.height
+
+export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBinding => {
+  const environment = resolveEnvironment(options.environment)
+  const axis = options.axis ?? 'vertical'
+  const overscan = options.overscan ?? 0
+  const scrollTarget = options.scroll
+  const viewportTarget: ScrollTarget = options.viewport ?? scrollTarget
+  const originTarget = options.origin
+
+  const listeners = new Set<() => void>()
+  let visible: readonly number[] = []
+  let lastViewport: Size | undefined
+  let originOffset = 0
+
+  const readVisible = (): readonly number[] => {
+    const window = readScrollWindow(scrollTarget, axis, originOffset)
+    const content = engine.getSnapshot().contentSize
+    const extent = axis === 'vertical' ? content.height : content.width
+    const start = Math.min(window.start, Math.max(0, extent - window.size))
+    return engine.getVisible({ start, size: window.size }, { axis, overscan })
+  }
+
+  const notify = (): void => {
+    for (const listener of listeners) {
+      listener()
+    }
+  }
+
+  const onLayoutChange = (): void => {
+    visible = readVisible()
+    notify()
+  }
+
+  const onScroll = (): void => {
+    const next = readVisible()
+    if (!sameIndices(visible, next)) {
+      visible = next
+      notify()
+    }
+  }
+
+  const applyViewport = (): void => {
+    originOffset = readOrigin(originTarget, scrollTarget, axis)
+    const size = readViewportSize(viewportTarget)
+    if (size.width <= 0 || size.height <= 0) {
+      return
+    }
+    if (sizeChanged(lastViewport, size)) {
+      lastViewport = size
+      engine.setViewport(size)
+    }
+  }
+
+  const onViewportResize = (): void => {
+    applyViewport()
+    onScroll()
+  }
+
+  const sizeObserver = createSizeObserver(environment, (entries) => engine.measure(entries))
+  const viewportObserver = isElement(viewportTarget)
+    ? environment.createResizeObserver(applyViewport)
+    : undefined
+  viewportObserver?.observe(viewportTarget as Element)
+  if (!isElement(viewportTarget)) {
+    viewportTarget.addEventListener('resize', onViewportResize)
+  }
+
+  const scroll = rafThrottle(environment, onScroll)
+  scrollTarget.addEventListener('scroll', scroll.run, { passive: true })
+  const unsubscribeEngine = engine.subscribe(onLayoutChange)
+
+  applyViewport()
+  visible = readVisible()
+
+  return {
+    observeItem: (id, element) => sizeObserver.observe(id, element),
+    unobserveItem: (id) => sizeObserver.unobserve(id),
+    getVisible: () => visible,
+    subscribe: (listener) => {
+      listeners.add(listener)
+      return () => {
+        listeners.delete(listener)
+      }
+    },
+    refresh: () => {
+      applyViewport()
+      visible = readVisible()
+      notify()
+    },
+    destroy: () => {
+      scrollTarget.removeEventListener('scroll', scroll.run)
+      scroll.cancel()
+      viewportObserver?.disconnect()
+      if (!isElement(viewportTarget)) {
+        viewportTarget.removeEventListener('resize', onViewportResize)
+      }
+      sizeObserver.disconnect()
+      unsubscribeEngine()
+      listeners.clear()
+    },
+  }
+}

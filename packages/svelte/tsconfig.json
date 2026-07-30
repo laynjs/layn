@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "paths": {
+      "@laynjs/adapter-utils": ["../adapter-utils/src/index.ts"],
+      "@laynjs/core": ["../core/src/index.ts"],
+      "@laynjs/dom": ["../dom/src/index.ts"]
+    }
+  },
+  "include": ["src"]
+}

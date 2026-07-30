@@ -1,0 +1,63 @@
+{
+  "name": "@laynjs/angular",
+  "version": "0.1.0",
+  "description": "Headless Angular adapter for layn: a signals factory + directives over the engine and DOM bindings.",
+  "keywords": [
+    "layout",
+    "masonry",
+    "justified",
+    "packing",
+    "layout-engine",
+    "virtualization",
+    "headless",
+    "ssr",
+    "grid",
+    "angular"
+  ],
+  "type": "module",
+  "license": "MIT",
+  "author": "majovkovic <majovkovic@gmail.com>",
+  "homepage": "https://layn.io",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laynjs/layn.git",
+    "directory": "packages/angular"
+  },
+  "bugs": {
+    "url": "https://github.com/laynjs/layn/issues"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.tsbuildinfo",
+    "!dist/**/*.map"
+  ],
+  "scripts": {
+    "build": "ngc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@laynjs/adapter-utils": "workspace:*",
+    "@laynjs/core": "workspace:*",
+    "@laynjs/dom": "workspace:*"
+  },
+  "peerDependencies": {
+    "@angular/core": "^19.0.0 || ^20.0.0 || ^21.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@angular/compiler": "^20.0.0",
+    "@angular/compiler-cli": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "rxjs": "^7.8.0"
+  }
+}

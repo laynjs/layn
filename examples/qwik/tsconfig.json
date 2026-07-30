@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "jsxImportSource": "@builder.io/qwik",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["node"],
+    "strict": true,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@laynjs/adapter-utils": ["../../packages/adapter-utils/src/index.ts"],
+      "@laynjs/core": ["../../packages/core/src/index.ts"],
+      "@laynjs/dom": ["../../packages/dom/src/index.ts"],
+      "@laynjs/qwik": ["../../packages/qwik/src/index.ts"]
+    }
+  },
+  "include": ["src", "e2e", "vite.config.ts"]
+}

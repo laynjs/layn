@@ -1,0 +1,86 @@
+:root {
+  --sl-font: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --sl-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+:root[data-theme="dark"] {
+  --sl-color-accent-low: #10233a;
+  --sl-color-accent: #2b7fff;
+  --sl-color-accent-high: #bcd7ff;
+}
+
+:root[data-theme="light"] {
+  --sl-color-accent-low: #d6e4ff;
+  --sl-color-accent: #1f6feb;
+  --sl-color-accent-high: #0b326b;
+}
+
+.site-title {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-size: 1.25rem;
+  gap: 0.55rem;
+}
+
+.site-title img {
+  height: 1.6rem;
+  width: auto;
+}
+
+.sl-markdown-content .card {
+  --sl-card-border: var(--sl-color-blue);
+  --sl-card-bg: var(--sl-color-blue-low);
+}
+
+.sl-markdown-content .card .icon {
+  color: var(--sl-color-blue-high);
+}
+
+@media (min-width: 72rem) {
+  .right-sidebar-container {
+    width: 240px;
+  }
+
+  .right-sidebar-panel .sl-container {
+    width: auto;
+    max-width: 216px;
+  }
+
+  [data-has-sidebar][data-has-toc] .main-pane {
+    width: calc(100% - 240px);
+    --sl-content-margin-inline: 0;
+  }
+
+  .main-pane :where(.sl-markdown-content, .content-panel .sl-container) {
+    max-width: none;
+  }
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.hero .stack {
+  align-items: center;
+  text-align: center;
+  max-width: 44rem;
+  margin-inline: auto;
+}
+
+.hero .copy {
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.hero .copy h1 {
+  text-align: center;
+  width: 100%;
+}
+
+.hero .actions {
+  justify-content: center;
+}

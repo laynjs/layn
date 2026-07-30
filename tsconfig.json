@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": false,
+    "types": ["node"]
+  },
+  "include": ["vitest.config.ts", "scripts/**/*.mjs"],
+  "references": [
+    { "path": "packages/adapter-utils/tsconfig.build.json" },
+    { "path": "packages/core/tsconfig.build.json" },
+    { "path": "packages/dom/tsconfig.build.json" },
+    { "path": "packages/react/tsconfig.build.json" },
+    { "path": "packages/vue/tsconfig.build.json" },
+    { "path": "packages/vanilla/tsconfig.build.json" },
+    { "path": "packages/solid/tsconfig.build.json" },
+    { "path": "packages/svelte/tsconfig.build.json" },
+    { "path": "packages/angular/tsconfig.build.json" },
+    { "path": "packages/qwik/tsconfig.build.json" }
+  ]
+}

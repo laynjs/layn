@@ -1,0 +1,7 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <title>layn</title>
+  <rect x="2" y="2" width="12" height="18" rx="2.5" fill="#2b7fff" />
+  <rect x="18" y="2" width="12" height="10" rx="2.5" fill="#7db1ff" />
+  <rect x="18" y="16" width="12" height="14" rx="2.5" fill="#2b7fff" />
+  <rect x="2" y="24" width="12" height="6" rx="2.5" fill="#7db1ff" />
+</svg>

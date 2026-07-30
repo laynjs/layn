@@ -1,0 +1,24 @@
+{
+  "name": "@laynjs/example-vanilla",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "e2e": "playwright test -c e2e/playwright.config.ts"
+  },
+  "dependencies": {
+    "@laynjs/core": "workspace:*",
+    "@laynjs/dom": "workspace:*",
+    "@laynjs/vanilla": "workspace:*"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^22.0.0",
+    "esbuild": "^0.28.0",
+    "vite": "^6.0.0"
+  }
+}

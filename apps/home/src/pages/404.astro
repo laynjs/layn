@@ -1,0 +1,29 @@
+---
+import BaseHead from '../components/BaseHead.astro'
+import Logo from '../components/Logo.astro'
+import { DOCS_URL, HOME_URL } from '../lib/site'
+import '../styles/base.css'
+import '../styles/not-found.css'
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title="layn - Page not found" robots="noindex" />
+  </head>
+  <body>
+    <div class="glow"></div>
+    <main>
+      <a class="brand" href={HOME_URL}>
+        <Logo size={30} />
+        <span>layn</span>
+      </a>
+      <p class="code">404</p>
+      <h1>This page could not be laid out.</h1>
+      <p class="lede">The page you are looking for does not exist or has moved.</p>
+      <div class="cta">
+        <a class="btn primary" href={HOME_URL}>Back to home</a>
+        <a class="btn ghost" href={DOCS_URL}>Read the docs</a>
+      </div>
+    </main>
+  </body>
+</html>

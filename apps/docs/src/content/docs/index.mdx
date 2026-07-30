@@ -1,0 +1,66 @@
+---
+title: Introduction
+description: layn is a headless, framework-agnostic web layout engine with SSR-deterministic positioning and first-class virtualization.
+---
+
+import { CardGrid, Card, LinkCard } from '@astrojs/starlight/components';
+
+**layn** is a headless, framework-agnostic layout engine for the web. It computes the exact
+position of every item in a grid - masonry, justified, packing, quilt and more - as a pure
+function of your data, then hands those positions to your framework to render.
+
+It exists to replace stagnant libraries like `masonic`: a single engine, an identical result on
+the server and the client, virtualization built in, and a thin adapter for every major framework.
+
+## Why layn
+
+<CardGrid>
+  <Card title="Headless core" icon="setting">
+    The engine computes positions. Your framework renders. No opinions about your markup, styling,
+    or component tree.
+  </Card>
+  <Card title="SSR-deterministic" icon="document">
+    The server and the client compute identical rectangles from the same data, so hydration never
+    mismatches and there is no layout shift.
+  </Card>
+  <Card title="Virtualization built in" icon="magnifier">
+    A spatial index means only the visible items are ever rendered, at any scale, on any of the
+    nine layout algorithms.
+  </Card>
+  <Card title="Zero-dependency core" icon="approve-check">
+    `@laynjs/core` ships with no runtime dependencies and no DOM usage. Thin adapters add the rest.
+  </Card>
+</CardGrid>
+
+## How it works
+
+The whole engine is one idea:
+
+```
+(items + config + measurements) -> positions + contentSize
+```
+
+Because positions are derived from data (aspect ratios or provided dimensions) rather than from
+measuring the DOM, the server can compute the same layout the client will. The client then refines
+sizes with a `ResizeObserver` after paint, but it starts from the exact same rectangles the server
+sent. No mismatch, no cumulative layout shift.
+
+## Nine layout algorithms
+
+masonry, columns, justified (Flickr-style), staggered, packing (skyline), bin-packing (maxrects),
+quilt, magazine, and horizontal masonry - all SSR-deterministic, all virtualized, all driven by the
+same engine.
+
+## Get going
+
+<CardGrid>
+  <LinkCard title="Installation" href="/getting-started/installation/" description="Add layn to your project." />
+  <LinkCard title="Quick start" href="/getting-started/quick-start/" description="A virtualized masonry grid in a few lines." />
+  <LinkCard title="Core concepts" href="/getting-started/concepts/" description="The engine, measurement, and virtualization." />
+  <LinkCard title="API reference" href="/core/api/" description="Every function, option, and type." />
+</CardGrid>
+
+:::note
+layn is MIT-licensed and open source. The core is framework-free and DOM-free, so the same engine
+powers the React, Vue, Svelte, Solid, Angular, Qwik, and vanilla adapters.
+:::

@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["node"],
+    "strict": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "useDefineForClassFields": false,
+    "baseUrl": ".",
+    "paths": {
+      "@laynjs/adapter-utils": ["../../packages/adapter-utils/src/index.ts"],
+      "@laynjs/angular": ["../../packages/angular/src/index.ts"],
+      "@laynjs/core": ["../../packages/core/src/index.ts"],
+      "@laynjs/dom": ["../../packages/dom/src/index.ts"]
+    }
+  },
+  "angularCompilerOptions": {
+    "strictTemplates": true
+  },
+  "include": ["src", "e2e", "vite.config.ts"]
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.0.0/schema.json",
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "fixed": [],
+  "linked": [
+    [
+      "@laynjs/core",
+      "@laynjs/dom",
+      "@laynjs/adapter-utils",
+      "@laynjs/react",
+      "@laynjs/vue",
+      "@laynjs/svelte",
+      "@laynjs/solid",
+      "@laynjs/angular",
+      "@laynjs/qwik",
+      "@laynjs/vanilla"
+    ]
+  ],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": []
+}

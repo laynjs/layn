@@ -1,0 +1,61 @@
+{
+  "name": "@laynjs/vue",
+  "version": "0.1.0",
+  "description": "Headless Vue 3 adapter for layn: a composable over the engine and DOM bindings.",
+  "keywords": [
+    "layout",
+    "masonry",
+    "justified",
+    "packing",
+    "layout-engine",
+    "virtualization",
+    "headless",
+    "ssr",
+    "grid",
+    "vue"
+  ],
+  "type": "module",
+  "license": "MIT",
+  "author": "majovkovic <majovkovic@gmail.com>",
+  "homepage": "https://layn.io",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laynjs/layn.git",
+    "directory": "packages/vue"
+  },
+  "bugs": {
+    "url": "https://github.com/laynjs/layn/issues"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.tsbuildinfo",
+    "!dist/**/*.map"
+  ],
+  "scripts": {
+    "build": "tsc -b tsconfig.build.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@laynjs/adapter-utils": "workspace:*",
+    "@laynjs/core": "workspace:*",
+    "@laynjs/dom": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@vue/server-renderer": "^3.4.0",
+    "vue": "^3.4.0"
+  }
+}

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0a0e16" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <title>layn - Page not found</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #ffffff;
+        --fg: #0b1220;
+        --muted: #5a6577;
+        --border: #e4e9f0;
+        --accent: #1f6feb;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0a0e16;
+          --fg: #eef2f8;
+          --muted: #9aa7ba;
+          --border: #1e2636;
+          --accent: #4b8dff;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+      body {
+        background: var(--bg);
+        color: var(--fg);
+        font-family:
+          'Inter',
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 32px;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 11px;
+        font-weight: 700;
+        font-size: 20px;
+        letter-spacing: -0.02em;
+        margin-bottom: 26px;
+      }
+      .code {
+        font-family: 'SF Mono', ui-monospace, monospace;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        color: var(--accent);
+        margin: 0;
+      }
+      h1 {
+        font-size: clamp(1.8rem, 4vw, 2.5rem);
+        line-height: 1.12;
+        letter-spacing: -0.03em;
+        font-weight: 800;
+        margin: 10px 0 8px;
+      }
+      p.lede {
+        font-size: 1.05rem;
+        color: var(--muted);
+        margin: 0 0 28px;
+        max-width: 440px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 12px 22px;
+        border-radius: 11px;
+        font-weight: 600;
+        font-size: 15px;
+        background: var(--accent);
+        color: #ffffff;
+        box-shadow: 0 8px 24px -8px var(--accent);
+        transition: filter 0.15s ease;
+      }
+      .btn:hover {
+        filter: brightness(1.07);
+      }
+    </style>
+  </head>
+  <body>
+    <a class="brand" href="/">
+      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="2" y="2" width="12" height="18" rx="2.5" fill="#2b7fff"></rect>
+        <rect x="18" y="2" width="12" height="10" rx="2.5" fill="#7db1ff"></rect>
+        <rect x="18" y="16" width="12" height="14" rx="2.5" fill="#2b7fff"></rect>
+        <rect x="2" y="24" width="12" height="6" rx="2.5" fill="#7db1ff"></rect>
+      </svg>
+      <span>layn</span>
+    </a>
+    <p class="code">404</p>
+    <h1>This view has no layout.</h1>
+    <p class="lede">The page you are looking for does not exist. Head back to the playground.</p>
+    <a class="btn" href="/">Open the playground</a>
+  </body>
+</html>
