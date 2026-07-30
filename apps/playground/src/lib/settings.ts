@@ -15,5 +15,5 @@ export const DEFAULT_SETTINGS: Settings = {
   count: 400,
   size: 200,
   overscan: 400,
-  showImages: true,
+  showImages: false,
 }

@@ -92,6 +92,39 @@ const tiles = ratios.map((ar, i) => {
             ></path></svg
           >
         </a>
+        <button
+          class="icon theme-toggle"
+          id="theme-toggle"
+          type="button"
+          aria-label="Toggle color theme"
+        >
+          <svg
+            class="moon"
+            width="19"
+            height="19"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"></path></svg
+          >
+          <svg
+            class="sun"
+            width="19"
+            height="19"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            aria-hidden="true"
+            ><circle cx="12" cy="12" r="4"></circle><path
+              d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+            ></path></svg
+          >
+        </button>
       </nav>
     </header>
 
@@ -158,6 +191,18 @@ const tiles = ratios.map((ar, i) => {
         quilt,
         staggered,
       } from '@laynjs/core'
+
+      const root = document.documentElement
+      const effectiveTheme = (): 'light' | 'dark' => {
+        const explicit = root.dataset.theme
+        if (explicit === 'light' || explicit === 'dark') return explicit
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      }
+      document.getElementById('theme-toggle')?.addEventListener('click', () => {
+        const next = effectiveTheme() === 'dark' ? 'light' : 'dark'
+        root.dataset.theme = next
+        localStorage.setItem('theme', next)
+      })
 
       const COLS = 3
 
