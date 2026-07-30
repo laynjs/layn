@@ -651,9 +651,40 @@ input[type="range"] {
 }
 
 @media (max-width: 720px) {
-  .controls {
-    width: 264px;
+  .topbar {
+    padding: 0 12px;
   }
+
+  .brand-sub {
+    display: none;
+  }
+
+  .top-nav {
+    gap: 6px;
+  }
+
+  .workspace {
+    flex-direction: column;
+  }
+
+  .stage {
+    order: 0;
+    flex: 1;
+    min-height: 0;
+    padding: 12px;
+  }
+
+  .controls {
+    order: 1;
+    width: 100%;
+    flex: none;
+    max-height: 46vh;
+    border-right: none;
+    border-top: 1px solid var(--border);
+    padding: 16px;
+    gap: 18px;
+  }
+
   .drawer {
     width: 100%;
   }
