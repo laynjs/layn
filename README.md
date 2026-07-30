@@ -1,8 +1,9 @@
 <div align="center">
 
-# layn
+<img src=".github/banner.png" alt="layn - the headless layout engine for the web" width="100%" />
 
-**The headless layout engine for the web.**
+<br />
+<br />
 
 Compute your layout once, render it anywhere. Deterministic on the server, virtualized on the client, rendered by any framework.
 

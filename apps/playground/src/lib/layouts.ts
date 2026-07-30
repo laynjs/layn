@@ -221,7 +221,8 @@ export const PRESETS: Preset[] = [
 
 const ratioSeed = (index: number): number => 0.7 + (((index * 2654435761) % 1000) / 1000) * 1.1
 
-export const hue = (index: number): number => (index * 47) % 360
+export const toneOf = (index: number): number =>
+  Math.floor((((index * 2654435761) >>> 0) / 4294967296) * 5)
 
 export interface Tile {
   readonly id: number

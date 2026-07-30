@@ -1,6 +1,6 @@
 import { useLayn } from '@laynjs/react'
 import { useMemo } from 'react'
-import { type AlgoSpec, hue, makeTiles } from '../lib/layouts'
+import { type AlgoSpec, makeTiles, toneOf } from '../lib/layouts'
 import type { Settings } from '../lib/settings'
 
 interface GridProps {
@@ -42,9 +42,9 @@ export function Grid({ spec, settings }: GridProps) {
             <div
               key={entry.id}
               ref={entry.ref}
-              className="tile"
+              className={`tile tone-${toneOf(entry.index)}`}
               {...entry.a11y}
-              style={{ ...entry.style, background: `hsl(${hue(entry.index)} 62% 62%)` }}
+              style={entry.style}
             />
           ),
         )}
