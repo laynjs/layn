@@ -1,6 +1,6 @@
 {
   "name": "@laynjs/react",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Headless React adapter for layn: a useSyncExternalStore hook over the engine and DOM bindings.",
   "keywords": [
     "layout",

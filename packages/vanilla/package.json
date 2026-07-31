@@ -1,6 +1,6 @@
 {
   "name": "@laynjs/vanilla",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Framework-free layn adapter: an imperative controller that renders and virtualizes items, plus an SSR string renderer.",
   "keywords": [
     "layout",

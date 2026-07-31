@@ -1,6 +1,6 @@
 {
   "name": "@laynjs/solid",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Headless Solid adapter for layn: a signals primitive over the engine and DOM bindings.",
   "keywords": [
     "layout",
