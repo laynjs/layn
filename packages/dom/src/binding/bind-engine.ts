@@ -3,6 +3,7 @@ import { resolveEnvironment } from '../environment/index.js'
 import { createSizeObserver } from '../measure/index.js'
 import { rafThrottle } from '../scroll/index.js'
 import { isElement, readOrigin, readScrollWindow, readViewportSize } from '../target/index.js'
+import { createTransitionRunner } from '../transitions/index.js'
 import type { BindOptions, EngineBinding, ScrollTarget } from '../types/index.js'
 
 const sameIndices = (a: readonly number[], b: readonly number[]): boolean => {
@@ -32,6 +33,7 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
   let visible: readonly number[] = []
   let lastViewport: Size | undefined
   let originOffset = 0
+  let lastPositions = engine.getSnapshot().positions
 
   const readVisible = (): readonly number[] => {
     const window = readScrollWindow(scrollTarget, axis, originOffset)
@@ -48,7 +50,11 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
   }
 
   const onLayoutChange = (): void => {
+    const previous = lastPositions
+    const next = engine.getSnapshot().positions
+    lastPositions = next
     visible = readVisible()
+    runner?.play(previous, next, sizeObserver.elementOf, visible)
     notify()
   }
 
@@ -78,6 +84,7 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
   }
 
   const sizeObserver = createSizeObserver(environment, (entries) => engine.measure(entries))
+  const runner = createTransitionRunner(environment, options.animate)
   const viewportObserver = isElement(viewportTarget)
     ? environment.createResizeObserver(applyViewport)
     : undefined
@@ -88,9 +95,10 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
 
   const scroll = rafThrottle(environment, onScroll)
   scrollTarget.addEventListener('scroll', scroll.run, { passive: true })
-  const unsubscribeEngine = engine.subscribe(onLayoutChange)
 
   applyViewport()
+  lastPositions = engine.getSnapshot().positions
+  const unsubscribeEngine = engine.subscribe(onLayoutChange)
   visible = readVisible()
 
   return {
@@ -109,6 +117,7 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
       notify()
     },
     destroy: () => {
+      runner?.stop()
       scrollTarget.removeEventListener('scroll', scroll.run)
       scroll.cancel()
       viewportObserver?.disconnect()

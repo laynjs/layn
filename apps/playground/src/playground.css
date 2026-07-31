@@ -255,6 +255,11 @@ body,
   transform: translateY(1px);
 }
 
+.shuffle {
+  width: 100%;
+  text-align: center;
+}
+
 .hint {
   position: relative;
   display: inline-flex;

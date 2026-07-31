@@ -137,6 +137,59 @@ describe('bindEngine', () => {
     expect(binding.getVisible()).toEqual([0, 1, 2, 3, 4, 5])
   })
 
+  it('animates observed items across a layout change when animate is enabled', () => {
+    const { environment, flushRaf } = createControlledEnvironment()
+    const engine = createEngine({
+      algorithm: masonry({ columns: 1 }),
+      items: squares(20),
+      viewport: { width: 100, height: 300 },
+    })
+    const element = container(100, 300)
+    const binding = bindEngine(engine, { scroll: asElement(element), environment, animate: true })
+    const item = new FakeElement()
+    binding.observeItem(1, item as unknown as Element)
+
+    engine.setGap({ x: 0, y: 10 })
+    flushRaf()
+
+    expect(item.animations[0]?.keyframes).toEqual([
+      { transform: 'translate(0px, -10px)' },
+      { transform: 'translate(0px, 0px)' },
+    ])
+  })
+
+  it('does not animate the initial viewport commit of the binding', () => {
+    const { environment, flushRaf } = createControlledEnvironment()
+    const engine = createEngine({ algorithm: masonry({ columns: 1 }), items: squares(20) })
+    const element = container(100, 300)
+    const binding = bindEngine(engine, { scroll: asElement(element), environment, animate: true })
+    const item = new FakeElement()
+    binding.observeItem(1, item as unknown as Element)
+
+    flushRaf()
+
+    expect(item.animations).toHaveLength(0)
+  })
+
+  it('cancels running animations on destroy', () => {
+    const { environment, flushRaf } = createControlledEnvironment()
+    const engine = createEngine({
+      algorithm: masonry({ columns: 1 }),
+      items: squares(20),
+      viewport: { width: 100, height: 300 },
+    })
+    const element = container(100, 300)
+    const binding = bindEngine(engine, { scroll: asElement(element), environment, animate: true })
+    const item = new FakeElement()
+    binding.observeItem(1, item as unknown as Element)
+
+    engine.setGap({ x: 0, y: 10 })
+    flushRaf()
+    binding.destroy()
+
+    expect(item.animations[0]?.canceled).toBe(true)
+  })
+
   it('stops reacting after destroy', () => {
     const { environment, flushRaf } = createControlledEnvironment()
     const engine = createEngine({ algorithm: masonry({ columns: 1 }), items: squares(20) })

@@ -1,4 +1,22 @@
-import type { DomEnvironment } from '../types/index.js'
+import type { DomEnvironment, TransformOffset } from '../types/index.js'
+
+export class FakeAnimation {
+  onfinish: (() => void) | null = null
+  canceled = false
+
+  constructor(
+    readonly keyframes: Keyframe[],
+    readonly options: KeyframeAnimationOptions,
+  ) {}
+
+  cancel(): void {
+    this.canceled = true
+  }
+
+  finish(): void {
+    this.onfinish?.()
+  }
+}
 
 export class FakeElement {
   scrollTop = 0
@@ -6,7 +24,15 @@ export class FakeElement {
   clientWidth = 0
   clientHeight = 0
   rect = { top: 0, left: 0, width: 0, height: 0 }
+  transform: TransformOffset = { x: 0, y: 0 }
+  readonly animations: FakeAnimation[] = []
   private readonly handlers = new Map<string, Set<() => void>>()
+
+  animate(keyframes: Keyframe[], options: KeyframeAnimationOptions): FakeAnimation {
+    const animation = new FakeAnimation(keyframes, options)
+    this.animations.push(animation)
+    return animation
+  }
 
   addEventListener(type: string, handler: () => void): void {
     const set = this.handlers.get(type) ?? new Set<() => void>()
@@ -98,6 +124,7 @@ export const createControlledEnvironment = (): {
       observers.push(observer)
       return observer as unknown as ResizeObserver
     },
+    readTransform: (element) => (element as unknown as FakeElement).transform,
   }
 
   const flushRaf = (): void => {

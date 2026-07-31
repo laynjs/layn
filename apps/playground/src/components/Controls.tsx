@@ -10,7 +10,7 @@ interface ControlsProps {
 }
 
 export function Controls({ spec, settings, onChange, onPreset }: ControlsProps) {
-  const { algoId, columns, gap, count, size, overscan, showImages } = settings
+  const { algoId, columns, gap, count, size, overscan, showImages, animate, shuffleSeed } = settings
 
   return (
     <aside className="controls">
@@ -108,6 +108,20 @@ export function Controls({ spec, settings, onChange, onPreset }: ControlsProps) 
           checked={showImages}
           onChange={(value) => onChange({ showImages: value })}
         />
+        <Toggle
+          label="Animate"
+          hint="Animate items to their new positions on every layout change."
+          checked={animate}
+          onChange={(value) => onChange({ animate: value })}
+        />
+        <button
+          type="button"
+          className="preset shuffle"
+          title="Reorder the items randomly to see the layout transition."
+          onClick={() => onChange({ shuffleSeed: shuffleSeed + 1 })}
+        >
+          Shuffle items
+        </button>
       </section>
     </aside>
   )

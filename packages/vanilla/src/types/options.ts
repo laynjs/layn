@@ -6,7 +6,7 @@ import type {
   ScrollAxis,
   Viewport,
 } from '@laynjs/core'
-import type { DomEnvironment } from '@laynjs/dom'
+import type { AnimateOption, DomEnvironment } from '@laynjs/dom'
 
 export interface LaynOptions<TData = unknown> {
   readonly items: readonly LayoutItem<TData>[]
@@ -17,6 +17,7 @@ export interface LaynOptions<TData = unknown> {
   readonly overscan?: number
   readonly label?: string
   readonly measurements?: MeasurementsOptions
+  readonly animate?: AnimateOption
   readonly environment?: Partial<DomEnvironment>
   readonly renderItem?: (element: HTMLElement, item: LayoutItem<TData>) => void
 }

@@ -6,6 +6,8 @@ export interface Settings {
   readonly size: number
   readonly overscan: number
   readonly showImages: boolean
+  readonly animate: boolean
+  readonly shuffleSeed: number
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -16,4 +18,6 @@ export const DEFAULT_SETTINGS: Settings = {
   size: 200,
   overscan: 400,
   showImages: false,
+  animate: true,
+  shuffleSeed: 0,
 }

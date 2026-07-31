@@ -230,8 +230,23 @@ export interface Tile {
   readonly data: string
 }
 
-export const makeTiles = (count: number): Tile[] =>
-  Array.from({ length: count }, (_, index) => {
+const shuffled = (tiles: Tile[], seed: number): Tile[] => {
+  let state = (seed * 2654435761) >>> 0
+  for (let index = tiles.length - 1; index > 0; index -= 1) {
+    state = (state * 1664525 + 1013904223) >>> 0
+    const other = state % (index + 1)
+    const tile = tiles[index]
+    const swap = tiles[other]
+    if (tile !== undefined && swap !== undefined) {
+      tiles[index] = swap
+      tiles[other] = tile
+    }
+  }
+  return tiles
+}
+
+export const makeTiles = (count: number, seed = 0): Tile[] => {
+  const tiles = Array.from({ length: count }, (_, index): Tile => {
     const aspectRatio = ratioSeed(index)
     const width = 420
     const height = Math.round(width / aspectRatio)
@@ -241,3 +256,5 @@ export const makeTiles = (count: number): Tile[] =>
       data: `https://picsum.photos/seed/layn${index}/${width}/${height}`,
     }
   })
+  return seed === 0 ? tiles : shuffled(tiles, seed)
+}

@@ -9,9 +9,9 @@ interface GridProps {
 }
 
 export function Grid({ spec, settings }: GridProps) {
-  const { columns, size, gap, count, overscan, showImages } = settings
+  const { columns, size, gap, count, overscan, showImages, animate, shuffleSeed } = settings
   const algorithm = useMemo(() => spec.make({ columns, size }), [spec, columns, size])
-  const items = useMemo(() => makeTiles(count), [count])
+  const items = useMemo(() => makeTiles(count, shuffleSeed), [count, shuffleSeed])
 
   const layn = useLayn({
     items,
@@ -19,6 +19,7 @@ export function Grid({ spec, settings }: GridProps) {
     gap: { x: gap, y: gap },
     axis: spec.axis,
     overscan,
+    animate,
     label: `${spec.label} layout`,
   })
 

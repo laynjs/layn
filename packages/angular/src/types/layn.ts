@@ -12,7 +12,7 @@ import type {
   Size,
   Viewport,
 } from '@laynjs/core'
-import type { DomEnvironment } from '@laynjs/dom'
+import type { AnimateOption, DomEnvironment } from '@laynjs/dom'
 import type { LaynItem } from './item.js'
 
 export interface UseLaynOptions<TData = unknown> {
@@ -24,6 +24,7 @@ export interface UseLaynOptions<TData = unknown> {
   readonly overscan?: number
   readonly label?: string
   readonly measurements?: MeasurementsOptions
+  readonly animate?: AnimateOption
   readonly environment?: Partial<DomEnvironment>
 }
 

@@ -6,6 +6,7 @@ export interface SnippetContext {
   readonly size: number
   readonly gap: number
   readonly overscan: number
+  readonly animate: boolean
 }
 
 export interface Framework {
@@ -16,7 +17,7 @@ export interface Framework {
 }
 
 const options = (
-  { spec, columns, size, gap, overscan }: SnippetContext,
+  { spec, columns, size, gap, overscan, animate }: SnippetContext,
   indent: string,
 ): string => {
   const lines = [
@@ -28,6 +29,9 @@ const options = (
     lines.push(`${indent}axis: 'horizontal',`)
   }
   lines.push(`${indent}overscan: ${overscan},`)
+  if (animate) {
+    lines.push(`${indent}animate: true,`)
+  }
   return lines.join('\n')
 }
 
@@ -161,7 +165,7 @@ ${core(ctx)}
 
 export const Grid = component$(() => {
   const layn = useLayn({
-${options(ctx, '    ')}
+${options({ ...ctx, animate: false }, '    ')}
   })
 
   return (

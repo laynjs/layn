@@ -53,6 +53,7 @@ export function Playground() {
             size: settings.size,
             gap: settings.gap,
             overscan: settings.overscan,
+            animate: settings.animate,
           }}
         />
       </div>

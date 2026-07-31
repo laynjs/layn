@@ -1,6 +1,7 @@
 import type { ItemId, ScrollAxis } from '@laynjs/core'
 import type { DomEnvironment } from './environment.js'
 import type { ScrollTarget } from './target.js'
+import type { AnimateOption } from './transitions.js'
 
 export interface BindOptions {
   readonly scroll: ScrollTarget
@@ -8,6 +9,7 @@ export interface BindOptions {
   readonly origin?: HTMLElement
   readonly axis?: ScrollAxis
   readonly overscan?: number
+  readonly animate?: AnimateOption
   readonly environment?: Partial<DomEnvironment>
 }
 

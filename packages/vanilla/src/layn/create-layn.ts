@@ -104,6 +104,7 @@ export const createLayn = <TData = unknown>(
     scroll: container,
     axis,
     overscan,
+    ...(options.animate !== undefined ? { animate: options.animate } : {}),
     ...(options.environment !== undefined ? { environment: options.environment } : {}),
   }
   binding = bindEngine(engine, bindOptions)

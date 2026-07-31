@@ -17,6 +17,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
   const axis = options.axis ?? 'vertical'
   const overscan = options.overscan ?? 0
   const environment = options.environment
+  const animate = options.animate
 
   const engine = createEngine(
     resolveEngineConfig({
@@ -79,6 +80,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
       scroll: element,
       axis,
       overscan,
+      ...(animate !== undefined ? { animate } : {}),
       ...(environment !== undefined ? { environment } : {}),
     }
     binding = bindEngine(engine, bindOptions)

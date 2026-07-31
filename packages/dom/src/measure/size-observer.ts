@@ -39,6 +39,7 @@ export const createSizeObserver = (
       observer.observe(element)
     },
     unobserve: detach,
+    elementOf: (id) => elementById.get(id),
     disconnect() {
       observer.disconnect()
       idByElement.clear()

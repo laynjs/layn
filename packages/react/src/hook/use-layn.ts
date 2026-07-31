@@ -6,7 +6,7 @@ import {
   resolveEngineConfig,
 } from '@laynjs/adapter-utils'
 import { createEngine, diffItems, type ItemId, type LayoutEngine } from '@laynjs/core'
-import { type BindOptions, bindEngine, type EngineBinding } from '@laynjs/dom'
+import { type AnimateOption, type BindOptions, bindEngine, type EngineBinding } from '@laynjs/dom'
 import {
   type CSSProperties,
   useCallback,
@@ -31,6 +31,19 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
   const axis = options.axis ?? 'vertical'
   const overscan = options.overscan ?? 0
   const environment = options.environment
+  const animateEnabled = options.animate !== undefined && options.animate !== false
+  const animateDuration = typeof options.animate === 'object' ? options.animate.duration : undefined
+  const animateEasing = typeof options.animate === 'object' ? options.animate.easing : undefined
+  const animate = useMemo<AnimateOption | undefined>(
+    () =>
+      animateEnabled
+        ? {
+            ...(animateDuration !== undefined ? { duration: animateDuration } : {}),
+            ...(animateEasing !== undefined ? { easing: animateEasing } : {}),
+          }
+        : undefined,
+    [animateEnabled, animateDuration, animateEasing],
+  )
 
   const engine = useConstant<LayoutEngine>(() =>
     createEngine(
@@ -93,13 +106,14 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
         scroll: element,
         axis,
         overscan,
+        ...(animate !== undefined ? { animate } : {}),
         ...(environment !== undefined ? { environment } : {}),
       }
       const binding = bindEngine(engine, bindOptions)
       bindingRef.current = binding
       store.attach(binding)
     },
-    [engine, store, axis, overscan, environment],
+    [engine, store, axis, overscan, animate, environment],
   )
 
   const refFor = useCallback(
