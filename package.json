@@ -20,7 +20,7 @@
     "test:e2e": "pnpm -r run e2e",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "pnpm build && changeset publish"
+    "release": "pnpm build && pnpm publish -r --provenance --access public --no-git-checks && changeset tag"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.0",
