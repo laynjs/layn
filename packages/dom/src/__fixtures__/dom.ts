@@ -34,6 +34,14 @@ export class FakeElement {
     return animation
   }
 
+  scrollTo(options: ScrollToOptions): void {
+    this.lastScrollTo = options
+    this.scrollTop = options.top ?? this.scrollTop
+    this.scrollLeft = options.left ?? this.scrollLeft
+  }
+
+  lastScrollTo: ScrollToOptions | undefined
+
   addEventListener(type: string, handler: () => void): void {
     const set = this.handlers.get(type) ?? new Set<() => void>()
     set.add(handler)
@@ -60,7 +68,14 @@ export class FakeWindow {
   scrollY = 0
   innerWidth = 0
   innerHeight = 0
+  lastScrollTo: ScrollToOptions | undefined
   private readonly handlers = new Map<string, Set<() => void>>()
+
+  scrollTo(options: ScrollToOptions): void {
+    this.lastScrollTo = options
+    this.scrollY = options.top ?? this.scrollY
+    this.scrollX = options.left ?? this.scrollX
+  }
 
   addEventListener(type: string, handler: () => void): void {
     const set = this.handlers.get(type) ?? new Set<() => void>()

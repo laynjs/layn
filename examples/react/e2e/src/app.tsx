@@ -40,6 +40,13 @@ export function App() {
       <button type="button" data-testid="prepend" onClick={prepend}>
         prepend
       </button>
+      <button
+        type="button"
+        data-testid="jump"
+        onClick={() => view.scrollToItem(400, { align: 'center' })}
+      >
+        jump
+      </button>
       <div
         {...view.containerProps}
         data-testid="container"

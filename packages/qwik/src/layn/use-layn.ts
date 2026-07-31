@@ -2,9 +2,11 @@ import { type NoSerialize, noSerialize, useSignal, useVisibleTask$ } from '@buil
 import type { EngineStore } from '@laynjs/adapter-utils'
 import {
   containerAttrs,
+  containerStyleObject,
   contentAria,
   contentStyleObject,
   createStore,
+  resolveBindTargets,
   resolveEngineConfig,
 } from '@laynjs/adapter-utils'
 import {
@@ -20,11 +22,10 @@ import { type BindOptions, bindEngine, type EngineBinding } from '@laynjs/dom'
 import { buildItems } from '../items/index.js'
 import type { LaynItem, UseLaynOptions, UseLaynResult } from '../types/index.js'
 
-const containerStyle: Record<string, string> = { position: 'relative', overflow: 'auto' }
-
 export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLaynResult<TData> => {
   const axis = options.axis ?? 'vertical'
   const overscan = options.overscan ?? 0
+  const scroll = options.scroll
 
   const engine = createEngine(
     resolveEngineConfig({
@@ -67,10 +68,12 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
     }
     const unsubscribe = activeStore.subscribe(update)
     if (container instanceof HTMLElement) {
+      const targets = resolveBindTargets(scroll, container)
       const bindOptions: BindOptions = {
-        scroll: container,
+        scroll: targets.scroll,
         axis,
         overscan,
+        ...(targets.origin !== undefined ? { origin: targets.origin } : {}),
         ...(options.environment !== undefined ? { environment: options.environment } : {}),
       }
       const binding = bindEngine(activeEngine, bindOptions)
@@ -87,7 +90,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
 
   return {
     containerRef,
-    containerStyle,
+    containerStyle: containerStyleObject(scroll),
     containerAttrs: containerAttrs(options.label),
     contentAttrs: contentAria(),
     items,
@@ -105,5 +108,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
     },
     setAlgorithm: (algorithm: LayoutAlgorithm) => engineRef.value?.setAlgorithm(algorithm),
     setGap: (gap: Gap | undefined) => engineRef.value?.setGap({ x: gap?.x ?? 0, y: gap?.y ?? 0 }),
+    scrollToIndex: (index, scrollOptions) => bindingRef.value?.scrollToIndex(index, scrollOptions),
+    scrollToItem: (id, scrollOptions) => bindingRef.value?.scrollToItem(id, scrollOptions),
   }
 }

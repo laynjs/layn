@@ -1,5 +1,5 @@
 import type { Signal } from '@angular/core'
-import type { ContainerAttrs, ContentAria } from '@laynjs/adapter-utils'
+import type { ContainerAttrs, ContentAria, ScrollMode } from '@laynjs/adapter-utils'
 import type {
   Gap,
   ItemId,
@@ -12,7 +12,7 @@ import type {
   Size,
   Viewport,
 } from '@laynjs/core'
-import type { AnimateOption, DomEnvironment } from '@laynjs/dom'
+import type { AnimateOption, DomEnvironment, ScrollToItemOptions } from '@laynjs/dom'
 import type { LaynItem } from './item.js'
 
 export interface UseLaynOptions<TData = unknown> {
@@ -25,6 +25,7 @@ export interface UseLaynOptions<TData = unknown> {
   readonly label?: string
   readonly measurements?: MeasurementsOptions
   readonly animate?: AnimateOption
+  readonly scroll?: ScrollMode
   readonly environment?: Partial<DomEnvironment>
 }
 
@@ -54,4 +55,6 @@ export interface LaynRef<TData = unknown> extends LaynItemTarget, LaynContainerT
   setItems(items: readonly LayoutItem<TData>[]): void
   setAlgorithm(algorithm: LayoutAlgorithm): void
   setGap(gap: Gap | undefined): void
+  scrollToIndex(index: number, options?: ScrollToItemOptions): void
+  scrollToItem(id: ItemId, options?: ScrollToItemOptions): void
 }

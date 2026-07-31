@@ -1,10 +1,15 @@
 import type { LayoutEngine, Size } from '@laynjs/core'
 import { resolveEnvironment } from '../environment/index.js'
 import { createSizeObserver } from '../measure/index.js'
-import { rafThrottle } from '../scroll/index.js'
+import { rafThrottle, scrollOffsetFor } from '../scroll/index.js'
 import { isElement, readOrigin, readScrollWindow, readViewportSize } from '../target/index.js'
 import { createTransitionRunner } from '../transitions/index.js'
-import type { BindOptions, EngineBinding, ScrollTarget } from '../types/index.js'
+import type {
+  BindOptions,
+  EngineBinding,
+  ScrollTarget,
+  ScrollToItemOptions,
+} from '../types/index.js'
 
 const sameIndices = (a: readonly number[], b: readonly number[]): boolean => {
   if (a.length !== b.length) {
@@ -93,6 +98,21 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
     viewportTarget.addEventListener('resize', onViewportResize)
   }
 
+  const scrollToIndex = (index: number, options?: ScrollToItemOptions): void => {
+    const positions = engine.getSnapshot().positions
+    if (index < 0 || index >= positions.count) {
+      return
+    }
+    const rect = positions.rectAt(index)
+    const size = readScrollWindow(scrollTarget, axis, originOffset).size
+    const offset = scrollOffsetFor(rect, axis, size, options?.align ?? 'start') + originOffset
+    const position = Math.max(0, offset)
+    scrollTarget.scrollTo({
+      ...(axis === 'vertical' ? { top: position } : { left: position }),
+      ...(options?.behavior !== undefined ? { behavior: options.behavior } : {}),
+    })
+  }
+
   const scroll = rafThrottle(environment, onScroll)
   scrollTarget.addEventListener('scroll', scroll.run, { passive: true })
 
@@ -109,6 +129,13 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
       listeners.add(listener)
       return () => {
         listeners.delete(listener)
+      }
+    },
+    scrollToIndex,
+    scrollToItem: (id, options) => {
+      const index = engine.getSnapshot().positions.indexOf(id)
+      if (index >= 0) {
+        scrollToIndex(index, options)
       }
     },
     refresh: () => {

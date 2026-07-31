@@ -1,14 +1,16 @@
 import {
   applyRectStyle,
   containerAttrs,
+  containerStyleObject,
   contentAria,
   contentStyleObject,
   createStore,
+  resolveBindTargets,
   resolveEngineConfig,
 } from '@laynjs/adapter-utils'
 import { createEngine, diffItems, type ItemId, type Rect } from '@laynjs/core'
 import { type BindOptions, bindEngine, type EngineBinding } from '@laynjs/dom'
-import { type Accessor, createEffect, createSignal, type JSX, onCleanup, onMount } from 'solid-js'
+import { type Accessor, createEffect, createSignal, onCleanup, onMount } from 'solid-js'
 import { createItemBuilder } from '../items/index.js'
 import type {
   LaynElementRef,
@@ -16,8 +18,6 @@ import type {
   UseLaynOptions,
   UseLaynResult,
 } from '../types/index.js'
-
-const containerStyle: JSX.CSSProperties = { position: 'relative', overflow: 'auto' }
 
 const access = <T>(value: MaybeAccessor<T>): T =>
   typeof value === 'function' ? (value as Accessor<T>)() : value
@@ -27,6 +27,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
   const overscan = options.overscan ?? 0
   const environment = options.environment
   const animate = options.animate
+  const scroll = options.scroll
 
   const engine = createEngine(
     resolveEngineConfig({
@@ -76,10 +77,12 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
     if (container === undefined) {
       return
     }
+    const targets = resolveBindTargets(scroll, container)
     const bindOptions: BindOptions = {
-      scroll: container,
+      scroll: targets.scroll,
       axis,
       overscan,
+      ...(targets.origin !== undefined ? { origin: targets.origin } : {}),
       ...(animate !== undefined ? { animate } : {}),
       ...(environment !== undefined ? { environment } : {}),
     }
@@ -95,12 +98,14 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
 
   return {
     containerRef,
-    containerStyle,
+    containerStyle: containerStyleObject(scroll),
     containerAttrs: containerAttrs(options.label),
     contentAttrs: contentAria(),
     contentStyle: () => contentStyleObject(state().snapshot.contentSize),
     items: () => build(access(options.items), state().snapshot, state().visible),
     totalSize: () => state().snapshot.contentSize,
     engine,
+    scrollToIndex: (index, scrollOptions) => binding?.scrollToIndex(index, scrollOptions),
+    scrollToItem: (id, scrollOptions) => binding?.scrollToItem(id, scrollOptions),
   }
 }

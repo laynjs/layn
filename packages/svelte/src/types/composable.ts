@@ -1,6 +1,7 @@
-import type { ContainerAttrs, ContentAria } from '@laynjs/adapter-utils'
+import type { ContainerAttrs, ContentAria, ScrollMode } from '@laynjs/adapter-utils'
 import type {
   Gap,
+  ItemId,
   LayoutAlgorithm,
   LayoutEngine,
   LayoutItem,
@@ -9,7 +10,7 @@ import type {
   Size,
   Viewport,
 } from '@laynjs/core'
-import type { AnimateOption, DomEnvironment } from '@laynjs/dom'
+import type { AnimateOption, DomEnvironment, ScrollToItemOptions } from '@laynjs/dom'
 import type { Action } from 'svelte/action'
 import type { Readable } from 'svelte/store'
 import type { ItemActionParams, LaynItem } from './item.js'
@@ -24,6 +25,7 @@ export interface UseLaynOptions<TData = unknown> {
   readonly label?: string
   readonly measurements?: MeasurementsOptions
   readonly animate?: AnimateOption
+  readonly scroll?: ScrollMode
   readonly environment?: Partial<DomEnvironment>
 }
 
@@ -40,4 +42,6 @@ export interface UseLaynResult<TData = unknown> {
   readonly setItems: (items: readonly LayoutItem<TData>[]) => void
   readonly setAlgorithm: (algorithm: LayoutAlgorithm) => void
   readonly setGap: (gap: Gap | undefined) => void
+  readonly scrollToIndex: (index: number, options?: ScrollToItemOptions) => void
+  readonly scrollToItem: (id: ItemId, options?: ScrollToItemOptions) => void
 }

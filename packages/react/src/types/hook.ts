@@ -1,6 +1,7 @@
-import type { ContainerAria, ContentAria } from '@laynjs/adapter-utils'
+import type { ContainerAria, ContentAria, ScrollMode } from '@laynjs/adapter-utils'
 import type {
   Gap,
+  ItemId,
   LayoutAlgorithm,
   LayoutEngine,
   LayoutItem,
@@ -9,7 +10,7 @@ import type {
   Size,
   Viewport,
 } from '@laynjs/core'
-import type { AnimateOption, DomEnvironment } from '@laynjs/dom'
+import type { AnimateOption, DomEnvironment, ScrollToItemOptions } from '@laynjs/dom'
 import type { CSSProperties } from 'react'
 import type { LaynItem } from './item.js'
 
@@ -22,6 +23,7 @@ export interface UseLaynOptions<TData = unknown> {
   readonly overscan?: number
   readonly label?: string
   readonly animate?: AnimateOption
+  readonly scroll?: ScrollMode
   readonly measurements?: MeasurementsOptions
   readonly environment?: Partial<DomEnvironment>
 }
@@ -38,4 +40,6 @@ export interface UseLaynResult<TData = unknown> {
   readonly items: readonly LaynItem<TData>[]
   readonly totalSize: Size
   readonly engine: LayoutEngine
+  scrollToIndex(index: number, options?: ScrollToItemOptions): void
+  scrollToItem(id: ItemId, options?: ScrollToItemOptions): void
 }

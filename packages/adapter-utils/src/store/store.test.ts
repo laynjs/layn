@@ -19,6 +19,8 @@ const fakeBinding = () => {
         listeners.delete(listener)
       }
     },
+    scrollToIndex: () => undefined,
+    scrollToItem: () => undefined,
     refresh: () => undefined,
     destroy: () => undefined,
   }

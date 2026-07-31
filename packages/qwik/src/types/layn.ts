@@ -1,7 +1,8 @@
 import type { Signal } from '@builder.io/qwik'
-import type { ContainerAttrs, ContentAria } from '@laynjs/adapter-utils'
+import type { ContainerAttrs, ContentAria, ScrollMode } from '@laynjs/adapter-utils'
 import type {
   Gap,
+  ItemId,
   LayoutAlgorithm,
   LayoutItem,
   MeasurementsOptions,
@@ -9,7 +10,7 @@ import type {
   Size,
   Viewport,
 } from '@laynjs/core'
-import type { DomEnvironment } from '@laynjs/dom'
+import type { DomEnvironment, ScrollToItemOptions } from '@laynjs/dom'
 import type { LaynItem } from './item.js'
 
 export interface UseLaynOptions<TData = unknown> {
@@ -21,6 +22,7 @@ export interface UseLaynOptions<TData = unknown> {
   readonly overscan?: number
   readonly label?: string
   readonly measurements?: MeasurementsOptions
+  readonly scroll?: ScrollMode
   readonly environment?: Partial<DomEnvironment>
 }
 
@@ -35,4 +37,6 @@ export interface UseLaynResult<TData = unknown> {
   readonly setItems: (items: readonly LayoutItem<TData>[]) => void
   readonly setAlgorithm: (algorithm: LayoutAlgorithm) => void
   readonly setGap: (gap: Gap | undefined) => void
+  readonly scrollToIndex: (index: number, options?: ScrollToItemOptions) => void
+  readonly scrollToItem: (id: ItemId, options?: ScrollToItemOptions) => void
 }

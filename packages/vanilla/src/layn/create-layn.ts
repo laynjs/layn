@@ -7,6 +7,7 @@ import {
   createStore,
   itemAria,
   mapVisible,
+  resolveBindTargets,
   resolveEngineConfig,
 } from '@laynjs/adapter-utils'
 import { createEngine, diffItems, type ItemId, type LayoutItem, type Rect } from '@laynjs/core'
@@ -35,7 +36,9 @@ export const createLayn = <TData = unknown>(
   const store = createStore(engine, axis, overscan)
 
   container.style.position = 'relative'
-  container.style.overflow = 'auto'
+  if (options.scroll !== 'window') {
+    container.style.overflow = 'auto'
+  }
   applyAttrs(container, containerAttrs(options.label))
 
   const existing = container.querySelector(`[${CONTENT_ATTR}]`)
@@ -100,10 +103,12 @@ export const createLayn = <TData = unknown>(
     }
   }
 
+  const targets = resolveBindTargets(options.scroll, container)
   const bindOptions: BindOptions = {
-    scroll: container,
+    scroll: targets.scroll,
     axis,
     overscan,
+    ...(targets.origin !== undefined ? { origin: targets.origin } : {}),
     ...(options.animate !== undefined ? { animate: options.animate } : {}),
     ...(options.environment !== undefined ? { environment: options.environment } : {}),
   }
@@ -127,6 +132,8 @@ export const createLayn = <TData = unknown>(
     },
     setAlgorithm: (algorithm) => engine.setAlgorithm(algorithm),
     setGap: (gap) => engine.setGap(gap),
+    scrollToIndex: (index, scrollOptions) => binding?.scrollToIndex(index, scrollOptions),
+    scrollToItem: (id, scrollOptions) => binding?.scrollToItem(id, scrollOptions),
     refresh: () => binding?.refresh(),
     destroy() {
       unsubscribe()

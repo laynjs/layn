@@ -1,8 +1,10 @@
 import {
   containerAttrs,
+  containerStyleObject,
   contentAria,
   contentStyleObject,
   createStore,
+  resolveBindTargets,
   resolveEngineConfig,
 } from '@laynjs/adapter-utils'
 import { createEngine, diffItems, type ItemId } from '@laynjs/core'
@@ -11,13 +13,12 @@ import { computed, onBeforeUnmount, shallowRef, toValue, watch } from 'vue'
 import { buildItems } from '../items/index.js'
 import type { LaynElementRef, UseLaynOptions, UseLaynResult } from '../types/index.js'
 
-const containerStyle: Record<string, string> = { position: 'relative', overflow: 'auto' }
-
 export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLaynResult<TData> => {
   const axis = options.axis ?? 'vertical'
   const overscan = options.overscan ?? 0
   const environment = options.environment
   const animate = options.animate
+  const scroll = options.scroll
 
   const engine = createEngine(
     resolveEngineConfig({
@@ -76,10 +77,12 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
       binding = undefined
       return
     }
+    const targets = resolveBindTargets(scroll, element)
     const bindOptions: BindOptions = {
-      scroll: element,
+      scroll: targets.scroll,
       axis,
       overscan,
+      ...(targets.origin !== undefined ? { origin: targets.origin } : {}),
       ...(animate !== undefined ? { animate } : {}),
       ...(environment !== undefined ? { environment } : {}),
     }
@@ -95,7 +98,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
 
   return {
     containerRef,
-    containerStyle,
+    containerStyle: containerStyleObject(scroll),
     containerAttrs: containerAttrs(options.label),
     contentAttrs: contentAria(),
     contentStyle: computed(() => contentStyleObject(state.value.snapshot.contentSize)),
@@ -104,5 +107,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
     ),
     totalSize: computed(() => state.value.snapshot.contentSize),
     engine,
+    scrollToIndex: (index, scrollOptions) => binding?.scrollToIndex(index, scrollOptions),
+    scrollToItem: (id, scrollOptions) => binding?.scrollToItem(id, scrollOptions),
   }
 }

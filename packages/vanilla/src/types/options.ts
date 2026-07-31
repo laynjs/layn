@@ -1,3 +1,4 @@
+import type { ScrollMode } from '@laynjs/adapter-utils'
 import type {
   Gap,
   LayoutAlgorithm,
@@ -18,6 +19,7 @@ export interface LaynOptions<TData = unknown> {
   readonly label?: string
   readonly measurements?: MeasurementsOptions
   readonly animate?: AnimateOption
+  readonly scroll?: ScrollMode
   readonly environment?: Partial<DomEnvironment>
   readonly renderItem?: (element: HTMLElement, item: LayoutItem<TData>) => void
 }

@@ -13,11 +13,20 @@ export interface BindOptions {
   readonly environment?: Partial<DomEnvironment>
 }
 
+export type ScrollAlign = 'start' | 'center' | 'end'
+
+export interface ScrollToItemOptions {
+  readonly align?: ScrollAlign
+  readonly behavior?: ScrollBehavior
+}
+
 export interface EngineBinding {
   observeItem(id: ItemId, element: Element): void
   unobserveItem(id: ItemId): void
   getVisible(): readonly number[]
   subscribe(listener: () => void): () => void
+  scrollToIndex(index: number, options?: ScrollToItemOptions): void
+  scrollToItem(id: ItemId, options?: ScrollToItemOptions): void
   refresh(): void
   destroy(): void
 }

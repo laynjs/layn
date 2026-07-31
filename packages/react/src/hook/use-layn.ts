@@ -3,6 +3,7 @@ import {
   containerAria,
   contentAria,
   createStore,
+  resolveBindTargets,
   resolveEngineConfig,
 } from '@laynjs/adapter-utils'
 import { createEngine, diffItems, type ItemId, type LayoutEngine } from '@laynjs/core'
@@ -21,6 +22,8 @@ import { useConstant } from './use-constant.js'
 
 const containerStyle: CSSProperties = { position: 'relative', overflow: 'auto' }
 
+const windowContainerStyle: CSSProperties = { position: 'relative' }
+
 const contentStyle = (width: number, height: number): CSSProperties => ({
   position: 'relative',
   width,
@@ -31,6 +34,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
   const axis = options.axis ?? 'vertical'
   const overscan = options.overscan ?? 0
   const environment = options.environment
+  const scroll = options.scroll
   const animateEnabled = options.animate !== undefined && options.animate !== false
   const animateDuration = typeof options.animate === 'object' ? options.animate.duration : undefined
   const animateEasing = typeof options.animate === 'object' ? options.animate.easing : undefined
@@ -102,10 +106,12 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
         bindingRef.current = undefined
         return
       }
+      const targets = resolveBindTargets(scroll, element)
       const bindOptions: BindOptions = {
-        scroll: element,
+        scroll: targets.scroll,
         axis,
         overscan,
+        ...(targets.origin !== undefined ? { origin: targets.origin } : {}),
         ...(animate !== undefined ? { animate } : {}),
         ...(environment !== undefined ? { environment } : {}),
       }
@@ -113,7 +119,16 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
       bindingRef.current = binding
       store.attach(binding)
     },
-    [engine, store, axis, overscan, animate, environment],
+    [engine, store, axis, overscan, animate, environment, scroll],
+  )
+
+  const scrollToIndex = useCallback<UseLaynResult<TData>['scrollToIndex']>(
+    (index, scrollOptions) => bindingRef.current?.scrollToIndex(index, scrollOptions),
+    [],
+  )
+  const scrollToItem = useCallback<UseLaynResult<TData>['scrollToItem']>(
+    (id, scrollOptions) => bindingRef.current?.scrollToItem(id, scrollOptions),
+    [],
   )
 
   const refFor = useCallback(
@@ -151,7 +166,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
   return {
     containerProps: {
       ref: containerRef,
-      style: containerStyle,
+      style: scroll === 'window' ? windowContainerStyle : containerStyle,
       tabIndex: CONTAINER_TAB_INDEX,
       ...containerAria(options.label),
     },
@@ -159,5 +174,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
     items,
     totalSize: state.snapshot.contentSize,
     engine,
+    scrollToIndex,
+    scrollToItem,
   }
 }

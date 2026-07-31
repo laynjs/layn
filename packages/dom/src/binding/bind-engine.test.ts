@@ -209,6 +209,46 @@ describe('bindEngine', () => {
     expect(item.animations[0]?.canceled).toBe(true)
   })
 
+  it('scrolls the container to an item by index and by id', () => {
+    const { environment } = createControlledEnvironment()
+    const engine = createEngine({ algorithm: masonry({ columns: 1 }), items: squares(20) })
+    const element = container(100, 300)
+    const binding = bindEngine(engine, { scroll: asElement(element), environment })
+
+    binding.scrollToIndex(5)
+    expect(element.lastScrollTo).toEqual({ top: 500 })
+
+    binding.scrollToIndex(5, { align: 'center', behavior: 'smooth' })
+    expect(element.lastScrollTo).toEqual({ top: 400, behavior: 'smooth' })
+
+    binding.scrollToItem(7, { align: 'end' })
+    expect(element.lastScrollTo).toEqual({ top: 500 })
+
+    element.lastScrollTo = undefined
+    binding.scrollToIndex(99)
+    binding.scrollToItem('missing')
+    expect(element.lastScrollTo).toBeUndefined()
+  })
+
+  it('scrolls the window to an item offset by the origin element', () => {
+    const { environment } = createControlledEnvironment()
+    const engine = createEngine({ algorithm: masonry({ columns: 1 }), items: squares(20) })
+    const win = new FakeWindow()
+    win.innerWidth = 100
+    win.innerHeight = 300
+    const origin = new FakeElement()
+    origin.rect = { top: 500, left: 0, width: 100, height: 0 }
+
+    const binding = bindEngine(engine, {
+      scroll: asWindow(win),
+      origin: origin as unknown as HTMLElement,
+      environment,
+    })
+
+    binding.scrollToIndex(3)
+    expect(win.lastScrollTo).toEqual({ top: 800 })
+  })
+
   it('stops reacting after destroy', () => {
     const { environment, flushRaf } = createControlledEnvironment()
     const engine = createEngine({ algorithm: masonry({ columns: 1 }), items: squares(20) })

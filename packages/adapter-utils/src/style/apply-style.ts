@@ -1,4 +1,5 @@
 import type { Rect, Size } from '@laynjs/core'
+import type { ScrollMode } from '../types/index.js'
 
 export const applyRectStyle = (element: HTMLElement, rect: Rect): void => {
   element.style.position = 'absolute'
@@ -40,3 +41,6 @@ export const contentStyleObject = (size: Size): Record<string, string> => ({
   width: `${size.width}px`,
   height: `${size.height}px`,
 })
+
+export const containerStyleObject = (mode: ScrollMode | undefined): Record<string, string> =>
+  mode === 'window' ? { position: 'relative' } : { position: 'relative', overflow: 'auto' }
