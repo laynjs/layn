@@ -158,6 +158,25 @@ describe('bindEngine', () => {
     ])
   })
 
+  it('fades in items that are appended to the data', () => {
+    const { environment, flushRaf } = createControlledEnvironment()
+    const engine = createEngine({
+      algorithm: masonry({ columns: 1 }),
+      items: squares(2),
+      viewport: { width: 100, height: 300 },
+    })
+    const element = container(100, 300)
+    const binding = bindEngine(engine, { scroll: asElement(element), environment, animate: true })
+
+    engine.appendItems([{ id: 2, aspectRatio: 1 }])
+    const added = new FakeElement()
+    binding.observeItem(2, added as unknown as Element)
+    flushRaf()
+
+    expect(added.animations).toHaveLength(2)
+    expect(added.animations[1]?.keyframes).toEqual([{ opacity: 0 }, { opacity: 1 }])
+  })
+
   it('does not animate the initial viewport commit of the binding', () => {
     const { environment, flushRaf } = createControlledEnvironment()
     const engine = createEngine({ algorithm: masonry({ columns: 1 }), items: squares(20) })

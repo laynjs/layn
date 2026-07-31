@@ -13,3 +13,13 @@ export interface TransitionMove {
   readonly dx: number
   readonly dy: number
 }
+
+export interface TransitionEnter {
+  readonly id: ItemId
+  readonly element: Element
+}
+
+export interface TransitionPlan {
+  readonly moves: readonly TransitionMove[]
+  readonly enters: readonly TransitionEnter[]
+}

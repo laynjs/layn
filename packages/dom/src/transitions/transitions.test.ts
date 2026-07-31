@@ -7,7 +7,11 @@ import {
 } from '@laynjs/core'
 import { describe, expect, it } from 'vitest'
 import { createControlledEnvironment, FakeElement } from '../__fixtures__/dom.js'
-import { DEFAULT_TRANSITION_DURATION, DEFAULT_TRANSITION_EASING } from '../constants.js'
+import {
+  DEFAULT_TRANSITION_DURATION,
+  DEFAULT_TRANSITION_EASING,
+  TRANSITION_ENTER_RISE,
+} from '../constants.js'
 import { createTransitionRunner, resolveTransitionConfig } from './transitions.js'
 
 const squares = (count: number): LayoutItem[] =>
@@ -163,7 +167,23 @@ describe('createTransitionRunner', () => {
     expect(element.animations[1]?.keyframes[0]).toEqual({ transform: 'translate(0px, -20px)' })
   })
 
-  it('skips items without an element or without a previous rect', () => {
+  it('skips items without a registered element', () => {
+    const { environment, flushRaf } = createControlledEnvironment()
+    const runner = createTransitionRunner(environment, true)
+    const engine = engineOf(3)
+    const { elements, elementOf } = registry(3)
+    const previous = engine.getSnapshot().positions
+
+    engine.setGap({ x: 0, y: 10 })
+    const skipSecond = (id: ItemId): Element | undefined => (id === 1 ? undefined : elementOf(id))
+    runner?.play(previous, engine.getSnapshot().positions, skipSecond, [0, 1, 2])
+    flushRaf()
+
+    expect(elements[1]?.animations).toHaveLength(0)
+    expect(elements[2]?.animations).toHaveLength(1)
+  })
+
+  it('animates entering items with a fade and an additive rise', () => {
     const { environment, flushRaf } = createControlledEnvironment()
     const runner = createTransitionRunner(environment, true)
     const engine = engineOf(2)
@@ -171,14 +191,22 @@ describe('createTransitionRunner', () => {
     const previous = engine.getSnapshot().positions
 
     engine.appendItems([{ id: 2, aspectRatio: 1 }])
-    engine.setGap({ x: 0, y: 10 })
-    const skipFirst = (id: ItemId): Element | undefined => (id === 0 ? undefined : elementOf(id))
-    runner?.play(previous, engine.getSnapshot().positions, skipFirst, [0, 1, 2])
+    runner?.play(previous, engine.getSnapshot().positions, elementOf, [0, 1, 2])
     flushRaf()
 
     expect(elements[0]?.animations).toHaveLength(0)
-    expect(elements[1]?.animations).toHaveLength(1)
-    expect(elements[2]?.animations).toHaveLength(0)
+    expect(elements[1]?.animations).toHaveLength(0)
+    expect(elements[2]?.animations).toHaveLength(2)
+    expect(elements[2]?.animations[0]?.keyframes).toEqual([
+      { transform: `translate(0px, ${TRANSITION_ENTER_RISE}px)` },
+      { transform: 'translate(0px, 0px)' },
+    ])
+    expect(elements[2]?.animations[0]?.options.composite).toBe('add')
+    expect(elements[2]?.animations[1]?.keyframes).toEqual([{ opacity: 0 }, { opacity: 1 }])
+    expect(elements[2]?.animations[1]?.options).toEqual({
+      duration: DEFAULT_TRANSITION_DURATION,
+      easing: DEFAULT_TRANSITION_EASING,
+    })
   })
 
   it('stop cancels the pending frame and every active animation', () => {

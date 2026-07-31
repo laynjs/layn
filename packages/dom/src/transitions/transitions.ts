@@ -2,6 +2,7 @@ import type { ItemId } from '@laynjs/core'
 import {
   DEFAULT_TRANSITION_DURATION,
   DEFAULT_TRANSITION_EASING,
+  TRANSITION_ENTER_RISE,
   TRANSITION_EPSILON,
 } from '../constants.js'
 import type {
@@ -10,7 +11,7 @@ import type {
   TransitionConfig,
   TransitionRunner,
 } from '../types/index.js'
-import type { TransitionBatch, TransitionMove } from './types.js'
+import type { TransitionBatch, TransitionEnter, TransitionMove, TransitionPlan } from './types.js'
 
 export const resolveTransitionConfig = (
   animate: AnimateOption | undefined,
@@ -37,11 +38,13 @@ export const createTransitionRunner = (
   }
 
   const animations = new Map<ItemId, Animation>()
+  const fades = new Set<Animation>()
   let frame: number | undefined
   let pending: TransitionBatch | undefined
 
-  const collectMoves = (batch: TransitionBatch): TransitionMove[] => {
+  const collect = (batch: TransitionBatch): TransitionPlan => {
     const moves: TransitionMove[] = []
+    const enters: TransitionEnter[] = []
     for (const index of batch.visible) {
       const id = batch.next.idAt(index)
       const element = batch.elementOf(id)
@@ -50,6 +53,7 @@ export const createTransitionRunner = (
       }
       const from = batch.previous.rectOf(id)
       if (from === undefined) {
+        enters.push({ id, element })
         continue
       }
       const to = batch.next.rectAt(index)
@@ -67,7 +71,7 @@ export const createTransitionRunner = (
       }
       moves.push({ id, element, dx, dy })
     }
-    return moves
+    return { moves, enters }
   }
 
   const start = (move: TransitionMove): void => {
@@ -87,6 +91,31 @@ export const createTransitionRunner = (
     animations.set(move.id, animation)
   }
 
+  const enter = (entry: TransitionEnter): void => {
+    animations.get(entry.id)?.cancel()
+    const rise = entry.element.animate(
+      [
+        { transform: `translate(0px, ${TRANSITION_ENTER_RISE}px)` },
+        { transform: 'translate(0px, 0px)' },
+      ],
+      { duration: config.duration, easing: config.easing, composite: 'add' },
+    )
+    rise.onfinish = () => {
+      if (animations.get(entry.id) === rise) {
+        animations.delete(entry.id)
+      }
+    }
+    animations.set(entry.id, rise)
+    const fade = entry.element.animate([{ opacity: 0 }, { opacity: 1 }], {
+      duration: config.duration,
+      easing: config.easing,
+    })
+    fade.onfinish = () => {
+      fades.delete(fade)
+    }
+    fades.add(fade)
+  }
+
   const run = (): void => {
     frame = undefined
     const batch = pending
@@ -94,8 +123,12 @@ export const createTransitionRunner = (
     if (batch === undefined) {
       return
     }
-    for (const move of collectMoves(batch)) {
+    const plan = collect(batch)
+    for (const move of plan.moves) {
       start(move)
+    }
+    for (const entry of plan.enters) {
+      enter(entry)
     }
   }
 
@@ -116,6 +149,10 @@ export const createTransitionRunner = (
         animation.cancel()
       }
       animations.clear()
+      for (const fade of fades) {
+        fade.cancel()
+      }
+      fades.clear()
     },
   }
 }
