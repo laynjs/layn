@@ -1,6 +1,6 @@
 {
   "name": "@laynjs/vue",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Headless Vue 3 adapter for layn: a composable over the engine and DOM bindings.",
   "keywords": [
     "layout",
