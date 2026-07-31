@@ -63,6 +63,10 @@ const { containerRef, containerStyle, containerAttrs, contentAttrs, contentStyle
 | `totalSize` | Computed ref, `{ width, height }`. |
 | `engine` | The raw engine. |
 
+The hook also accepts `animate` ([animations guide](/guides/animations/)) and `scroll: 'window'`
+([scrolling guide](/guides/scrolling/)), and returns `scrollToItem(id, options?)` /
+`scrollToIndex(index, options?)` for programmatic scrolling.
+
 ## Reactive inputs
 
 `items`, `algorithm`, and `gap` accept a ref, a getter, or a plain value. Wrap anything reactive in a

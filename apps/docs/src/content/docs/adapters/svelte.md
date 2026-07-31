@@ -67,6 +67,10 @@ Peer dependency: Svelte 5.
 | `engine` | The raw engine. |
 | `setItems` / `setAlgorithm` / `setGap` | Imperative updates. |
 
+The hook also accepts `animate` ([animations guide](/guides/animations/)) and `scroll: 'window'`
+([scrolling guide](/guides/scrolling/)), and returns `scrollToItem(id, options?)` /
+`scrollToIndex(index, options?)` for programmatic scrolling.
+
 ## Why actions
 
 The two `use:` actions solve the two lifecycle details for you: `use:container` binds after mount when

@@ -47,8 +47,12 @@ In `renderItem`, set individual style properties (`element.style.background = ..
 | `setItems(items)` | Replace the items. |
 | `setAlgorithm(algorithm)` | Swap the algorithm. |
 | `setGap(gap)` | Change spacing. |
+| `scrollToItem(id, options?)` / `scrollToIndex(index, options?)` | Programmatic scrolling. See the [scrolling guide](/guides/scrolling/). |
 | `refresh()` | Re-measure the container and recompute. |
 | `destroy()` | Tear down observers and remove nodes. |
+
+`createLayn` also accepts `animate` ([animations guide](/guides/animations/)) and `scroll: 'window'`
+([scrolling guide](/guides/scrolling/)).
 
 ## Server rendering
 

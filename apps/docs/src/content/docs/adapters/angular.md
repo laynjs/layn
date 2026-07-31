@@ -77,6 +77,10 @@ export class GalleryComponent {
 | `engine` | The raw engine. |
 | `setItems` / `setAlgorithm` / `setGap` | Imperative updates, drive them from `effect`. |
 
+The hook also accepts `animate` ([animations guide](/guides/animations/)) and `scroll: 'window'`
+([scrolling guide](/guides/scrolling/)), and returns `scrollToItem(id, options?)` /
+`scrollToIndex(index, options?)` for programmatic scrolling.
+
 ## Directives
 
 - `[laynContainer]="layn"` binds the scroll container after the view initializes.

@@ -55,6 +55,10 @@ export const Gallery = component$<{ photos: Photo[] }>(({ photos }) => {
 | `contentStyle` | A signal with the content-size style. |
 | `totalSize` | A signal, `{ width, height }`. |
 | `setItems` / `setAlgorithm` / `setGap` | Imperative updates. |
+| `scrollToItem` / `scrollToIndex` | Programmatic scrolling. See the [scrolling guide](/guides/scrolling/). |
+
+The hook also accepts `scroll: 'window'` ([scrolling guide](/guides/scrolling/)). The `animate` option is
+not available in Qwik: resumable rendering has no per-item element refs for the transition layer.
 
 ## Reactivity is consumer-driven
 
