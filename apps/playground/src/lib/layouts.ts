@@ -224,10 +224,15 @@ const ratioSeed = (index: number): number => 0.7 + (((index * 2654435761) % 1000
 export const toneOf = (index: number): number =>
   Math.floor((((index * 2654435761) >>> 0) / 4294967296) * 5)
 
+export interface TileData {
+  readonly src: string
+  readonly label: string
+}
+
 export interface Tile {
   readonly id: number
   readonly aspectRatio: number
-  readonly data: string
+  readonly data: TileData
 }
 
 const shuffled = (tiles: Tile[], seed: number): Tile[] => {
@@ -245,16 +250,26 @@ const shuffled = (tiles: Tile[], seed: number): Tile[] => {
   return tiles
 }
 
-export const makeTiles = (count: number, seed = 0): Tile[] => {
-  const tiles = Array.from({ length: count }, (_, index): Tile => {
-    const aspectRatio = ratioSeed(index)
-    const width = 420
-    const height = Math.round(width / aspectRatio)
-    return {
-      id: index,
-      aspectRatio,
-      data: `https://picsum.photos/seed/layn${index}/${width}/${height}`,
-    }
-  })
+const tileOf = (id: number, label: string): Tile => {
+  const aspectRatio = ratioSeed(id)
+  const width = 420
+  const height = Math.round(width / aspectRatio)
+  return {
+    id,
+    aspectRatio,
+    data: { src: `https://picsum.photos/seed/layn${id}/${width}/${height}`, label },
+  }
+}
+
+const PREPEND_ID_BASE = 100000
+
+const makePrepended = (count: number): Tile[] =>
+  Array.from({ length: count }, (_, index) => tileOf(PREPEND_ID_BASE + index, `+${index + 1}`))
+
+export const makeTiles = (count: number, seed = 0, prepended = 0): Tile[] => {
+  const tiles = [
+    ...makePrepended(prepended),
+    ...Array.from({ length: count }, (_, index) => tileOf(index, String(index))),
+  ]
   return seed === 0 ? tiles : shuffled(tiles, seed)
 }

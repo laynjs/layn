@@ -1,17 +1,22 @@
 import { useLayn } from '@laynjs/react'
-import { useMemo } from 'react'
+import { type MutableRefObject, useEffect, useMemo } from 'react'
 import { type AlgoSpec, makeTiles, toneOf } from '../lib/layouts'
 import type { Settings } from '../lib/settings'
 
 interface GridProps {
   spec: AlgoSpec
   settings: Settings
+  scrollApi: MutableRefObject<((id: number) => void) | undefined>
 }
 
-export function Grid({ spec, settings }: GridProps) {
-  const { columns, size, gap, count, overscan, showImages, animate, shuffleSeed } = settings
+export function Grid({ spec, settings, scrollApi }: GridProps) {
+  const { columns, size, gap, count, overscan, showImages, animate, shuffleSeed, prepended } =
+    settings
   const algorithm = useMemo(() => spec.make({ columns, size }), [spec, columns, size])
-  const items = useMemo(() => makeTiles(count, shuffleSeed), [count, shuffleSeed])
+  const items = useMemo(
+    () => makeTiles(count, shuffleSeed, prepended),
+    [count, shuffleSeed, prepended],
+  )
 
   const layn = useLayn({
     items,
@@ -22,6 +27,13 @@ export function Grid({ spec, settings }: GridProps) {
     animate,
     label: `${spec.label} layout`,
   })
+
+  useEffect(() => {
+    scrollApi.current = (id) => layn.scrollToItem(id, { align: 'center', behavior: 'smooth' })
+    return () => {
+      scrollApi.current = undefined
+    }
+  }, [scrollApi, layn.scrollToItem])
 
   const scrollClass = spec.axis === 'horizontal' ? 'grid-scroll horizontal' : 'grid-scroll'
 
@@ -37,7 +49,7 @@ export function Grid({ spec, settings }: GridProps) {
               {...entry.a11y}
               style={entry.style}
             >
-              <img className="tile-img" src={entry.item.data} alt="" decoding="async" />
+              <img className="tile-img" src={entry.item.data?.src} alt="" decoding="async" />
             </div>
           ) : (
             <div
@@ -46,7 +58,9 @@ export function Grid({ spec, settings }: GridProps) {
               className={`tile tone-${toneOf(entry.index)}`}
               {...entry.a11y}
               style={entry.style}
-            />
+            >
+              <span className="tile-num">{entry.item.data?.label}</span>
+            </div>
           ),
         )}
       </div>

@@ -41,7 +41,13 @@ Every `useLayn` accepts these (Vue and Solid also accept reactive wrappers for t
 | `axis` | `ScrollAxis` | `'vertical'` (default) or `'horizontal'`. |
 | `overscan` | `number` | Extra pixels rendered beyond the viewport. |
 | `label` | `string` | Accessible name for the scroll region. |
+| `animate` | `boolean \| { duration, easing }` | Animate layout changes. See the [animations guide](/guides/animations/). Not available in Qwik. |
+| `scroll` | `'container' \| 'window'` | Scroll the container (default) or the page. See the [scrolling guide](/guides/scrolling/). |
 | `measurements` | `MeasurementsOptions` | Estimator and fallback ratio. |
+
+Every adapter also returns **`scrollToItem(id, options?)`** and **`scrollToIndex(index, options?)`**
+for programmatic scrolling, with `align: 'start' | 'center' | 'end'` and an optional smooth
+`behavior`. See the [scrolling guide](/guides/scrolling/).
 
 ## Pick your framework
 

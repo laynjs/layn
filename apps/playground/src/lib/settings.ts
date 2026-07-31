@@ -8,6 +8,7 @@ export interface Settings {
   readonly showImages: boolean
   readonly animate: boolean
   readonly shuffleSeed: number
+  readonly prepended: number
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -20,4 +21,5 @@ export const DEFAULT_SETTINGS: Settings = {
   showImages: false,
   animate: true,
   shuffleSeed: 0,
+  prepended: 0,
 }

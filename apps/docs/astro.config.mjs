@@ -65,6 +65,8 @@ export default defineConfig({
         {
           label: 'Guides',
           items: [
+            { label: 'Animations', slug: 'guides/animations' },
+            { label: 'Scrolling', slug: 'guides/scrolling' },
             { label: 'SSR & hydration', slug: 'guides/ssr' },
             { label: 'Accessibility', slug: 'guides/accessibility' },
             { label: 'Performance', slug: 'guides/performance' },

@@ -55,6 +55,10 @@ sets `position: relative` and `overflow: auto`, so the height is all you add.
 | `items` | The visible view-models: `{ id, index, item, style, a11y, ref }`. |
 | `totalSize` | `{ width, height }` of the whole grid. |
 | `engine` | The raw engine, for advanced use. |
+| `scrollToItem` / `scrollToIndex` | Programmatic scrolling with `align` and `behavior`. See the [scrolling guide](/guides/scrolling/). |
+
+The hook also accepts `animate` ([animations guide](/guides/animations/)) and `scroll: 'window'`
+([scrolling guide](/guides/scrolling/)).
 
 ## Item view-model
 

@@ -163,6 +163,9 @@ body,
 }
 
 .tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
   border-radius: 10px;
   background: var(--tile);
@@ -257,6 +260,51 @@ body,
 
 .shuffle {
   width: 100%;
+  text-align: center;
+}
+
+.tile-num {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 7px;
+  background: rgba(8, 11, 18, 0.35);
+  color: rgba(255, 255, 255, 0.92);
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.jump-row {
+  display: flex;
+  gap: 8px;
+}
+
+.jump-input {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 10px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--fg);
+  font-family: inherit;
+  font-size: 13px;
+  appearance: textfield;
+}
+
+.jump-input::-webkit-outer-spin-button,
+.jump-input::-webkit-inner-spin-button {
+  appearance: none;
+}
+
+.jump-input:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+}
+
+.jump-go {
+  flex: none;
   text-align: center;
 }
 

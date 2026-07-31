@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { ALGORITHMS, type AlgoSpec, PRESETS, type Preset } from '../lib/layouts'
 import type { Settings } from '../lib/settings'
 import { Hint, Select, Slider, Toggle } from './form'
@@ -7,10 +8,19 @@ interface ControlsProps {
   settings: Settings
   onChange: (patch: Partial<Settings>) => void
   onPreset: (preset: Preset) => void
+  onScrollTo: (id: number) => void
 }
 
-export function Controls({ spec, settings, onChange, onPreset }: ControlsProps) {
+export function Controls({ spec, settings, onChange, onPreset, onScrollTo }: ControlsProps) {
   const { algoId, columns, gap, count, size, overscan, showImages, animate, shuffleSeed } = settings
+  const [jumpTarget, setJumpTarget] = useState('')
+
+  const jump = () => {
+    const parsed = Number(jumpTarget)
+    if (Number.isInteger(parsed) && parsed >= 0 && parsed < count) {
+      onScrollTo(parsed)
+    }
+  }
 
   return (
     <aside className="controls">
@@ -114,6 +124,10 @@ export function Controls({ spec, settings, onChange, onPreset }: ControlsProps) 
           checked={animate}
           onChange={(value) => onChange({ animate: value })}
         />
+      </section>
+
+      <section className="group">
+        <h2 className="group-title">Try it</h2>
         <button
           type="button"
           className="preset shuffle"
@@ -122,6 +136,40 @@ export function Controls({ spec, settings, onChange, onPreset }: ControlsProps) 
         >
           Shuffle items
         </button>
+        <button
+          type="button"
+          className="preset shuffle"
+          title="Add ten new items to the start of the data to see them fade in."
+          onClick={() => onChange({ prepended: settings.prepended + 10 })}
+        >
+          Prepend 10 items
+        </button>
+        <div className="jump-row">
+          <input
+            className="jump-input"
+            type="number"
+            inputMode="numeric"
+            min={0}
+            max={count - 1}
+            placeholder={`0 - ${count - 1}`}
+            value={jumpTarget}
+            onChange={(event) => setJumpTarget(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                jump()
+              }
+            }}
+            aria-label="Item number to scroll to"
+          />
+          <button
+            type="button"
+            className="preset jump-go"
+            title="Smooth-scroll the grid to the item with this number."
+            onClick={jump}
+          >
+            Scroll to
+          </button>
+        </div>
       </section>
     </aside>
   )

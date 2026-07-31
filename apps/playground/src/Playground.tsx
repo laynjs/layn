@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { CodeDrawer } from './components/CodeDrawer'
 import { Controls } from './components/Controls'
 import { Grid } from './components/Grid'
@@ -14,6 +14,7 @@ export function Playground() {
   const [theme, setTheme] = useState(initialTheme)
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
   const [codeOpen, setCodeOpen] = useState(false)
+  const scrollApi = useRef<((id: number) => void) | undefined>(undefined)
 
   const spec = ALGORITHMS.find((a) => a.id === settings.algoId) ?? ALGORITHMS[0]
 
@@ -26,6 +27,7 @@ export function Playground() {
       size: p.size,
       gap: p.gap,
       showImages: p.images,
+      prepended: 0,
     }))
 
   return (
@@ -39,10 +41,16 @@ export function Playground() {
 
       <div className="workspace">
         <main className="stage">
-          <Grid key={spec.axis} spec={spec} settings={settings} />
+          <Grid key={spec.axis} spec={spec} settings={settings} scrollApi={scrollApi} />
         </main>
 
-        <Controls spec={spec} settings={settings} onChange={patch} onPreset={applyPreset} />
+        <Controls
+          spec={spec}
+          settings={settings}
+          onChange={patch}
+          onPreset={applyPreset}
+          onScrollTo={(id) => scrollApi.current?.(id)}
+        />
 
         <CodeDrawer
           open={codeOpen}
