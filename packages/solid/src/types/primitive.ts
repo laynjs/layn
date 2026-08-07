@@ -28,6 +28,9 @@ export interface UseLaynOptions<TData = unknown> {
   readonly animate?: AnimateOption
   readonly onReachEnd?: () => void
   readonly reachEndThreshold?: number
+  readonly onReorder?: (from: number, to: number) => void
+  readonly onDragStart?: (id: ItemId) => void
+  readonly onDragEnd?: (id: ItemId) => void
   readonly scroll?: ScrollMode
   readonly environment?: Partial<DomEnvironment>
 }
@@ -43,4 +46,5 @@ export interface UseLaynResult<TData = unknown> {
   readonly engine: LayoutEngine
   scrollToIndex(index: number, options?: ScrollToItemOptions): void
   scrollToItem(id: ItemId, options?: ScrollToItemOptions): void
+  startDrag(id: ItemId, event: PointerEvent): void
 }

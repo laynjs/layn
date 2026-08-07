@@ -1,6 +1,7 @@
 import type { ScrollMode } from '@laynjs/adapter-utils'
 import type {
   Gap,
+  ItemId,
   LayoutAlgorithm,
   LayoutItem,
   MeasurementsOptions,
@@ -22,6 +23,9 @@ export interface LaynOptions<TData = unknown> {
   readonly scroll?: ScrollMode
   readonly onReachEnd?: () => void
   readonly reachEndThreshold?: number
+  readonly onReorder?: (from: number, to: number) => void
+  readonly onDragStart?: (id: ItemId) => void
+  readonly onDragEnd?: (id: ItemId) => void
   readonly environment?: Partial<DomEnvironment>
   readonly renderItem?: (element: HTMLElement, item: LayoutItem<TData>) => void
 }

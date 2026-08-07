@@ -58,7 +58,8 @@ export const Gallery = component$<{ photos: Photo[] }>(({ photos }) => {
 | `scrollToItem` / `scrollToIndex` | Programmatic scrolling. See the [scrolling guide](/guides/scrolling/). |
 
 The hook also accepts `scroll: 'window'` ([scrolling guide](/guides/scrolling/)). The `animate` option is
-not available in Qwik: resumable rendering has no per-item element refs for the transition layer.
+not available in Qwik: resumable rendering has no per-item element refs, which both the transition
+layer and drag-to-reorder need.
 
 For infinite scroll, pass `onReachEnd` as a `QRL` - see the [infinite scroll guide](/guides/infinite-scroll/).
 

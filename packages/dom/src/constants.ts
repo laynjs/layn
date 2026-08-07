@@ -11,3 +11,7 @@ export const EXIT_ATTR = 'data-layn-exiting'
 export const CLONED_ITEM_ATTRS = ['data-layn-id', 'id', 'role', 'aria-setsize', 'aria-posinset']
 
 export const DEFAULT_REACH_END_THRESHOLD = 200
+
+export const DRAGGING_ATTR = 'data-layn-dragging'
+
+export const DRAG_Z_INDEX = 1

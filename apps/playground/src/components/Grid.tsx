@@ -1,5 +1,6 @@
+import type { ItemId } from '@laynjs/core'
 import { useLayn } from '@laynjs/react'
-import { type MutableRefObject, useEffect, useMemo } from 'react'
+import { type MutableRefObject, useEffect, useMemo, useState } from 'react'
 import { type AlgoSpec, makeTiles, toneOf } from '../lib/layouts'
 import type { Settings } from '../lib/settings'
 
@@ -15,10 +16,24 @@ export function Grid({ spec, settings, scrollApi, onLoadMore }: GridProps) {
     settings
   const total = count + settings.loaded
   const algorithm = useMemo(() => spec.make({ columns, size }), [spec, columns, size])
-  const items = useMemo(
+  const base = useMemo(
     () => makeTiles(total, shuffleSeed, prepended, settings.removed),
     [total, shuffleSeed, prepended, settings.removed],
   )
+  const [items, setItems] = useState(base)
+  useEffect(() => {
+    setItems(base)
+  }, [base])
+
+  const reorder = (from: number, to: number) =>
+    setItems((current) => {
+      const next = [...current]
+      const [moved] = next.splice(from, 1)
+      if (moved !== undefined) {
+        next.splice(to, 0, moved)
+      }
+      return next
+    })
 
   const layn = useLayn({
     items,
@@ -29,6 +44,7 @@ export function Grid({ spec, settings, scrollApi, onLoadMore }: GridProps) {
     animate,
     label: `${spec.label} layout`,
     ...(settings.infinite ? { onReachEnd: onLoadMore } : {}),
+    ...(settings.reorder ? { onReorder: reorder } : {}),
   })
 
   useEffect(() => {
@@ -39,6 +55,11 @@ export function Grid({ spec, settings, scrollApi, onLoadMore }: GridProps) {
   }, [scrollApi, layn.scrollToItem])
 
   const scrollClass = spec.axis === 'horizontal' ? 'grid-scroll horizontal' : 'grid-scroll'
+  const tileClass = settings.reorder ? 'tile draggable' : 'tile'
+  const dragProps = (id: ItemId) =>
+    settings.reorder
+      ? { onPointerDown: (event: React.PointerEvent) => layn.startDrag(id, event.nativeEvent) }
+      : {}
 
   return (
     <div {...layn.containerProps} className={scrollClass}>
@@ -48,7 +69,8 @@ export function Grid({ spec, settings, scrollApi, onLoadMore }: GridProps) {
             <div
               key={entry.id}
               ref={entry.ref}
-              className="tile"
+              className={tileClass}
+              {...dragProps(entry.id)}
               {...entry.a11y}
               style={entry.style}
             >
@@ -58,7 +80,8 @@ export function Grid({ spec, settings, scrollApi, onLoadMore }: GridProps) {
             <div
               key={entry.id}
               ref={entry.ref}
-              className={`tile tone-${toneOf(entry.index)}`}
+              className={`${tileClass} tone-${toneOf(entry.index)}`}
+              {...dragProps(entry.id)}
               {...entry.a11y}
               style={entry.style}
             >

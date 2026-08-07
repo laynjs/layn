@@ -45,6 +45,8 @@ Every `useLayn` accepts these (Vue and Solid also accept reactive wrappers for t
 | `scroll` | `'container' \| 'window'` | Scroll the container (default) or the page. See the [scrolling guide](/guides/scrolling/). |
 | `onReachEnd` | `() => void` | Called when the scroll nears the end of the content. See the [infinite scroll guide](/guides/infinite-scroll/). |
 | `reachEndThreshold` | `number` | Pixels from the end that count as "reached". Defaults to `200`. |
+| `onReorder` | `(from, to) => void` | Enables drag-to-reorder. See the [drag and drop guide](/guides/drag-and-drop/). Not available in Qwik. |
+| `onDragStart` / `onDragEnd` | `(id) => void` | Drag lifecycle callbacks. |
 | `measurements` | `MeasurementsOptions` | Estimator and fallback ratio. |
 
 Every adapter also returns **`scrollToItem(id, options?)`** and **`scrollToIndex(index, options?)`**

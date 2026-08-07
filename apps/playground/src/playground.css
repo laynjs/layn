@@ -742,3 +742,13 @@ input[type="range"] {
     width: 100%;
   }
 }
+
+.tile.draggable {
+  cursor: grab;
+  touch-action: none;
+}
+
+.tile[data-layn-dragging] {
+  cursor: grabbing;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.35);
+}

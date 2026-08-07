@@ -73,6 +73,8 @@ The hook also accepts `animate` ([animations guide](/guides/animations/)) and `s
 
 For infinite scroll, pass `onReachEnd` - see the [infinite scroll guide](/guides/infinite-scroll/).
 
+For drag-to-reorder, pass `onReorder` and call `startDrag(id, event)` - see the [drag and drop guide](/guides/drag-and-drop/).
+
 ## Why actions
 
 The two `use:` actions solve the two lifecycle details for you: `use:container` binds after mount when

@@ -29,6 +29,7 @@ export function Playground() {
       showImages: p.images,
       prepended: 0,
       removed: 0,
+      reorder: false,
       infinite: p.infinite ?? false,
       loaded: 0,
     }))

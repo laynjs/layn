@@ -26,6 +26,7 @@ const fakeBinding = () => {
       }
     },
     scrollToIndex: () => undefined,
+    startDrag: () => undefined,
     scrollToItem: () => undefined,
     refresh: () => undefined,
     destroy: () => undefined,
@@ -118,6 +119,24 @@ describe('store', () => {
     store.attach(binding)
 
     expect(observed).toEqual([])
+  })
+
+  it('re-observes every item when the binding is replaced', () => {
+    const engine = createEngine({
+      algorithm: masonry({ columns: 1 }),
+      viewport: { width: 100, height: 300 },
+      items: squares(3),
+    })
+    const store = createStore(engine, 'vertical', 0)
+    const first = fakeBinding()
+    store.attach(first.binding)
+    store.observeItem(0, {} as Element)
+    store.observeItem(1, {} as Element)
+
+    const second = fakeBinding()
+    store.attach(second.binding)
+
+    expect(second.observed).toEqual([0, 1])
   })
 
   it('forwards observation straight to the binding once attached', () => {

@@ -7,13 +7,13 @@ import {
   createStore,
   itemAria,
   mapVisible,
-  resolveBindTargets,
   resolveEngineConfig,
 } from '@laynjs/adapter-utils'
 import { createEngine, diffItems, type ItemId, type LayoutItem, type Rect } from '@laynjs/core'
-import { type BindOptions, bindEngine, type EngineBinding } from '@laynjs/dom'
+import { bindEngine, type EngineBinding } from '@laynjs/dom'
 import { CONTENT_ATTR, ITEM_ID_ATTR } from '../constants.js'
 import type { LaynInstance, LaynOptions } from '../types/index.js'
+import { bindOptionsFor } from './bind-options.js'
 
 export const createLayn = <TData = unknown>(
   container: HTMLElement,
@@ -103,20 +103,7 @@ export const createLayn = <TData = unknown>(
     }
   }
 
-  const targets = resolveBindTargets(options.scroll, container)
-  const bindOptions: BindOptions = {
-    scroll: targets.scroll,
-    axis,
-    overscan,
-    ...(targets.origin !== undefined ? { origin: targets.origin } : {}),
-    ...(options.animate !== undefined ? { animate: options.animate } : {}),
-    ...(options.onReachEnd !== undefined ? { onReachEnd: options.onReachEnd } : {}),
-    ...(options.reachEndThreshold !== undefined
-      ? { reachEndThreshold: options.reachEndThreshold }
-      : {}),
-    ...(options.environment !== undefined ? { environment: options.environment } : {}),
-  }
-  binding = bindEngine(engine, bindOptions)
+  binding = bindEngine(engine, bindOptionsFor(container, options, axis, overscan))
   store.attach(binding)
   const unsubscribe = store.subscribe(render)
   render()
@@ -138,6 +125,7 @@ export const createLayn = <TData = unknown>(
     setGap: (gap) => engine.setGap(gap),
     scrollToIndex: (index, scrollOptions) => binding?.scrollToIndex(index, scrollOptions),
     scrollToItem: (id, scrollOptions) => binding?.scrollToItem(id, scrollOptions),
+    startDrag: (id, event) => binding?.startDrag(id, event),
     refresh: () => binding?.refresh(),
     destroy() {
       unsubscribe()

@@ -1,4 +1,5 @@
 import type { ItemId, ScrollAxis } from '@laynjs/core'
+import type { DragOptions } from './dnd.js'
 import type { DomEnvironment } from './environment.js'
 import type { ScrollTarget } from './target.js'
 import type { AnimateOption } from './transitions.js'
@@ -12,6 +13,7 @@ export interface BindOptions {
   readonly animate?: AnimateOption
   readonly onReachEnd?: () => void
   readonly reachEndThreshold?: number
+  readonly drag?: DragOptions
   readonly environment?: Partial<DomEnvironment>
 }
 
@@ -29,6 +31,7 @@ export interface EngineBinding {
   subscribe(listener: () => void): () => void
   scrollToIndex(index: number, options?: ScrollToItemOptions): void
   scrollToItem(id: ItemId, options?: ScrollToItemOptions): void
+  startDrag(id: ItemId, event: PointerEvent): void
   refresh(): void
   destroy(): void
 }

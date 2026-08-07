@@ -10,6 +10,7 @@ export interface EngineStore {
   subscribe(listener: () => void): () => void
   getState(): EngineStoreState
   attach(binding: EngineBinding): void
+  detach(): void
   observeItem(id: ItemId, element: Element): void
   unobserveItem(id: ItemId): void
   destroy(): void

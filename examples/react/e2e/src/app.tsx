@@ -28,6 +28,15 @@ export function App() {
     overscan: 200,
     animate: true,
     label: 'Gallery',
+    onReorder: (from, to) =>
+      setItems((current) => {
+        const next = [...current]
+        const [moved] = next.splice(from, 1)
+        if (moved !== undefined) {
+          next.splice(to, 0, moved)
+        }
+        return next
+      }),
     onReachEnd: () => {
       setLoads((count) => count + 1)
       setItems((current) => [...current, ...grow(current, 30)])
@@ -56,6 +65,12 @@ export function App() {
       <button type="button" data-testid="remove" onClick={remove}>
         remove
       </button>
+      <span data-testid="order">
+        {items
+          .slice(0, 4)
+          .map((item) => item.id)
+          .join(',')}
+      </span>
       <span data-testid="count">{items.length}</span>
       <span data-testid="loads">{loads}</span>
       <div
@@ -70,8 +85,9 @@ export function App() {
               ref={entry.ref}
               data-testid="item"
               data-id={entry.id}
+              onPointerDown={(event) => view.startDrag(entry.id, event.nativeEvent)}
               {...entry.a11y}
-              style={{ ...entry.style, background: '#dddddd' }}
+              style={{ ...entry.style, background: '#dddddd', touchAction: 'none' }}
             >
               {entry.item.data}
             </div>

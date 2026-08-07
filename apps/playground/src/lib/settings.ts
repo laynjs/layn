@@ -10,6 +10,7 @@ export interface Settings {
   readonly shuffleSeed: number
   readonly prepended: number
   readonly removed: number
+  readonly reorder: boolean
   readonly infinite: boolean
   readonly loaded: number
 }
@@ -30,6 +31,7 @@ export const DEFAULT_SETTINGS: Settings = {
   shuffleSeed: 0,
   prepended: 0,
   removed: 0,
+  reorder: false,
   infinite: false,
   loaded: 0,
 }

@@ -7,7 +7,7 @@ import {
   resolveEngineConfig,
 } from '@laynjs/adapter-utils'
 import { createEngine, diffItems, type ItemId, type LayoutEngine } from '@laynjs/core'
-import { type AnimateOption, type BindOptions, bindEngine, type EngineBinding } from '@laynjs/dom'
+import { type BindOptions, bindEngine, type EngineBinding } from '@laynjs/dom'
 import {
   type CSSProperties,
   useCallback,
@@ -18,6 +18,7 @@ import {
 } from 'react'
 import { buildItems } from '../items/index.js'
 import type { UseLaynOptions, UseLaynResult } from '../types/index.js'
+import { useBindOptions } from './use-bind-options.js'
 import { useConstant } from './use-constant.js'
 
 const containerStyle: CSSProperties = { position: 'relative', overflow: 'auto' }
@@ -35,35 +36,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
   const overscan = options.overscan ?? 0
   const environment = options.environment
   const scroll = options.scroll
-  const animateEnabled = options.animate !== undefined && options.animate !== false
-  const animateDuration = typeof options.animate === 'object' ? options.animate.duration : undefined
-  const animateEasing = typeof options.animate === 'object' ? options.animate.easing : undefined
-  const animate = useMemo<AnimateOption | undefined>(
-    () =>
-      animateEnabled
-        ? {
-            ...(animateDuration !== undefined ? { duration: animateDuration } : {}),
-            ...(animateEasing !== undefined ? { easing: animateEasing } : {}),
-          }
-        : undefined,
-    [animateEnabled, animateDuration, animateEasing],
-  )
-
-  const reachEndThreshold = options.reachEndThreshold
-  const wantsReachEnd = options.onReachEnd !== undefined
-  const reachEndRef = useRef(options.onReachEnd)
-  useEffect(() => {
-    reachEndRef.current = options.onReachEnd
-  })
-  const onReachEnd = useMemo(
-    () =>
-      wantsReachEnd
-        ? () => {
-            reachEndRef.current?.()
-          }
-        : undefined,
-    [wantsReachEnd],
-  )
+  const { animate, onReachEnd, reachEndThreshold, drag } = useBindOptions(options)
 
   const engine = useConstant<LayoutEngine>(() =>
     createEngine(
@@ -118,6 +91,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
   const containerRef = useCallback(
     (element: HTMLElement | null): void => {
       if (element === null) {
+        store.detach()
         bindingRef.current?.destroy()
         bindingRef.current = undefined
         return
@@ -131,13 +105,25 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
         ...(animate !== undefined ? { animate } : {}),
         ...(onReachEnd !== undefined ? { onReachEnd } : {}),
         ...(reachEndThreshold !== undefined ? { reachEndThreshold } : {}),
+        ...(drag !== undefined ? { drag } : {}),
         ...(environment !== undefined ? { environment } : {}),
       }
       const binding = bindEngine(engine, bindOptions)
       bindingRef.current = binding
       store.attach(binding)
     },
-    [engine, store, axis, overscan, animate, onReachEnd, reachEndThreshold, environment, scroll],
+    [
+      engine,
+      store,
+      axis,
+      overscan,
+      animate,
+      onReachEnd,
+      reachEndThreshold,
+      drag,
+      environment,
+      scroll,
+    ],
   )
 
   const scrollToIndex = useCallback<UseLaynResult<TData>['scrollToIndex']>(
@@ -146,6 +132,11 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
   )
   const scrollToItem = useCallback<UseLaynResult<TData>['scrollToItem']>(
     (id, scrollOptions) => bindingRef.current?.scrollToItem(id, scrollOptions),
+    [],
+  )
+
+  const startDrag = useCallback<UseLaynResult<TData>['startDrag']>(
+    (id, event) => bindingRef.current?.startDrag(id, event),
     [],
   )
 
@@ -194,5 +185,6 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
     engine,
     scrollToIndex,
     scrollToItem,
+    startDrag,
   }
 }

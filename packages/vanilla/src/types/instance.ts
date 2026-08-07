@@ -8,6 +8,7 @@ export interface LaynInstance<TData = unknown> {
   setGap(gap: Gap): void
   scrollToIndex(index: number, options?: ScrollToItemOptions): void
   scrollToItem(id: ItemId, options?: ScrollToItemOptions): void
+  startDrag(id: ItemId, event: PointerEvent): void
   refresh(): void
   destroy(): void
 }

@@ -1,4 +1,5 @@
 export * from './binding.js'
+export * from './dnd.js'
 export * from './environment.js'
 export * from './measure.js'
 export * from './reach-end.js'

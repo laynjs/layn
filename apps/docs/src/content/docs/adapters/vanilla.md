@@ -56,6 +56,8 @@ In `renderItem`, set individual style properties (`element.style.background = ..
 
 For infinite scroll, pass `onReachEnd` - see the [infinite scroll guide](/guides/infinite-scroll/).
 
+For drag-to-reorder, pass `onReorder` and call `startDrag(id, event)` - see the [drag and drop guide](/guides/drag-and-drop/).
+
 ## Server rendering
 
 `renderToString` emits the same markup on the server, with a string `renderItem`:

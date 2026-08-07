@@ -68,6 +68,7 @@ export default defineConfig({
             { label: 'Animations', slug: 'guides/animations' },
             { label: 'Scrolling', slug: 'guides/scrolling' },
             { label: 'Infinite scroll', slug: 'guides/infinite-scroll' },
+            { label: 'Drag and drop', slug: 'guides/drag-and-drop' },
             { label: 'SSR & hydration', slug: 'guides/ssr' },
             { label: 'Accessibility', slug: 'guides/accessibility' },
             { label: 'Performance', slug: 'guides/performance' },

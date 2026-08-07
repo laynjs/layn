@@ -15,7 +15,7 @@ import {
   type LayoutAlgorithm,
   type LayoutItem,
 } from '@laynjs/core'
-import { type BindOptions, bindEngine, type EngineBinding } from '@laynjs/dom'
+import { type BindOptions, bindEngine, type DragOptions, type EngineBinding } from '@laynjs/dom'
 import { onDestroy, onMount } from 'svelte'
 import type { Action } from 'svelte/action'
 import { derived, writable } from 'svelte/store'
@@ -29,6 +29,14 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
   const animate = options.animate
   const onReachEnd = options.onReachEnd
   const reachEndThreshold = options.reachEndThreshold
+  const drag: DragOptions | undefined =
+    options.onReorder === undefined
+      ? undefined
+      : {
+          onReorder: options.onReorder,
+          ...(options.onDragStart !== undefined ? { onDragStart: options.onDragStart } : {}),
+          ...(options.onDragEnd !== undefined ? { onDragEnd: options.onDragEnd } : {}),
+        }
   const scroll = options.scroll
 
   const engine = createEngine(
@@ -85,6 +93,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
 
       ...(onReachEnd !== undefined ? { onReachEnd } : {}),
       ...(reachEndThreshold !== undefined ? { reachEndThreshold } : {}),
+      ...(drag !== undefined ? { drag } : {}),
       ...(environment !== undefined ? { environment } : {}),
     }
     binding = bindEngine(engine, bindOptions)
@@ -117,5 +126,6 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
     setGap: (gap: Gap | undefined) => engine.setGap({ x: gap?.x ?? 0, y: gap?.y ?? 0 }),
     scrollToIndex: (index, scrollOptions) => binding?.scrollToIndex(index, scrollOptions),
     scrollToItem: (id, scrollOptions) => binding?.scrollToItem(id, scrollOptions),
+    startDrag: (id, event) => binding?.startDrag(id, event),
   }
 }

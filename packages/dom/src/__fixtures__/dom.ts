@@ -90,12 +90,28 @@ export class FakeElement {
     return this.rect
   }
 
-  emit(type: string): void {
+  emit(type: string, event?: unknown): void {
     for (const handler of this.handlers.get(type) ?? []) {
-      handler()
+      ;(handler as (value?: unknown) => void)(event)
     }
   }
+
+  captured = false
+
+  setPointerCapture(): void {
+    this.captured = true
+  }
+
+  releasePointerCapture(): void {
+    this.captured = false
+  }
+
+  get ownerDocument(): FakeElement {
+    return fakeDocument
+  }
 }
+
+export const fakeDocument = new FakeElement()
 
 export class FakeWindow {
   scrollX = 0
@@ -121,9 +137,9 @@ export class FakeWindow {
     this.handlers.get(type)?.delete(handler)
   }
 
-  emit(type: string): void {
+  emit(type: string, event?: unknown): void {
     for (const handler of this.handlers.get(type) ?? []) {
-      handler()
+      ;(handler as (value?: unknown) => void)(event)
     }
   }
 }

@@ -29,6 +29,7 @@ export interface TransitionCommit {
   readonly elementOf: (id: ItemId) => Element | undefined
   readonly leaving: Iterable<ExitCandidate>
   readonly visible: readonly number[]
+  readonly skip?: ItemId
 }
 
 export interface TransitionRunner {

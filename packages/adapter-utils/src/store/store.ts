@@ -11,7 +11,7 @@ export const createStore = (
 ): EngineStore => {
   let binding: EngineBinding | undefined
   const listeners = new Set<() => void>()
-  const pending = new Map<ItemId, Element>()
+  const observed = new Map<ItemId, Element>()
 
   const readVisible = (): readonly number[] => {
     if (binding !== undefined) {
@@ -45,27 +45,29 @@ export const createStore = (
     attach(next) {
       unsubscribeEngine()
       unsubscribeEngine = noop
+      unsubscribeBinding()
       binding = next
-      for (const [id, element] of pending) {
+      for (const [id, element] of observed) {
         next.observeItem(id, element)
       }
-      pending.clear()
       unsubscribeBinding = next.subscribe(update)
       update()
     },
     observeItem(id, element) {
-      if (binding === undefined) {
-        pending.set(id, element)
-        return
-      }
-      binding.observeItem(id, element)
+      observed.set(id, element)
+      binding?.observeItem(id, element)
     },
     unobserveItem(id) {
-      pending.delete(id)
+      observed.delete(id)
       binding?.unobserveItem(id)
     },
+    detach() {
+      unsubscribeBinding()
+      unsubscribeBinding = noop
+      binding = undefined
+    },
     destroy() {
-      pending.clear()
+      observed.clear()
       unsubscribeEngine()
       unsubscribeBinding()
       listeners.clear()

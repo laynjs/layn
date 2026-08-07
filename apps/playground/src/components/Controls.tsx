@@ -154,6 +154,12 @@ export function Controls({ spec, settings, onChange, onPreset, onScrollTo }: Con
           Remove 10 items
         </button>
         <Toggle
+          label="Drag to reorder"
+          hint="Pick a tile up and drop it somewhere else; the rest flow around it."
+          checked={settings.reorder}
+          onChange={(value) => onChange({ reorder: value })}
+        />
+        <Toggle
           label={settings.loaded > 0 ? `Infinite scroll (+${settings.loaded})` : 'Infinite scroll'}
           hint="Load another page of items whenever the scroll reaches the end."
           checked={settings.infinite}

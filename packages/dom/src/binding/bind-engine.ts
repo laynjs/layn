@@ -1,9 +1,10 @@
 import type { LayoutEngine, Size } from '@laynjs/core'
+import { createDragController } from '../dnd/index.js'
 import { resolveEnvironment } from '../environment/index.js'
 import { createSizeObserver } from '../measure/index.js'
 import { createReachEndWatcher, rafThrottle, scrollOffsetFor } from '../scroll/index.js'
 import { isElement, readOrigin, readScrollWindow, readViewportSize } from '../target/index.js'
-import { createTransitionRunner } from '../transitions/index.js'
+import { createTransitionRunner, resolveTransitionConfig } from '../transitions/index.js'
 import type {
   BindOptions,
   EngineBinding,
@@ -60,14 +61,17 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
     const next = engine.getSnapshot().positions
     lastPositions = next
     visible = readVisible()
+    const dragged = drag?.activeId()
     runner?.play({
       previous,
       next,
       elementOf: sizeObserver.elementOf,
       leaving: sizeObserver.tracked(),
       visible,
+      ...(dragged !== undefined ? { skip: dragged } : {}),
     })
     sizeObserver.forget()
+    drag?.sync()
     notify()
   }
 
@@ -100,6 +104,14 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
   const sizeObserver = createSizeObserver(environment, (entries) => engine.measure(entries))
   const runner = createTransitionRunner(environment, options.animate)
   const reachEnd = createReachEndWatcher(environment, options.onReachEnd, options.reachEndThreshold)
+  const drag = createDragController({
+    engine,
+    environment,
+    elementOf: sizeObserver.elementOf,
+    visibleOf: () => visible,
+    settle: resolveTransitionConfig(options.animate),
+    options: options.drag ?? {},
+  })
   const viewportObserver = isElement(viewportTarget)
     ? environment.createResizeObserver(applyViewport)
     : undefined
@@ -142,6 +154,7 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
       }
     },
     scrollToIndex,
+    startDrag: (id, event) => drag?.start(id, event),
     scrollToItem: (id, options) => {
       const index = engine.getSnapshot().positions.indexOf(id)
       if (index >= 0) {
@@ -154,6 +167,7 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
       notify()
     },
     destroy: () => {
+      drag?.stop()
       runner?.stop()
       reachEnd?.stop()
       scrollTarget.removeEventListener('scroll', scroll.run)
