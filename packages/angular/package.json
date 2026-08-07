@@ -1,6 +1,6 @@
 {
   "name": "@laynjs/angular",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Headless Angular adapter for layn: a signals factory + directives over the engine and DOM bindings.",
   "keywords": [
     "layout",
