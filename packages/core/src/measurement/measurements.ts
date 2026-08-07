@@ -1,4 +1,4 @@
-import { FALLBACK_ASPECT_RATIO } from '../constants.js'
+import { FALLBACK_ASPECT_RATIO, MEASURED_WIDTH_EPSILON } from '../constants.js'
 import type { LayoutItem, Measurements, MeasurementsOptions, Size } from '../types/index.js'
 
 const explicitAspectRatio = (item: LayoutItem): number | undefined => {
@@ -34,7 +34,7 @@ export const createMeasurements = (options: MeasurementsOptions = {}): Measureme
 
   const size = (item: LayoutItem, targetWidth: number): Size => {
     const cached = options.cache?.get(item.id)
-    if (cached !== undefined) {
+    if (cached !== undefined && Math.abs(cached.width - targetWidth) < MEASURED_WIDTH_EPSILON) {
       return { width: targetWidth, height: cached.height }
     }
     if (hasOnlyFixedHeight(item) && item.height !== undefined) {

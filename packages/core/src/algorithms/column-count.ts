@@ -36,3 +36,6 @@ export const resolveRowCount = (
   }
   return DEFAULT_COLUMN_COUNT
 }
+
+export const resolveTrackSize = (extent: number, count: number, gap: number): number =>
+  Math.max(0, (extent - gap * (count - 1)) / count)

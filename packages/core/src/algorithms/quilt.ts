@@ -8,7 +8,7 @@ import type {
   QuiltOptions,
   QuiltSpan,
 } from '../types/index.js'
-import { resolveColumnCount } from './column-count.js'
+import { resolveColumnCount, resolveTrackSize } from './column-count.js'
 
 const createGrid = (columns: number) => {
   const rows: boolean[][] = []
@@ -72,7 +72,7 @@ export const quilt = (options: QuiltOptions = {}): LayoutAlgorithm => ({
   layout(items: readonly LayoutItem[], context: LayoutContext): LayoutResult {
     const { viewport, gap } = context
     const columns = resolveColumnCount(options, viewport.width, gap.x)
-    const cell = (viewport.width - gap.x * (columns - 1)) / columns
+    const cell = resolveTrackSize(viewport.width, columns, gap.x)
     const pattern = options.pattern ?? DEFAULT_QUILT_PATTERN
     const grid = createGrid(columns)
     const builder = positionsBuilder(items.length)

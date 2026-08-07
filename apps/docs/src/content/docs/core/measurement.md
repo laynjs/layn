@@ -10,7 +10,8 @@ strategy so the server and client agree, then refines on the client after paint.
 
 For each item, layn uses the first source that applies:
 
-1. **DOM-measured size** - cached from a `ResizeObserver` once the item has rendered (client only).
+1. **DOM-measured size** - cached from a `ResizeObserver` once the item has rendered (client only),
+   and only while the layout still gives that item the width it was measured at.
 2. **Provided `width` and `height`** on the item.
 3. **`aspectRatio`** on the item, scaled to the resolved column width.
 4. **An `estimateHeight` function**, if you provide one.
@@ -19,6 +20,15 @@ For each item, layn uses the first source that applies:
 On the server, step 1 is unavailable, so sizing starts at step 2. This is deliberate: the client
 begins from the exact same rectangles the server produced, then step 1 quietly corrects anything the
 data got slightly wrong.
+
+A measured height only means anything at the width it was measured at, so it is scoped to that
+width. Change the column count, the gap, or the container size, and every item falls back to its
+declared shape until it has been measured at the new width. Without that scoping a measured height
+would stick forever: the layout writes the height onto the element, the element reports that same
+height back, and the item could never rescale.
+
+Measurements of a zero-sized element are ignored. A `ResizeObserver` reports `0` for anything that
+is not laid out yet, and caching that would collapse the item permanently.
 
 ## Sizing your items
 

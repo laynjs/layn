@@ -6,7 +6,7 @@ import type {
   LayoutResult,
   MasonryOptions,
 } from '../types/index.js'
-import { resolveColumnCount } from './column-count.js'
+import { resolveColumnCount, resolveTrackSize } from './column-count.js'
 import type { MasonryState } from './types.js'
 
 const shortestColumnIndex = (heights: readonly number[]): number => {
@@ -75,7 +75,7 @@ export const masonry = (options: MasonryOptions = {}): LayoutAlgorithm => ({
   ): LayoutResult {
     const { viewport, gap, measurements } = context
     const columnCount = resolveColumnCount(options, viewport.width, gap.x)
-    const columnWidth = (viewport.width - gap.x * (columnCount - 1)) / columnCount
+    const columnWidth = resolveTrackSize(viewport.width, columnCount, gap.x)
 
     const carried = continueFrom(previous, columnCount, columnWidth, items.length)
     const columnHeights = carried?.columnHeights ?? new Array<number>(columnCount).fill(0)

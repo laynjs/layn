@@ -14,6 +14,9 @@ export const createMeasuredCache = (
     record(entries) {
       let changed = false
       for (const entry of entries) {
+        if (entry.size.width <= 0 || entry.size.height <= 0) {
+          continue
+        }
         if (sizeChanged(sizes.get(entry.id), entry.size)) {
           sizes.set(entry.id, entry.size)
           changed = true

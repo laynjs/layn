@@ -39,7 +39,7 @@ export const magazine = (options: MagazineOptions = {}): LayoutAlgorithm => ({
       const count = Math.min(template.weights.length, items.length - start)
       const rowHeight = template.height * unit
       const totalWeight = sumWeights(template.weights, count) || 1
-      const available = viewport.width - gap.x * (count - 1)
+      const available = Math.max(0, viewport.width - gap.x * (count - 1))
 
       let left = 0
       for (let k = 0; k < count; k += 1) {

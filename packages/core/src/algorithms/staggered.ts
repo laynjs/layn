@@ -7,7 +7,7 @@ import type {
   LayoutResult,
   StaggeredOptions,
 } from '../types/index.js'
-import { resolveColumnCount } from './column-count.js'
+import { resolveColumnCount, resolveTrackSize } from './column-count.js'
 
 export const staggered = (options: StaggeredOptions = {}): LayoutAlgorithm => ({
   name: 'staggered',
@@ -15,7 +15,7 @@ export const staggered = (options: StaggeredOptions = {}): LayoutAlgorithm => ({
   layout(items: readonly LayoutItem[], context: LayoutContext): LayoutResult {
     const { viewport, gap, measurements } = context
     const columnCount = resolveColumnCount(options, viewport.width, gap.x)
-    const columnWidth = (viewport.width - gap.x * (columnCount - 1)) / columnCount
+    const columnWidth = resolveTrackSize(viewport.width, columnCount, gap.x)
     const stagger = options.stagger ?? DEFAULT_STAGGER
     const offset = stagger * columnWidth
     const columnHeights = Array.from({ length: columnCount }, (_, c) => (c % 2 === 1 ? offset : 0))

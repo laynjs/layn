@@ -61,4 +61,14 @@ describe('masonry', () => {
     expect(entriesOf(client.positions)).toEqual(entriesOf(server.positions))
     expect(client.contentSize).toEqual(server.contentSize)
   })
+
+  it('never produces a negative column width when the viewport is smaller than the gaps', () => {
+    const result = masonry({ columns: 4 }).layout([{ id: 0, aspectRatio: 1 }], {
+      viewport: { width: 0, height: 0 },
+      gap: { x: 12, y: 12 },
+      measurements: createMeasurements(),
+    })
+
+    expect(result.positions.rectAt(0)).toEqual({ x: 0, y: 0, width: 0, height: 0 })
+  })
 })

@@ -218,7 +218,7 @@ describe('engine', () => {
       viewport: { width: 320, height: 800 },
       items: base,
     })
-    engine.measure(base.map((item) => ({ id: item.id, size: { width: 155, height: 120 } })))
+    engine.measure(base.map((item) => ({ id: item.id, size: { width: 160, height: 120 } })))
     expect(engine.serialize().measured).toHaveLength(10)
 
     engine.setItems(base.slice(0, 3))
@@ -234,7 +234,7 @@ describe('engine', () => {
       viewport: { width: 320, height: 800 },
       items: base,
     })
-    engine.measure(base.map((item) => ({ id: item.id, size: { width: 155, height: 120 } })))
+    engine.measure(base.map((item) => ({ id: item.id, size: { width: 160, height: 120 } })))
 
     engine.setItems(plain(20, 100))
 

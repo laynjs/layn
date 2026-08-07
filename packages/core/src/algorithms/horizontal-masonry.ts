@@ -6,7 +6,7 @@ import type {
   LayoutItem,
   LayoutResult,
 } from '../types/index.js'
-import { resolveRowCount } from './column-count.js'
+import { resolveRowCount, resolveTrackSize } from './column-count.js'
 
 const shortestRowIndex = (widths: readonly number[]): number => {
   let index = 0
@@ -27,7 +27,7 @@ export const horizontalMasonry = (options: HorizontalMasonryOptions = {}): Layou
   layout(items: readonly LayoutItem[], context: LayoutContext): LayoutResult {
     const { viewport, gap, measurements } = context
     const rowCount = resolveRowCount(options, viewport.height, gap.y)
-    const rowHeight = (viewport.height - gap.y * (rowCount - 1)) / rowCount
+    const rowHeight = resolveTrackSize(viewport.height, rowCount, gap.y)
     const rowWidths = new Array<number>(rowCount).fill(0)
     const builder = positionsBuilder(items.length)
 

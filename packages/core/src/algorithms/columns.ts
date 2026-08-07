@@ -6,7 +6,7 @@ import type {
   LayoutItem,
   LayoutResult,
 } from '../types/index.js'
-import { resolveColumnCount } from './column-count.js'
+import { resolveColumnCount, resolveTrackSize } from './column-count.js'
 
 export const columns = (options: ColumnsOptions = {}): LayoutAlgorithm => ({
   name: 'columns',
@@ -14,7 +14,7 @@ export const columns = (options: ColumnsOptions = {}): LayoutAlgorithm => ({
   layout(items: readonly LayoutItem[], context: LayoutContext): LayoutResult {
     const { viewport, gap, measurements } = context
     const columnCount = resolveColumnCount(options, viewport.width, gap.x)
-    const columnWidth = (viewport.width - gap.x * (columnCount - 1)) / columnCount
+    const columnWidth = resolveTrackSize(viewport.width, columnCount, gap.x)
     const columnHeights = new Array<number>(columnCount).fill(0)
     const builder = positionsBuilder(items.length)
 

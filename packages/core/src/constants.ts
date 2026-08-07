@@ -2,6 +2,8 @@ import type { Gap, MagazineRow, QuiltSpan, Viewport } from './types/index.js'
 
 export const FALLBACK_ASPECT_RATIO = 1
 
+export const MEASURED_WIDTH_EPSILON = 0.5
+
 export const MIN_COLUMN_COUNT = 1
 
 export const DEFAULT_COLUMN_COUNT = 1
