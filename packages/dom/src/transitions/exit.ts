@@ -9,6 +9,7 @@ const cloneOf = (element: Element, parent: Element): HTMLElement => {
     clone.removeAttribute(attribute)
   }
   clone.setAttribute(EXIT_ATTR, '')
+  clone.setAttribute('aria-hidden', 'true')
   clone.style.pointerEvents = 'none'
   parent.appendChild(clone)
   return clone

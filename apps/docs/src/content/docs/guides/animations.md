@@ -42,7 +42,8 @@ Every framework unmounts a removed item's node immediately - by the time layn he
 change, the node is already out of the document. So layn animates a **clone**: it keeps a reference
 to each rendered item, and when an id disappears from the data it re-inserts a copy of that node at
 the position it held and fades the copy out. The clone carries a `data-layn-exiting` attribute, is
-`pointer-events: none`, and is removed as soon as the fade finishes.
+`pointer-events: none` and `aria-hidden`, drops the list-item role and position so screen readers
+never count it, and is removed as soon as the fade finishes.
 
 That keeps exits working identically in all seven adapters with no per-framework lifecycle hooks.
 Two consequences worth knowing:

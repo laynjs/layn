@@ -256,6 +256,8 @@ describe('createTransitionRunner', () => {
     const parent = new FakeElement()
     for (const element of elements) {
       element.setAttribute('data-layn-id', 'kept')
+      element.setAttribute('role', 'listitem')
+      element.setAttribute('aria-posinset', '1')
       parent.appendChild(element)
     }
     const previous = engine.getSnapshot().positions
@@ -271,7 +273,10 @@ describe('createTransitionRunner', () => {
     const clone = parent.children.at(-1)
     expect(parent.children).toHaveLength(4)
     expect(clone?.attributes.get(EXIT_ATTR)).toBe('')
+    expect(clone?.attributes.get('aria-hidden')).toBe('true')
     expect(clone?.attributes.has('data-layn-id')).toBe(false)
+    expect(clone?.attributes.has('role')).toBe(false)
+    expect(clone?.attributes.has('aria-posinset')).toBe(false)
     expect(clone?.style.pointerEvents).toBe('none')
     expect(clone?.animations[0]?.keyframes).toEqual([
       { transform: 'translate(0px, 0px)' },

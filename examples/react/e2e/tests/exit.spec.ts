@@ -17,12 +17,16 @@ test('fades out items removed from the data and cleans the clones up', async ({ 
       opacity: getComputedStyle(element).opacity,
       pointerEvents: getComputedStyle(element).pointerEvents,
       hasItemId: element.hasAttribute('data-layn-id'),
+      hidden: element.getAttribute('aria-hidden'),
+      hasRole: element.hasAttribute('role'),
     }
   })
   expect(state.count).toBe(2)
   expect(Number(state.opacity)).toBeLessThan(1)
   expect(state.pointerEvents).toBe('none')
   expect(state.hasItemId).toBe(false)
+  expect(state.hidden).toBe('true')
+  expect(state.hasRole).toBe(false)
 
   await expect(clones).toHaveCount(0)
   await expect(page.locator('[data-testid="item"]')).toHaveCount(before)
