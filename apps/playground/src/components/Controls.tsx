@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ALGORITHMS, type AlgoSpec, PRESETS, type Preset } from '../lib/layouts'
-import type { Settings } from '../lib/settings'
+import { REMOVE_BATCH_SIZE, type Settings } from '../lib/settings'
 import { Hint, Select, Slider, Toggle } from './form'
 
 interface ControlsProps {
@@ -144,6 +144,14 @@ export function Controls({ spec, settings, onChange, onPreset, onScrollTo }: Con
           onClick={() => onChange({ prepended: settings.prepended + 10 })}
         >
           Prepend 10 items
+        </button>
+        <button
+          type="button"
+          className="preset shuffle"
+          title="Remove the ten items at the front of the data to see them fade out."
+          onClick={() => onChange({ removed: settings.removed + REMOVE_BATCH_SIZE })}
+        >
+          Remove 10 items
         </button>
         <Toggle
           label={settings.loaded > 0 ? `Infinite scroll (+${settings.loaded})` : 'Infinite scroll'}

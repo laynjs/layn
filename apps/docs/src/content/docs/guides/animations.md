@@ -31,12 +31,25 @@ function.
   whose position did not change are left alone.
 - **Enters** - an item whose id is new to the data fades in with a slight upward drift. Items that
   merely scroll into view are **not** treated as entering, so virtualization never flickers.
+- **Exits** - an item whose id left the data fades out and sinks slightly while its neighbors glide
+  into place. Items that merely scroll out of view are **not** treated as exiting.
 - **Nothing on mount** - the first layout after binding is applied instantly, so there is no
   fly-in cascade on page load or hydration.
 
-Exit animations (items animating out on removal) are not in yet: frameworks unmount removed nodes
-synchronously, and keeping them alive needs the item lifecycle work planned for the drag-and-drop
-release. Removed items disappear instantly while their neighbors glide into place.
+## How exits work
+
+Every framework unmounts a removed item's node immediately - by the time layn hears about the
+change, the node is already out of the document. So layn animates a **clone**: it keeps a reference
+to each rendered item, and when an id disappears from the data it re-inserts a copy of that node at
+the position it held and fades the copy out. The clone carries a `data-layn-exiting` attribute, is
+`pointer-events: none`, and is removed as soon as the fade finishes.
+
+That keeps exits working identically in all seven adapters with no per-framework lifecycle hooks.
+Two consequences worth knowing:
+
+- The clone is inert. Event handlers, framework state, and interactive content do not survive the
+  copy - it is a picture of the item on its way out.
+- Style the leaving item with `[data-layn-exiting]` if you want it to look different while it goes.
 
 ## How it works
 

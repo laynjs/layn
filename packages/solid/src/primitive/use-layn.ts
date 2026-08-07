@@ -51,8 +51,8 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
       if (element instanceof HTMLElement) {
         applyRectStyle(element, rect)
       }
-      binding?.observeItem(id, element)
-      onCleanup(() => binding?.unobserveItem(id))
+      store.observeItem(id, element)
+      onCleanup(() => store.unobserveItem(id))
     }
   const build = createItemBuilder<TData>(makeRef)
 

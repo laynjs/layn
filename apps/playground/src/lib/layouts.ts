@@ -278,10 +278,11 @@ const PREPEND_ID_BASE = 100000
 const makePrepended = (count: number): Tile[] =>
   Array.from({ length: count }, (_, index) => tileOf(PREPEND_ID_BASE + index, `+${index + 1}`))
 
-export const makeTiles = (count: number, seed = 0, prepended = 0): Tile[] => {
+export const makeTiles = (count: number, seed = 0, prepended = 0, removed = 0): Tile[] => {
   const tiles = [
     ...makePrepended(prepended),
     ...Array.from({ length: count }, (_, index) => tileOf(index, String(index))),
   ]
-  return seed === 0 ? tiles : shuffled(tiles, seed)
+  const kept = removed === 0 ? tiles : tiles.slice(removed)
+  return seed === 0 ? kept : shuffled(kept, seed)
 }

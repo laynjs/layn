@@ -47,9 +47,9 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
     }
     const ref: LaynElementRef = (element) => {
       if (element instanceof Element) {
-        binding?.observeItem(id, element)
+        store.observeItem(id, element)
       } else {
-        binding?.unobserveItem(id)
+        store.unobserveItem(id)
       }
     }
     refCache.set(id, ref)

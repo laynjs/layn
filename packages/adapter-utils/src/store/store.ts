@@ -1,4 +1,4 @@
-import type { LayoutEngine, ScrollAxis } from '@laynjs/core'
+import type { ItemId, LayoutEngine, ScrollAxis } from '@laynjs/core'
 import type { EngineBinding } from '@laynjs/dom'
 import type { EngineStore, EngineStoreState } from '../types/index.js'
 
@@ -11,6 +11,7 @@ export const createStore = (
 ): EngineStore => {
   let binding: EngineBinding | undefined
   const listeners = new Set<() => void>()
+  const pending = new Map<ItemId, Element>()
 
   const readVisible = (): readonly number[] => {
     if (binding !== undefined) {
@@ -45,10 +46,26 @@ export const createStore = (
       unsubscribeEngine()
       unsubscribeEngine = noop
       binding = next
+      for (const [id, element] of pending) {
+        next.observeItem(id, element)
+      }
+      pending.clear()
       unsubscribeBinding = next.subscribe(update)
       update()
     },
+    observeItem(id, element) {
+      if (binding === undefined) {
+        pending.set(id, element)
+        return
+      }
+      binding.observeItem(id, element)
+    },
+    unobserveItem(id) {
+      pending.delete(id)
+      binding?.unobserveItem(id)
+    },
     destroy() {
+      pending.clear()
       unsubscribeEngine()
       unsubscribeBinding()
       listeners.clear()

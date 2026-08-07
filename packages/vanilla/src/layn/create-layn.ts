@@ -72,7 +72,7 @@ export const createLayn = <TData = unknown>(
     }
     applyRectStyle(element, rect)
     applyAttrs(element, itemAria(index, items.length))
-    binding?.observeItem(item.id, element)
+    store.observeItem(item.id, element)
     mounted.set(key, { element, id: item.id })
   }
 
@@ -96,7 +96,7 @@ export const createLayn = <TData = unknown>(
     }
     for (const [key, entry] of mounted) {
       if (!next.has(key)) {
-        binding?.unobserveItem(entry.id)
+        store.unobserveItem(entry.id)
         entry.element.remove()
         mounted.delete(key)
       }

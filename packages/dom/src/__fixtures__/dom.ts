@@ -26,12 +26,46 @@ export class FakeElement {
   rect = { top: 0, left: 0, width: 0, height: 0 }
   transform: TransformOffset = { x: 0, y: 0 }
   readonly animations: FakeAnimation[] = []
+  readonly attributes = new Map<string, string>()
+  readonly style: Record<string, string> = {}
+  readonly children: FakeElement[] = []
+  parentElement: FakeElement | null = null
   private readonly handlers = new Map<string, Set<() => void>>()
 
   animate(keyframes: Keyframe[], options: KeyframeAnimationOptions): FakeAnimation {
     const animation = new FakeAnimation(keyframes, options)
     this.animations.push(animation)
     return animation
+  }
+
+  setAttribute(name: string, value: string): void {
+    this.attributes.set(name, value)
+  }
+
+  removeAttribute(name: string): void {
+    this.attributes.delete(name)
+  }
+
+  appendChild(child: FakeElement): void {
+    child.parentElement = this
+    this.children.push(child)
+  }
+
+  remove(): void {
+    const parent = this.parentElement
+    if (parent !== null) {
+      parent.children.splice(parent.children.indexOf(this), 1)
+    }
+    this.parentElement = null
+  }
+
+  cloneNode(): FakeElement {
+    const clone = new FakeElement()
+    for (const [name, value] of this.attributes) {
+      clone.attributes.set(name, value)
+    }
+    Object.assign(clone.style, this.style)
+    return clone
   }
 
   scrollTo(options: ScrollToOptions): void {

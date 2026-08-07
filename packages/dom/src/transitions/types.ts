@@ -1,10 +1,9 @@
 import type { ItemId, Positions } from '@laynjs/core'
+import type { ExitCandidate } from '../types/index.js'
 
-export interface TransitionBatch {
-  readonly previous: Positions
-  readonly next: Positions
-  readonly elementOf: (id: ItemId) => Element | undefined
-  readonly visible: readonly number[]
+export interface ExitRunner {
+  capture(next: Positions, leaving: Iterable<ExitCandidate>): void
+  stop(): void
 }
 
 export interface TransitionMove {

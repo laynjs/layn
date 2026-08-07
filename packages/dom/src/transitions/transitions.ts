@@ -8,10 +8,12 @@ import {
 import type {
   AnimateOption,
   DomEnvironment,
+  TransitionCommit,
   TransitionConfig,
   TransitionRunner,
 } from '../types/index.js'
-import type { TransitionBatch, TransitionEnter, TransitionMove, TransitionPlan } from './types.js'
+import { createExitRunner } from './exit.js'
+import type { TransitionEnter, TransitionMove, TransitionPlan } from './types.js'
 
 export const resolveTransitionConfig = (
   animate: AnimateOption | undefined,
@@ -39,10 +41,11 @@ export const createTransitionRunner = (
 
   const animations = new Map<ItemId, Animation>()
   const fades = new Set<Animation>()
+  const exits = createExitRunner(config)
   let frame: number | undefined
-  let pending: TransitionBatch | undefined
+  let pending: TransitionCommit | undefined
 
-  const collect = (batch: TransitionBatch): TransitionPlan => {
+  const collect = (batch: TransitionCommit): TransitionPlan => {
     const moves: TransitionMove[] = []
     const enters: TransitionEnter[] = []
     for (const index of batch.visible) {
@@ -133,13 +136,15 @@ export const createTransitionRunner = (
   }
 
   return {
-    play(previous, next, elementOf, visible) {
-      pending = { previous: pending?.previous ?? previous, next, elementOf, visible }
+    play(commit) {
+      exits.capture(commit.next, commit.leaving)
+      pending = { ...commit, previous: pending?.previous ?? commit.previous }
       if (frame === undefined) {
         frame = environment.requestAnimationFrame(run)
       }
     },
     stop() {
+      exits.stop()
       if (frame !== undefined) {
         environment.cancelAnimationFrame(frame)
         frame = undefined

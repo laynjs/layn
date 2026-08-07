@@ -157,15 +157,15 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
       }
       const ref = (element: HTMLElement | null): void => {
         if (element !== null) {
-          bindingRef.current?.observeItem(id, element)
+          store.observeItem(id, element)
         } else {
-          bindingRef.current?.unobserveItem(id)
+          store.unobserveItem(id)
         }
       }
       refCache.set(id, ref)
       return ref
     },
-    [refCache],
+    [refCache, store],
   )
 
   const items = useMemo(

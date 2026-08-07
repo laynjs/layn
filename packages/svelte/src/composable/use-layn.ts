@@ -61,13 +61,13 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
   const item: Action<HTMLElement, ItemActionParams> = (node, params) => {
     let current = params
     applyRectStyle(node, current.rect)
-    binding?.observeItem(current.id, node)
+    store.observeItem(current.id, node)
     return {
       update: (next) => {
         current = next
         applyRectStyle(node, current.rect)
       },
-      destroy: () => binding?.unobserveItem(current.id),
+      destroy: () => store.unobserveItem(current.id),
     }
   }
 

@@ -17,12 +17,21 @@ export interface TransformOffset {
   readonly y: number
 }
 
+export interface ExitCandidate {
+  readonly id: ItemId
+  readonly element: Element
+  readonly parent: Element
+}
+
+export interface TransitionCommit {
+  readonly previous: Positions
+  readonly next: Positions
+  readonly elementOf: (id: ItemId) => Element | undefined
+  readonly leaving: Iterable<ExitCandidate>
+  readonly visible: readonly number[]
+}
+
 export interface TransitionRunner {
-  play(
-    previous: Positions,
-    next: Positions,
-    elementOf: (id: ItemId) => Element | undefined,
-    visible: readonly number[],
-  ): void
+  play(commit: TransitionCommit): void
   stop(): void
 }

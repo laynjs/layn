@@ -76,8 +76,8 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): LaynRe
       binding = bindEngine(engine, bindOptions)
       store.attach(binding)
     },
-    observeItem: (id: ItemId, element: HTMLElement) => binding?.observeItem(id, element),
-    unobserveItem: (id: ItemId) => binding?.unobserveItem(id),
+    observeItem: (id: ItemId, element: HTMLElement) => store.observeItem(id, element),
+    unobserveItem: (id: ItemId) => store.unobserveItem(id),
     setItems: (items) => {
       currentItems = items
       if (diffItems(engine.getSnapshot().items, items).kind !== 'identical') {

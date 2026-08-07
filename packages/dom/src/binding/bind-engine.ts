@@ -60,11 +60,19 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
     const next = engine.getSnapshot().positions
     lastPositions = next
     visible = readVisible()
-    runner?.play(previous, next, sizeObserver.elementOf, visible)
+    runner?.play({
+      previous,
+      next,
+      elementOf: sizeObserver.elementOf,
+      leaving: sizeObserver.tracked(),
+      visible,
+    })
+    sizeObserver.forget()
     notify()
   }
 
   const onScroll = (): void => {
+    sizeObserver.forget()
     const next = readVisible()
     if (!sameIndices(visible, next)) {
       visible = next

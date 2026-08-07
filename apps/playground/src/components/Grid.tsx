@@ -16,8 +16,8 @@ export function Grid({ spec, settings, scrollApi, onLoadMore }: GridProps) {
   const total = count + settings.loaded
   const algorithm = useMemo(() => spec.make({ columns, size }), [spec, columns, size])
   const items = useMemo(
-    () => makeTiles(total, shuffleSeed, prepended),
-    [total, shuffleSeed, prepended],
+    () => makeTiles(total, shuffleSeed, prepended, settings.removed),
+    [total, shuffleSeed, prepended, settings.removed],
   )
 
   const layn = useLayn({

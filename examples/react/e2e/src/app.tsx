@@ -35,6 +35,7 @@ export function App() {
   })
 
   const reverse = () => setItems((current) => [...current].reverse())
+  const remove = () => setItems((current) => current.filter((item) => item.id % 2 === 1))
   const prepend = () => setItems((current) => [...grow(current, 3), ...current])
 
   return (
@@ -51,6 +52,9 @@ export function App() {
         onClick={() => view.scrollToItem(400, { align: 'center' })}
       >
         jump
+      </button>
+      <button type="button" data-testid="remove" onClick={remove}>
+        remove
       </button>
       <span data-testid="count">{items.length}</span>
       <span data-testid="loads">{loads}</span>

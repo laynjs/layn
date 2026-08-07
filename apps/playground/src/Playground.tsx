@@ -28,6 +28,7 @@ export function Playground() {
       gap: p.gap,
       showImages: p.images,
       prepended: 0,
+      removed: 0,
       infinite: p.infinite ?? false,
       loaded: 0,
     }))
