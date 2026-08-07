@@ -36,8 +36,8 @@ export const createDragController = (setup: DragSetup): DragController | undefin
     if (drag === undefined) {
       return
     }
-    sync()
     const box = drag.parent.getBoundingClientRect()
+    sync()
     const positions = setup.engine.getSnapshot().positions
     const target = indexAtPoint(
       positions,

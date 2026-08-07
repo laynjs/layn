@@ -5,6 +5,9 @@ packages:
 overrides:
   sharp: '^0.35.0'
   brace-expansion: '^2.1.4'
+  js-yaml@3: '^3.15.1'
+  js-yaml@4: '^4.3.1'
+  fast-uri@3: '^3.1.5'
 allowBuilds:
   '@parcel/watcher': false
   esbuild: true

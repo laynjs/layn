@@ -40,6 +40,7 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
   let lastViewport: Size | undefined
   let originOffset = 0
   let lastPositions = engine.getSnapshot().positions
+  let lastItems = engine.getSnapshot().items
 
   const readVisible = (): readonly number[] => {
     const window = readScrollWindow(scrollTarget, axis, originOffset)
@@ -58,15 +59,18 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
 
   const onLayoutChange = (): void => {
     const previous = lastPositions
-    const next = engine.getSnapshot().positions
+    const snapshot = engine.getSnapshot()
+    const next = snapshot.positions
+    const itemsChanged = snapshot.items !== lastItems
     lastPositions = next
+    lastItems = snapshot.items
     visible = readVisible()
     const dragged = drag?.activeId()
     runner?.play({
       previous,
       next,
       elementOf: sizeObserver.elementOf,
-      leaving: sizeObserver.tracked(),
+      leaving: itemsChanged ? sizeObserver.tracked() : [],
       visible,
       ...(dragged !== undefined ? { skip: dragged } : {}),
     })
@@ -140,6 +144,7 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
 
   applyViewport()
   lastPositions = engine.getSnapshot().positions
+  lastItems = engine.getSnapshot().items
   const unsubscribeEngine = engine.subscribe(onLayoutChange)
   visible = readVisible()
 

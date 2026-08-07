@@ -249,6 +249,49 @@ describe('bindEngine', () => {
     expect(win.lastScrollTo).toEqual({ top: 800 })
   })
 
+  it('does not scan for exits when only the layout changed', () => {
+    const { environment, flushRaf } = createControlledEnvironment()
+    const engine = createEngine({ algorithm: masonry({ columns: 1 }), items: squares(4) })
+    const element = container(100, 300)
+    const parent = new FakeElement()
+    const item = new FakeElement()
+    parent.appendChild(item)
+    const binding = bindEngine(engine, {
+      scroll: asElement(element),
+      animate: true,
+      environment,
+    })
+    binding.observeItem(99, asElement(item))
+
+    engine.setGap({ x: 0, y: 20 })
+    flushRaf()
+
+    expect(parent.children).toHaveLength(1)
+  })
+
+  it('clones an item that leaves the data even after it is unmounted', () => {
+    const { environment, flushRaf } = createControlledEnvironment()
+    const engine = createEngine({ algorithm: masonry({ columns: 1 }), items: squares(4) })
+    const element = container(100, 300)
+    const parent = new FakeElement()
+    const item = new FakeElement()
+    parent.appendChild(item)
+    const binding = bindEngine(engine, {
+      scroll: asElement(element),
+      animate: true,
+      environment,
+    })
+    binding.observeItem(3, asElement(item))
+    item.remove()
+    binding.unobserveItem(3)
+
+    engine.setItems(squares(3))
+    flushRaf()
+
+    expect(parent.children).toHaveLength(1)
+    expect(parent.children[0]?.attributes.has('data-layn-exiting')).toBe(true)
+  })
+
   it('does not signal the end while the scroll position is far from it', () => {
     const { environment, flushRaf } = createControlledEnvironment()
     const engine = createEngine({ algorithm: masonry({ columns: 1 }), items: squares(20) })

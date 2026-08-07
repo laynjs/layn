@@ -11,9 +11,9 @@
     "e2e": "playwright test -c e2e/playwright.config.ts"
   },
   "dependencies": {
-    "@angular/common": "^20.0.0",
-    "@angular/core": "^20.0.0",
-    "@angular/platform-browser": "^20.0.0",
+    "@angular/common": "^20.3.27",
+    "@angular/core": "^20.3.27",
+    "@angular/platform-browser": "^20.3.27",
     "@laynjs/angular": "workspace:*",
     "@laynjs/core": "workspace:*",
     "@laynjs/dom": "workspace:*",
@@ -21,9 +21,9 @@
   },
   "devDependencies": {
     "@analogjs/vite-plugin-angular": "^2.6.4",
-    "@angular/build": "^20.0.0",
-    "@angular/compiler": "^20.0.0",
-    "@angular/compiler-cli": "^20.0.0",
+    "@angular/build": "^20.3.33",
+    "@angular/compiler": "^20.3.27",
+    "@angular/compiler-cli": "^20.3.27",
     "@playwright/test": "^1.49.0",
     "@types/node": "^22.0.0",
     "vite": "^6.0.0"
