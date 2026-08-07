@@ -71,6 +71,8 @@ The hook also accepts `animate` ([animations guide](/guides/animations/)) and `s
 ([scrolling guide](/guides/scrolling/)), and returns `scrollToItem(id, options?)` /
 `scrollToIndex(index, options?)` for programmatic scrolling.
 
+For infinite scroll, pass `onReachEnd` - see the [infinite scroll guide](/guides/infinite-scroll/).
+
 ## Why actions
 
 The two `use:` actions solve the two lifecycle details for you: `use:container` binds after mount when

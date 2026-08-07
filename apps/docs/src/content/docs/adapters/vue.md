@@ -67,6 +67,8 @@ The hook also accepts `animate` ([animations guide](/guides/animations/)) and `s
 ([scrolling guide](/guides/scrolling/)), and returns `scrollToItem(id, options?)` /
 `scrollToIndex(index, options?)` for programmatic scrolling.
 
+For infinite scroll, pass `onReachEnd` - see the [infinite scroll guide](/guides/infinite-scroll/).
+
 ## Reactive inputs
 
 `items`, `algorithm`, and `gap` accept a ref, a getter, or a plain value. Wrap anything reactive in a

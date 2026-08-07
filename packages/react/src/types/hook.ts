@@ -24,6 +24,8 @@ export interface UseLaynOptions<TData = unknown> {
   readonly label?: string
   readonly animate?: AnimateOption
   readonly scroll?: ScrollMode
+  readonly onReachEnd?: () => void
+  readonly reachEndThreshold?: number
   readonly measurements?: MeasurementsOptions
   readonly environment?: Partial<DomEnvironment>
 }

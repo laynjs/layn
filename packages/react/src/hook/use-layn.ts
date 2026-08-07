@@ -49,6 +49,22 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
     [animateEnabled, animateDuration, animateEasing],
   )
 
+  const reachEndThreshold = options.reachEndThreshold
+  const wantsReachEnd = options.onReachEnd !== undefined
+  const reachEndRef = useRef(options.onReachEnd)
+  useEffect(() => {
+    reachEndRef.current = options.onReachEnd
+  })
+  const onReachEnd = useMemo(
+    () =>
+      wantsReachEnd
+        ? () => {
+            reachEndRef.current?.()
+          }
+        : undefined,
+    [wantsReachEnd],
+  )
+
   const engine = useConstant<LayoutEngine>(() =>
     createEngine(
       resolveEngineConfig({
@@ -113,13 +129,15 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
         overscan,
         ...(targets.origin !== undefined ? { origin: targets.origin } : {}),
         ...(animate !== undefined ? { animate } : {}),
+        ...(onReachEnd !== undefined ? { onReachEnd } : {}),
+        ...(reachEndThreshold !== undefined ? { reachEndThreshold } : {}),
         ...(environment !== undefined ? { environment } : {}),
       }
       const binding = bindEngine(engine, bindOptions)
       bindingRef.current = binding
       store.attach(binding)
     },
-    [engine, store, axis, overscan, animate, environment, scroll],
+    [engine, store, axis, overscan, animate, onReachEnd, reachEndThreshold, environment, scroll],
   )
 
   const scrollToIndex = useCallback<UseLaynResult<TData>['scrollToIndex']>(

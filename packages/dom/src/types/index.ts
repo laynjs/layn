@@ -1,5 +1,6 @@
 export * from './binding.js'
 export * from './environment.js'
 export * from './measure.js'
+export * from './reach-end.js'
 export * from './target.js'
 export * from './transitions.js'

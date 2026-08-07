@@ -1,4 +1,10 @@
-import { type NoSerialize, noSerialize, useSignal, useVisibleTask$ } from '@builder.io/qwik'
+import {
+  type NoSerialize,
+  noSerialize,
+  type QRL,
+  useSignal,
+  useVisibleTask$,
+} from '@builder.io/qwik'
 import type { EngineStore } from '@laynjs/adapter-utils'
 import {
   containerAttrs,
@@ -22,10 +28,26 @@ import { type BindOptions, bindEngine, type EngineBinding } from '@laynjs/dom'
 import { buildItems } from '../items/index.js'
 import type { LaynItem, UseLaynOptions, UseLaynResult } from '../types/index.js'
 
+const reachEndOptions = (
+  onReachEnd: QRL<() => void> | undefined,
+  threshold: number | undefined,
+): Pick<BindOptions, 'onReachEnd' | 'reachEndThreshold'> => ({
+  ...(onReachEnd !== undefined
+    ? {
+        onReachEnd: () => {
+          void onReachEnd()
+        },
+      }
+    : {}),
+  ...(threshold !== undefined ? { reachEndThreshold: threshold } : {}),
+})
+
 export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLaynResult<TData> => {
   const axis = options.axis ?? 'vertical'
   const overscan = options.overscan ?? 0
   const scroll = options.scroll
+  const reachEnd = options.onReachEnd
+  const reachEndThreshold = options.reachEndThreshold
 
   const engine = createEngine(
     resolveEngineConfig({
@@ -74,6 +96,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
         axis,
         overscan,
         ...(targets.origin !== undefined ? { origin: targets.origin } : {}),
+        ...reachEndOptions(reachEnd, reachEndThreshold),
         ...(options.environment !== undefined ? { environment: options.environment } : {}),
       }
       const binding = bindEngine(activeEngine, bindOptions)

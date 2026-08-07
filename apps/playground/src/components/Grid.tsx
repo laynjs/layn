@@ -7,15 +7,17 @@ interface GridProps {
   spec: AlgoSpec
   settings: Settings
   scrollApi: MutableRefObject<((id: number) => void) | undefined>
+  onLoadMore: () => void
 }
 
-export function Grid({ spec, settings, scrollApi }: GridProps) {
+export function Grid({ spec, settings, scrollApi, onLoadMore }: GridProps) {
   const { columns, size, gap, count, overscan, showImages, animate, shuffleSeed, prepended } =
     settings
+  const total = count + settings.loaded
   const algorithm = useMemo(() => spec.make({ columns, size }), [spec, columns, size])
   const items = useMemo(
-    () => makeTiles(count, shuffleSeed, prepended),
-    [count, shuffleSeed, prepended],
+    () => makeTiles(total, shuffleSeed, prepended),
+    [total, shuffleSeed, prepended],
   )
 
   const layn = useLayn({
@@ -26,6 +28,7 @@ export function Grid({ spec, settings, scrollApi }: GridProps) {
     overscan,
     animate,
     label: `${spec.label} layout`,
+    ...(settings.infinite ? { onReachEnd: onLoadMore } : {}),
   })
 
   useEffect(() => {

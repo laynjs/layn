@@ -110,6 +110,10 @@ export const createLayn = <TData = unknown>(
     overscan,
     ...(targets.origin !== undefined ? { origin: targets.origin } : {}),
     ...(options.animate !== undefined ? { animate: options.animate } : {}),
+    ...(options.onReachEnd !== undefined ? { onReachEnd: options.onReachEnd } : {}),
+    ...(options.reachEndThreshold !== undefined
+      ? { reachEndThreshold: options.reachEndThreshold }
+      : {}),
     ...(options.environment !== undefined ? { environment: options.environment } : {}),
   }
   binding = bindEngine(engine, bindOptions)

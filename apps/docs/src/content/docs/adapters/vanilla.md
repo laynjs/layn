@@ -54,6 +54,8 @@ In `renderItem`, set individual style properties (`element.style.background = ..
 `createLayn` also accepts `animate` ([animations guide](/guides/animations/)) and `scroll: 'window'`
 ([scrolling guide](/guides/scrolling/)).
 
+For infinite scroll, pass `onReachEnd` - see the [infinite scroll guide](/guides/infinite-scroll/).
+
 ## Server rendering
 
 `renderToString` emits the same markup on the server, with a string `renderItem`:

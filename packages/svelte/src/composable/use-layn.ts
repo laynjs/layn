@@ -27,6 +27,8 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
   const overscan = options.overscan ?? 0
   const environment = options.environment
   const animate = options.animate
+  const onReachEnd = options.onReachEnd
+  const reachEndThreshold = options.reachEndThreshold
   const scroll = options.scroll
 
   const engine = createEngine(
@@ -80,6 +82,9 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
       overscan,
       ...(targets.origin !== undefined ? { origin: targets.origin } : {}),
       ...(animate !== undefined ? { animate } : {}),
+
+      ...(onReachEnd !== undefined ? { onReachEnd } : {}),
+      ...(reachEndThreshold !== undefined ? { reachEndThreshold } : {}),
       ...(environment !== undefined ? { environment } : {}),
     }
     binding = bindEngine(engine, bindOptions)

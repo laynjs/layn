@@ -249,6 +249,123 @@ describe('bindEngine', () => {
     expect(win.lastScrollTo).toEqual({ top: 800 })
   })
 
+  it('does not signal the end while the scroll position is far from it', () => {
+    const { environment, flushRaf } = createControlledEnvironment()
+    const engine = createEngine({ algorithm: masonry({ columns: 1 }), items: squares(20) })
+    const element = container(100, 300)
+    const onReachEnd = vi.fn()
+
+    bindEngine(engine, { scroll: asElement(element), onReachEnd, environment })
+    flushRaf()
+
+    expect(onReachEnd).not.toHaveBeenCalled()
+  })
+
+  it('signals the end once the scroll position enters the threshold', () => {
+    const { environment, flushRaf } = createControlledEnvironment()
+    const engine = createEngine({ algorithm: masonry({ columns: 1 }), items: squares(20) })
+    const element = container(100, 300)
+    const onReachEnd = vi.fn()
+    bindEngine(engine, { scroll: asElement(element), onReachEnd, environment })
+    const extent = engine.getSnapshot().contentSize.height
+
+    element.scrollTop = extent - 600
+    element.emit('scroll')
+    flushRaf()
+    expect(onReachEnd).not.toHaveBeenCalled()
+
+    element.scrollTop = extent - 400
+    element.emit('scroll')
+    flushRaf()
+    expect(onReachEnd).toHaveBeenCalledTimes(1)
+  })
+
+  it('signals the end only once per content extent', () => {
+    const { environment, flushRaf } = createControlledEnvironment()
+    const engine = createEngine({ algorithm: masonry({ columns: 1 }), items: squares(20) })
+    const element = container(100, 300)
+    const onReachEnd = vi.fn()
+    bindEngine(engine, { scroll: asElement(element), onReachEnd, environment })
+
+    const extent = engine.getSnapshot().contentSize.height
+    element.scrollTop = extent
+    element.emit('scroll')
+    flushRaf()
+    element.scrollTop = extent - 50
+    element.emit('scroll')
+    flushRaf()
+
+    expect(onReachEnd).toHaveBeenCalledTimes(1)
+  })
+
+  it('signals the end again once appended items grow the content', () => {
+    const { environment, flushRaf } = createControlledEnvironment()
+    const engine = createEngine({ algorithm: masonry({ columns: 1 }), items: squares(20) })
+    const element = container(100, 300)
+    const onReachEnd = vi.fn()
+    bindEngine(engine, { scroll: asElement(element), onReachEnd, environment })
+
+    element.scrollTop = engine.getSnapshot().contentSize.height
+    element.emit('scroll')
+    flushRaf()
+    expect(onReachEnd).toHaveBeenCalledTimes(1)
+
+    engine.appendItems([{ id: 100, aspectRatio: 1 }])
+    flushRaf()
+
+    expect(onReachEnd).toHaveBeenCalledTimes(2)
+  })
+
+  it('signals the end on a later frame when the content does not fill the viewport', () => {
+    const { environment, flushRaf } = createControlledEnvironment()
+    const engine = createEngine({ algorithm: masonry({ columns: 1 }), items: squares(1) })
+    const element = container(100, 300)
+    const onReachEnd = vi.fn()
+
+    bindEngine(engine, { scroll: asElement(element), onReachEnd, environment })
+    expect(onReachEnd).not.toHaveBeenCalled()
+
+    flushRaf()
+    expect(onReachEnd).toHaveBeenCalledTimes(1)
+  })
+
+  it('honours a custom reach-end threshold', () => {
+    const { environment, flushRaf } = createControlledEnvironment()
+    const engine = createEngine({ algorithm: masonry({ columns: 1 }), items: squares(20) })
+    const element = container(100, 300)
+    const onReachEnd = vi.fn()
+    bindEngine(engine, {
+      scroll: asElement(element),
+      onReachEnd,
+      reachEndThreshold: 0,
+      environment,
+    })
+
+    const extent = engine.getSnapshot().contentSize.height
+    element.scrollTop = extent - 350
+    element.emit('scroll')
+    flushRaf()
+    expect(onReachEnd).not.toHaveBeenCalled()
+
+    element.scrollTop = extent
+    element.emit('scroll')
+    flushRaf()
+    expect(onReachEnd).toHaveBeenCalledTimes(1)
+  })
+
+  it('drops a pending end signal on destroy', () => {
+    const { environment, flushRaf } = createControlledEnvironment()
+    const engine = createEngine({ algorithm: masonry({ columns: 1 }), items: squares(1) })
+    const element = container(100, 300)
+    const onReachEnd = vi.fn()
+    const binding = bindEngine(engine, { scroll: asElement(element), onReachEnd, environment })
+
+    binding.destroy()
+    flushRaf()
+
+    expect(onReachEnd).not.toHaveBeenCalled()
+  })
+
   it('stops reacting after destroy', () => {
     const { environment, flushRaf } = createControlledEnvironment()
     const engine = createEngine({ algorithm: masonry({ columns: 1 }), items: squares(20) })

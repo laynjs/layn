@@ -1,4 +1,4 @@
-import type { Signal } from '@builder.io/qwik'
+import type { QRL, Signal } from '@builder.io/qwik'
 import type { ContainerAttrs, ContentAria, ScrollMode } from '@laynjs/adapter-utils'
 import type {
   Gap,
@@ -23,6 +23,8 @@ export interface UseLaynOptions<TData = unknown> {
   readonly label?: string
   readonly measurements?: MeasurementsOptions
   readonly scroll?: ScrollMode
+  readonly onReachEnd?: QRL<() => void>
+  readonly reachEndThreshold?: number
   readonly environment?: Partial<DomEnvironment>
 }
 

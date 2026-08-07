@@ -4,7 +4,7 @@ import { Controls } from './components/Controls'
 import { Grid } from './components/Grid'
 import { TopBar } from './components/TopBar'
 import { ALGORITHMS, type Preset } from './lib/layouts'
-import { DEFAULT_SETTINGS, type Settings } from './lib/settings'
+import { DEFAULT_SETTINGS, INFINITE_PAGE_SIZE, type Settings } from './lib/settings'
 import './playground.css'
 
 const initialTheme = (): 'light' | 'dark' =>
@@ -28,7 +28,10 @@ export function Playground() {
       gap: p.gap,
       showImages: p.images,
       prepended: 0,
+      infinite: p.infinite ?? false,
+      loaded: 0,
     }))
+  const loadMore = () => setSettings((s) => ({ ...s, loaded: s.loaded + INFINITE_PAGE_SIZE }))
 
   return (
     <div className="pg" data-theme={theme}>
@@ -41,7 +44,13 @@ export function Playground() {
 
       <div className="workspace">
         <main className="stage">
-          <Grid key={spec.axis} spec={spec} settings={settings} scrollApi={scrollApi} />
+          <Grid
+            key={spec.axis}
+            spec={spec}
+            settings={settings}
+            scrollApi={scrollApi}
+            onLoadMore={loadMore}
+          />
         </main>
 
         <Controls
@@ -62,6 +71,7 @@ export function Playground() {
             gap: settings.gap,
             overscan: settings.overscan,
             animate: settings.animate,
+            infinite: settings.infinite,
           }}
         />
       </div>

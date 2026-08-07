@@ -14,10 +14,11 @@ interface ControlsProps {
 export function Controls({ spec, settings, onChange, onPreset, onScrollTo }: ControlsProps) {
   const { algoId, columns, gap, count, size, overscan, showImages, animate, shuffleSeed } = settings
   const [jumpTarget, setJumpTarget] = useState('')
+  const total = count + settings.loaded
 
   const jump = () => {
     const parsed = Number(jumpTarget)
-    if (Number.isInteger(parsed) && parsed >= 0 && parsed < count) {
+    if (Number.isInteger(parsed) && parsed >= 0 && parsed < total) {
       onScrollTo(parsed)
     }
   }
@@ -100,7 +101,7 @@ export function Controls({ spec, settings, onChange, onPreset, onScrollTo }: Con
           min={50}
           max={2000}
           step={50}
-          onChange={(value) => onChange({ count: value })}
+          onChange={(value) => onChange({ count: value, loaded: 0 })}
         />
         <Slider
           label="Overscan"
@@ -144,14 +145,20 @@ export function Controls({ spec, settings, onChange, onPreset, onScrollTo }: Con
         >
           Prepend 10 items
         </button>
+        <Toggle
+          label={settings.loaded > 0 ? `Infinite scroll (+${settings.loaded})` : 'Infinite scroll'}
+          hint="Load another page of items whenever the scroll reaches the end."
+          checked={settings.infinite}
+          onChange={(value) => onChange({ infinite: value, loaded: 0 })}
+        />
         <div className="jump-row">
           <input
             className="jump-input"
             type="number"
             inputMode="numeric"
             min={0}
-            max={count - 1}
-            placeholder={`0 - ${count - 1}`}
+            max={total - 1}
+            placeholder={`0 - ${total - 1}`}
             value={jumpTarget}
             onChange={(event) => setJumpTarget(event.target.value)}
             onKeyDown={(event) => {

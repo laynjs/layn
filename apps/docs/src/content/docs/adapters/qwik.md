@@ -60,6 +60,8 @@ export const Gallery = component$<{ photos: Photo[] }>(({ photos }) => {
 The hook also accepts `scroll: 'window'` ([scrolling guide](/guides/scrolling/)). The `animate` option is
 not available in Qwik: resumable rendering has no per-item element refs for the transition layer.
 
+For infinite scroll, pass `onReachEnd` as a `QRL` - see the [infinite scroll guide](/guides/infinite-scroll/).
+
 ## Reactivity is consumer-driven
 
 Call the setters from a `useTask$` that tracks your own signals. Qwik task reactivity re-runs

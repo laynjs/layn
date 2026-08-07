@@ -8,8 +8,18 @@ const initialItems = Array.from({ length: 500 }, (_, index) => ({
   data: index,
 }))
 
+const grow = (current: typeof initialItems, count: number): typeof initialItems => {
+  const nextId = Math.max(...current.map((item) => item.id)) + 1
+  return Array.from({ length: count }, (_, index) => ({
+    id: nextId + index,
+    aspectRatio: 1,
+    data: nextId + index,
+  }))
+}
+
 export function App() {
   const [items, setItems] = useState(initialItems)
+  const [loads, setLoads] = useState(0)
   const view = useLayn({
     algorithm: masonry({ columns: 3 }),
     items,
@@ -18,19 +28,14 @@ export function App() {
     overscan: 200,
     animate: true,
     label: 'Gallery',
+    onReachEnd: () => {
+      setLoads((count) => count + 1)
+      setItems((current) => [...current, ...grow(current, 30)])
+    },
   })
 
   const reverse = () => setItems((current) => [...current].reverse())
-  const prepend = () =>
-    setItems((current) => {
-      const nextId = Math.max(...current.map((item) => item.id)) + 1
-      const added = Array.from({ length: 3 }, (_, index) => ({
-        id: nextId + index,
-        aspectRatio: 1,
-        data: nextId + index,
-      }))
-      return [...added, ...current]
-    })
+  const prepend = () => setItems((current) => [...grow(current, 3), ...current])
 
   return (
     <div>
@@ -47,6 +52,8 @@ export function App() {
       >
         jump
       </button>
+      <span data-testid="count">{items.length}</span>
+      <span data-testid="loads">{loads}</span>
       <div
         {...view.containerProps}
         data-testid="container"

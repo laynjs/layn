@@ -43,6 +43,8 @@ Every `useLayn` accepts these (Vue and Solid also accept reactive wrappers for t
 | `label` | `string` | Accessible name for the scroll region. |
 | `animate` | `boolean \| { duration, easing }` | Animate layout changes. See the [animations guide](/guides/animations/). Not available in Qwik. |
 | `scroll` | `'container' \| 'window'` | Scroll the container (default) or the page. See the [scrolling guide](/guides/scrolling/). |
+| `onReachEnd` | `() => void` | Called when the scroll nears the end of the content. See the [infinite scroll guide](/guides/infinite-scroll/). |
+| `reachEndThreshold` | `number` | Pixels from the end that count as "reached". Defaults to `200`. |
 | `measurements` | `MeasurementsOptions` | Estimator and fallback ratio. |
 
 Every adapter also returns **`scrollToItem(id, options?)`** and **`scrollToIndex(index, options?)`**

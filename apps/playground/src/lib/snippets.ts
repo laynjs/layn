@@ -7,6 +7,7 @@ export interface SnippetContext {
   readonly gap: number
   readonly overscan: number
   readonly animate: boolean
+  readonly infinite: boolean
 }
 
 export interface Framework {
@@ -17,8 +18,9 @@ export interface Framework {
 }
 
 const options = (
-  { spec, columns, size, gap, overscan, animate }: SnippetContext,
+  { spec, columns, size, gap, overscan, animate, infinite }: SnippetContext,
   indent: string,
+  reachEnd = 'loadMore',
 ): string => {
   const lines = [
     `${indent}items,`,
@@ -31,6 +33,9 @@ const options = (
   lines.push(`${indent}overscan: ${overscan},`)
   if (animate) {
     lines.push(`${indent}animate: true,`)
+  }
+  if (infinite) {
+    lines.push(`${indent}onReachEnd: ${reachEnd},`)
   }
   return lines.join('\n')
 }
@@ -165,7 +170,7 @@ ${core(ctx)}
 
 export const Grid = component$(() => {
   const layn = useLayn({
-${options({ ...ctx, animate: false }, '    ')}
+${options({ ...ctx, animate: false }, '    ', '$(loadMore)')}
   })
 
   return (

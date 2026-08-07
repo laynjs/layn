@@ -10,6 +10,8 @@ export interface BindOptions {
   readonly axis?: ScrollAxis
   readonly overscan?: number
   readonly animate?: AnimateOption
+  readonly onReachEnd?: () => void
+  readonly reachEndThreshold?: number
   readonly environment?: Partial<DomEnvironment>
 }
 

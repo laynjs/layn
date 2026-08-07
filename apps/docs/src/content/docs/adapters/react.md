@@ -60,6 +60,8 @@ sets `position: relative` and `overflow: auto`, so the height is all you add.
 The hook also accepts `animate` ([animations guide](/guides/animations/)) and `scroll: 'window'`
 ([scrolling guide](/guides/scrolling/)).
 
+For infinite scroll, pass `onReachEnd` - see the [infinite scroll guide](/guides/infinite-scroll/).
+
 ## Item view-model
 
 Each entry in `layn.items` is:

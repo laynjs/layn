@@ -16,25 +16,21 @@ import type {
   LayoutContext,
   LayoutEngine,
   LayoutResult,
-  MeasuredEntry,
   ScrollWindow,
   SerializedLayout,
-  Size,
   Viewport,
   VisibleOptions,
 } from '../types/index.js'
 import { createSpatialIndex } from '../virtualization/index.js'
+import { createMeasuredCache } from './measured-cache.js'
 import type { IndexCache } from './types.js'
-
-const sizeChanged = (previous: Size | undefined, next: Size): boolean =>
-  previous === undefined || previous.width !== next.width || previous.height !== next.height
 
 export const createEngine = (config: EngineConfig): LayoutEngine => {
   let algorithm = config.algorithm
-  const cache = new Map<ItemId, Size>(config.measured)
+  const measured = createMeasuredCache(config.measured)
   const measurements = createMeasurements({
     ...config.measurements,
-    cache: { get: (id) => cache.get(id) },
+    cache: { get: measured.get },
   })
 
   let items = config.items ?? []
@@ -80,15 +76,8 @@ export const createEngine = (config: EngineConfig): LayoutEngine => {
     }
   }
 
-  const measure = (entries: readonly MeasuredEntry[]): void => {
-    let changed = false
-    for (const entry of entries) {
-      if (sizeChanged(cache.get(entry.id), entry.size)) {
-        cache.set(entry.id, entry.size)
-        changed = true
-      }
-    }
-    if (changed) {
+  const measure: LayoutEngine['measure'] = (entries) => {
+    if (measured.record(entries)) {
       relayout()
     }
   }
@@ -124,7 +113,7 @@ export const createEngine = (config: EngineConfig): LayoutEngine => {
       gap,
       viewport,
       items,
-      measured: [...cache.entries()],
+      measured: measured.entries(),
       positions: {
         ids,
         x: Array.from(positions.x),
@@ -149,18 +138,19 @@ export const createEngine = (config: EngineConfig): LayoutEngine => {
         return
       }
       const diff = diffItems(items, next)
-      if (diff.kind === 'append') {
-        const previous = lastResult
-        items = next
-        relayout(previous)
-        return
-      }
+      const previous = lastResult
+      items = next
       if (diff.kind === 'identical') {
-        items = next
         commit()
         return
       }
-      items = next
+      if (diff.kind === 'append') {
+        relayout(previous)
+        return
+      }
+      if (diff.removedCount > 0) {
+        measured.prune(items)
+      }
       relayout()
     },
     appendItems: (next) => {

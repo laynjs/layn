@@ -143,9 +143,11 @@ export const createControlledEnvironment = (): {
   }
 
   const flushRaf = (): void => {
-    const pending = queue.splice(0)
-    for (const callback of pending) {
-      callback()
+    while (queue.length > 0) {
+      const pending = queue.splice(0)
+      for (const callback of pending) {
+        callback()
+      }
     }
   }
 

@@ -134,6 +134,7 @@ export interface Preset {
   readonly size: number
   readonly gap: number
   readonly images: boolean
+  readonly infinite?: boolean
 }
 
 export const PRESETS: Preset[] = [
@@ -216,6 +217,17 @@ export const PRESETS: Preset[] = [
     size: 200,
     gap: 10,
     images: false,
+  },
+  {
+    id: 'feed',
+    label: 'Infinite feed',
+    hint: 'Loads another page at the end',
+    algoId: 'masonry',
+    columns: 3,
+    size: 200,
+    gap: 12,
+    images: false,
+    infinite: true,
   },
 ]
 

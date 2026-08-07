@@ -1,7 +1,7 @@
 import type { LayoutEngine, Size } from '@laynjs/core'
 import { resolveEnvironment } from '../environment/index.js'
 import { createSizeObserver } from '../measure/index.js'
-import { rafThrottle, scrollOffsetFor } from '../scroll/index.js'
+import { createReachEndWatcher, rafThrottle, scrollOffsetFor } from '../scroll/index.js'
 import { isElement, readOrigin, readScrollWindow, readViewportSize } from '../target/index.js'
 import { createTransitionRunner } from '../transitions/index.js'
 import type {
@@ -45,6 +45,7 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
     const content = engine.getSnapshot().contentSize
     const extent = axis === 'vertical' ? content.height : content.width
     const start = Math.min(window.start, Math.max(0, extent - window.size))
+    reachEnd?.check(start, window.size, extent)
     return engine.getVisible({ start, size: window.size }, { axis, overscan })
   }
 
@@ -90,6 +91,7 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
 
   const sizeObserver = createSizeObserver(environment, (entries) => engine.measure(entries))
   const runner = createTransitionRunner(environment, options.animate)
+  const reachEnd = createReachEndWatcher(environment, options.onReachEnd, options.reachEndThreshold)
   const viewportObserver = isElement(viewportTarget)
     ? environment.createResizeObserver(applyViewport)
     : undefined
@@ -145,6 +147,7 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
     },
     destroy: () => {
       runner?.stop()
+      reachEnd?.stop()
       scrollTarget.removeEventListener('scroll', scroll.run)
       scroll.cancel()
       viewportObserver?.disconnect()

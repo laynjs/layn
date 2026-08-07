@@ -9,7 +9,11 @@ export interface Settings {
   readonly animate: boolean
   readonly shuffleSeed: number
   readonly prepended: number
+  readonly infinite: boolean
+  readonly loaded: number
 }
+
+export const INFINITE_PAGE_SIZE = 50
 
 export const DEFAULT_SETTINGS: Settings = {
   algoId: 'masonry',
@@ -22,4 +26,6 @@ export const DEFAULT_SETTINGS: Settings = {
   animate: true,
   shuffleSeed: 0,
   prepended: 0,
+  infinite: false,
+  loaded: 0,
 }

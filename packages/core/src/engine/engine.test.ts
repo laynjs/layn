@@ -191,6 +191,56 @@ describe('engine', () => {
     expect(spy.calls()).toBe(10)
   })
 
+  it('prepend yields the same layout as building the full set at once', () => {
+    const build = (items: LayoutItem[]) =>
+      createEngine({
+        algorithm: masonry({ columns: 3 }),
+        gap: { x: 12, y: 12 },
+        viewport: { width: 600, height: 800 },
+        items,
+      })
+    const combined = [...squares(10), ...squaresFrom(10, 20)]
+
+    const prepended = build(squaresFrom(10, 20))
+    prepended.setItems(combined)
+    const full = build(combined)
+
+    expect(entriesOf(prepended.getSnapshot().positions)).toEqual(
+      entriesOf(full.getSnapshot().positions),
+    )
+    expect(prepended.getSnapshot().contentSize).toEqual(full.getSnapshot().contentSize)
+  })
+
+  it('drops measurements for items removed from the list', () => {
+    const base = plain(10)
+    const engine = createEngine({
+      algorithm: masonry({ columns: 2 }),
+      viewport: { width: 320, height: 800 },
+      items: base,
+    })
+    engine.measure(base.map((item) => ({ id: item.id, size: { width: 155, height: 120 } })))
+    expect(engine.serialize().measured).toHaveLength(10)
+
+    engine.setItems(base.slice(0, 3))
+
+    expect(engine.serialize().measured.map(([id]) => id)).toEqual([0, 1, 2])
+    expect(engine.getSnapshot().positions.rectOf(0)?.height).toBe(120)
+  })
+
+  it('never keeps more measurements than there are items', () => {
+    const base = plain(20)
+    const engine = createEngine({
+      algorithm: masonry({ columns: 2 }),
+      viewport: { width: 320, height: 800 },
+      items: base,
+    })
+    engine.measure(base.map((item) => ({ id: item.id, size: { width: 155, height: 120 } })))
+
+    engine.setItems(plain(20, 100))
+
+    expect(engine.serialize().measured).toHaveLength(0)
+  })
+
   it('relayouts when the algorithm changes', () => {
     const engine = createEngine({
       algorithm: masonry({ columns: 2 }),

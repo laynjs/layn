@@ -20,6 +20,8 @@ export interface LaynOptions<TData = unknown> {
   readonly measurements?: MeasurementsOptions
   readonly animate?: AnimateOption
   readonly scroll?: ScrollMode
+  readonly onReachEnd?: () => void
+  readonly reachEndThreshold?: number
   readonly environment?: Partial<DomEnvironment>
   readonly renderItem?: (element: HTMLElement, item: LayoutItem<TData>) => void
 }
