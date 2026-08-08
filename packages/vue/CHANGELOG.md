@@ -1,5 +1,15 @@
 # @laynjs/vue
 
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies [5a0e3dc]
+- Updated dependencies [5a0e3dc]
+  - @laynjs/core@0.3.1
+  - @laynjs/dom@0.3.1
+  - @laynjs/adapter-utils@0.3.1
+
 ## 0.3.0
 
 ### Minor Changes

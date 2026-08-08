@@ -1,6 +1,6 @@
 {
   "name": "@laynjs/dom",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Browser bindings for layn: ResizeObserver measurement, scroll tracking, and virtualization glue.",
   "keywords": [
     "layout",

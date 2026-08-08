@@ -1,6 +1,6 @@
 {
   "name": "@laynjs/svelte",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Headless Svelte adapter for layn: stores and actions over the engine and DOM bindings.",
   "keywords": [
     "layout",

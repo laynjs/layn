@@ -1,5 +1,11 @@
 # @laynjs/core
 
+## 0.3.1
+
+### Patch Changes
+
+- 5a0e3dc: No functional changes. Version kept in lockstep with the rest of the packages.
+
 ## 0.3.0
 
 ### Minor Changes
