@@ -23,7 +23,10 @@ export default defineConfig({
       tagline: 'The headless layout engine for the modern web.',
       favicon: '/favicon.svg',
       logo: { src: './src/assets/logo.svg', replacesTitle: false },
-      components: { Head: './src/components/Head.astro' },
+      components: {
+        Head: './src/components/Head.astro',
+        ThemeSelect: './src/components/ThemeSelect.astro',
+      },
       social: [{ icon: 'github', label: 'GitHub', href: REPO_URL }],
       editLink: { baseUrl: `${REPO_URL}/edit/main/apps/docs/` },
       lastUpdated: true,
@@ -65,6 +68,7 @@ export default defineConfig({
         {
           label: 'Guides',
           items: [
+            { label: 'Styling', slug: 'guides/styling' },
             { label: 'Animations', slug: 'guides/animations' },
             { label: 'Scrolling', slug: 'guides/scrolling' },
             { label: 'Infinite scroll', slug: 'guides/infinite-scroll' },
