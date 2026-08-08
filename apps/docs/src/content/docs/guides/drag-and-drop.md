@@ -44,6 +44,10 @@ return (
 `touch-action: none` on the draggable element is required, otherwise the browser treats a touch
 drag as a scroll and you never receive the move events.
 
+Images and links inside a tile do not need any special handling. They start the browser's own
+drag-and-drop, which would otherwise steal the gesture and cancel yours the moment you move; layn
+suppresses that for as long as one of its drags is running, so a gallery works out of the box.
+
 ## You own the order
 
 layn never mutates your data. `onReorder(from, to)` gives you two indices into the array you passed

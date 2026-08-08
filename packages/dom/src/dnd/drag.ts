@@ -87,6 +87,7 @@ export const createDragController = (setup: DragSetup): DragController | undefin
     drag.element.removeEventListener('pointermove', onMove)
     drag.element.removeEventListener('pointerup', onUp)
     drag.element.removeEventListener('pointercancel', onCancel)
+    drag.element.removeEventListener('dragstart', onNativeDragStart)
     drag.element.ownerDocument.removeEventListener('keydown', onKeyDown)
     drag.element.releasePointerCapture?.(drag.pointerId)
     drag.element.removeAttribute(DRAGGING_ATTR)
@@ -115,6 +116,10 @@ export const createDragController = (setup: DragSetup): DragController | undefin
     if (event.key === 'Escape') {
       finish(true)
     }
+  }
+
+  function onNativeDragStart(event: Event): void {
+    event.preventDefault()
   }
 
   return {
@@ -151,6 +156,7 @@ export const createDragController = (setup: DragSetup): DragController | undefin
       element.addEventListener('pointermove', onMove)
       element.addEventListener('pointerup', onUp)
       element.addEventListener('pointercancel', onCancel)
+      element.addEventListener('dragstart', onNativeDragStart)
       element.ownerDocument.addEventListener('keydown', onKeyDown)
       setup.options.onDragStart?.(id)
     },

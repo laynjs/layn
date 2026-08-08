@@ -89,6 +89,13 @@ export function App() {
               {...entry.a11y}
               style={{ ...entry.style, background: '#dddddd', touchAction: 'none' }}
             >
+              <img
+                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='3'%3E%3Crect width='4' height='3' fill='%23789'/%3E%3C/svg%3E"
+                alt=""
+                width={40}
+                height={30}
+                data-testid="thumb"
+              />
               {entry.item.data}
             </div>
           ))}

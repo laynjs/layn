@@ -44,3 +44,31 @@ test('restores the original order when the drag is cancelled', async ({ page }) 
   await expect(page.getByTestId('order')).toHaveText('0,1,2,3')
   await page.mouse.up()
 })
+
+test('drags from an image without the browser hijacking the gesture', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.getByTestId('order')).toHaveText('0,1,2,3')
+
+  const thumb = await page.locator('[data-id="0"] [data-testid="thumb"]').boundingBox()
+  const target = await boxOf(page, 4)
+  if (thumb === null) {
+    throw new Error('thumbnail is not rendered')
+  }
+
+  const cancelled: string[] = []
+  await page.exposeFunction('reportCancel', (type: string) => cancelled.push(type))
+  await page.evaluate(() => {
+    document.addEventListener('pointercancel', () => {
+      Reflect.get(window, 'reportCancel')?.('pointercancel')
+    })
+  })
+
+  await page.mouse.move(thumb.x + thumb.width / 2, thumb.y + thumb.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(target.x + target.width / 2, target.y + target.height / 2, { steps: 12 })
+  await expect(page.locator('[data-id="0"]')).toHaveAttribute('data-layn-dragging', '')
+  await page.mouse.up()
+
+  await expect(page.getByTestId('order')).toHaveText('1,2,3,4')
+  expect(cancelled).toEqual([])
+})

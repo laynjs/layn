@@ -137,6 +137,35 @@ describe('createDragController', () => {
     expect(elements[1]?.attributes.has(DRAGGING_ATTR)).toBe(false)
   })
 
+  it('blocks the browser native drag that images and links start', () => {
+    const { controller, elements } = setupDrag({ onReorder: vi.fn() })
+    controller?.start(1, pointer(50, 150))
+    let prevented = false
+
+    elements[1]?.emit('dragstart', {
+      preventDefault: () => {
+        prevented = true
+      },
+    })
+
+    expect(prevented).toBe(true)
+  })
+
+  it('stops blocking the native drag once the drag is over', () => {
+    const { controller, elements } = setupDrag({ onReorder: vi.fn() })
+    controller?.start(1, pointer(50, 150))
+    elements[1]?.emit('pointerup')
+    let prevented = false
+
+    elements[1]?.emit('dragstart', {
+      preventDefault: () => {
+        prevented = true
+      },
+    })
+
+    expect(prevented).toBe(false)
+  })
+
   it('clears the drag state on pointerup', () => {
     const onDragEnd = vi.fn()
     const { controller, elements } = setupDrag({ onReorder: vi.fn(), onDragEnd })
