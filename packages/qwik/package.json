@@ -1,6 +1,6 @@
 {
   "name": "@laynjs/qwik",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Headless Qwik adapter for layn: a resumable useLayn hook over the engine and DOM bindings.",
   "keywords": [
     "layout",
