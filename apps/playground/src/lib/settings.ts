@@ -5,6 +5,7 @@ export interface Settings {
   readonly count: number
   readonly size: number
   readonly overscan: number
+  readonly radius: number
   readonly showImages: boolean
   readonly animate: boolean
   readonly shuffleSeed: number
@@ -15,10 +16,6 @@ export interface Settings {
   readonly loaded: number
 }
 
-export const INFINITE_PAGE_SIZE = 50
-
-export const REMOVE_BATCH_SIZE = 10
-
 export const DEFAULT_SETTINGS: Settings = {
   algoId: 'masonry',
   columns: 4,
@@ -26,6 +23,7 @@ export const DEFAULT_SETTINGS: Settings = {
   count: 400,
   size: 200,
   overscan: 400,
+  radius: 10,
   showImages: false,
   animate: true,
   shuffleSeed: 0,

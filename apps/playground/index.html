@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#080b12" />
+    <meta name="theme-color" content="#080b12" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <title>layn - Playground</title>
     <meta
       name="description"
@@ -29,6 +30,12 @@
     />
     <meta name="twitter:image" content="https://play.layn.io/og.png" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      const stored = localStorage.getItem('theme')
+      if (stored === 'dark' || stored === 'light') {
+        document.documentElement.dataset.theme = stored
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

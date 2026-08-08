@@ -1,67 +1,94 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { ActionBar } from './components/ActionBar'
 import { CodeDrawer } from './components/CodeDrawer'
-import { Controls } from './components/Controls'
 import { Grid } from './components/Grid'
+import { Inspector } from './components/Inspector'
+import { Toolbar } from './components/Toolbar'
 import { TopBar } from './components/TopBar'
+import { INFINITE_PAGE_SIZE, PREPEND_BATCH_SIZE, REMOVE_BATCH_SIZE } from './lib/constants'
 import { ALGORITHMS, type Preset } from './lib/layouts'
-import { DEFAULT_SETTINGS, INFINITE_PAGE_SIZE, type Settings } from './lib/settings'
+import { DEFAULT_SETTINGS, type Settings } from './lib/settings'
+import { applyTheme, readTheme, watchSystemTheme } from './lib/theme'
 import './playground.css'
 
-const initialTheme = (): 'light' | 'dark' =>
-  window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-
 export function Playground() {
-  const [theme, setTheme] = useState(initialTheme)
+  const [theme, setTheme] = useState(readTheme)
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
+  const [preset, setPreset] = useState<string | undefined>(undefined)
+  const [rendered, setRendered] = useState(0)
   const [codeOpen, setCodeOpen] = useState(false)
   const scrollApi = useRef<((id: number) => void) | undefined>(undefined)
 
-  const spec = ALGORITHMS.find((a) => a.id === settings.algoId) ?? ALGORITHMS[0]
+  useEffect(() => watchSystemTheme(setTheme), [])
 
-  const patch = (next: Partial<Settings>) => setSettings((s) => ({ ...s, ...next }))
-  const applyPreset = (p: Preset) =>
-    setSettings((s) => ({
-      ...s,
-      algoId: p.algoId,
-      columns: p.columns,
-      size: p.size,
-      gap: p.gap,
-      showImages: p.images,
+  const spec = ALGORITHMS.find((algorithm) => algorithm.id === settings.algoId) ?? ALGORITHMS[0]
+  const total = settings.count + settings.loaded
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark'
+    applyTheme(next)
+    setTheme(next)
+  }
+
+  const patch = (next: Partial<Settings>) => {
+    setPreset(undefined)
+    setSettings((current) => ({ ...current, ...next }))
+  }
+
+  const applyPreset = (chosen: Preset) => {
+    setPreset(chosen.id)
+    setSettings((current) => ({
+      ...current,
+      algoId: chosen.algoId,
+      columns: chosen.columns,
+      size: chosen.size,
+      gap: chosen.gap,
+      showImages: chosen.images,
       prepended: 0,
       removed: 0,
       reorder: false,
-      infinite: p.infinite ?? false,
+      infinite: chosen.infinite ?? false,
       loaded: 0,
     }))
-  const loadMore = () => setSettings((s) => ({ ...s, loaded: s.loaded + INFINITE_PAGE_SIZE }))
+  }
 
   return (
-    <div className="pg" data-theme={theme}>
+    <div className="pg">
       <TopBar
         theme={theme}
-        onToggleTheme={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
+        onToggleTheme={toggleTheme}
         codeOpen={codeOpen}
-        onToggleCode={() => setCodeOpen((v) => !v)}
+        onToggleCode={() => setCodeOpen((open) => !open)}
       />
 
       <div className="workspace">
-        <main className="stage">
-          <Grid
-            key={spec.axis}
-            spec={spec}
-            settings={settings}
-            scrollApi={scrollApi}
-            onLoadMore={loadMore}
+        <div className="canvas">
+          <Toolbar activePreset={preset} total={total} rendered={rendered} onPreset={applyPreset} />
+          <main className="stage">
+            <Grid
+              key={spec.axis}
+              spec={spec}
+              settings={settings}
+              scrollApi={scrollApi}
+              onRendered={setRendered}
+              onLoadMore={() =>
+                setSettings((current) => ({
+                  ...current,
+                  loaded: current.loaded + INFINITE_PAGE_SIZE,
+                }))
+              }
+            />
+          </main>
+          <ActionBar
+            total={total}
+            onShuffle={() => patch({ shuffleSeed: settings.shuffleSeed + 1 })}
+            onPrepend={() => patch({ prepended: settings.prepended + PREPEND_BATCH_SIZE })}
+            onRemove={() => patch({ removed: settings.removed + REMOVE_BATCH_SIZE })}
+            onScrollTo={(index) => scrollApi.current?.(index)}
           />
-        </main>
+        </div>
 
-        <Controls
-          spec={spec}
-          settings={settings}
-          onChange={patch}
-          onPreset={applyPreset}
-          onScrollTo={(id) => scrollApi.current?.(id)}
-        />
+        <Inspector spec={spec} settings={settings} onChange={patch} />
 
         <CodeDrawer
           open={codeOpen}

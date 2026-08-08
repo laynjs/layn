@@ -22,6 +22,7 @@ export interface AlgoSpec {
   readonly axis: 'vertical' | 'horizontal'
   readonly usesCount: boolean
   readonly usesSize: boolean
+  readonly short?: string
   readonly sizeLabel?: string
   readonly codeName: string
   readonly make: (params: AlgoParams) => LayoutAlgorithm
@@ -84,6 +85,7 @@ export const ALGORITHMS: AlgoSpec[] = [
   {
     id: 'bin-packing',
     label: 'Bin packing',
+    short: 'Bin pack',
     axis: 'vertical',
     usesCount: false,
     usesSize: true,
@@ -116,6 +118,7 @@ export const ALGORITHMS: AlgoSpec[] = [
   {
     id: 'horizontal',
     label: 'Horizontal masonry',
+    short: 'Horizontal',
     axis: 'horizontal',
     usesCount: true,
     usesSize: false,
