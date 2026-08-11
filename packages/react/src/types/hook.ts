@@ -1,5 +1,6 @@
 import type { ContainerAria, ContentAria, ScrollMode } from '@laynjs/adapter-utils'
 import type {
+  Direction,
   Gap,
   ItemId,
   LayoutAlgorithm,
@@ -30,6 +31,8 @@ export interface UseLaynOptions<TData = unknown> {
   readonly onDragStart?: (id: ItemId) => void
   readonly onDragEnd?: (id: ItemId) => void
   readonly measurements?: MeasurementsOptions
+  readonly direction?: Direction
+  readonly stickyHeaders?: (item: LayoutItem) => boolean
   readonly environment?: Partial<DomEnvironment>
 }
 

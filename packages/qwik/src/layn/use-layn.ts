@@ -56,6 +56,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
       gap: options.gap,
       viewport: options.viewport,
       measurements: options.measurements,
+      direction: options.direction,
     }),
   )
   const store = createStore(engine, axis, overscan)

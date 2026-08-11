@@ -1,6 +1,7 @@
 import type { Signal } from '@angular/core'
 import type { ContainerAttrs, ContentAria, ScrollMode } from '@laynjs/adapter-utils'
 import type {
+  Direction,
   Gap,
   ItemId,
   LayoutAlgorithm,
@@ -24,6 +25,8 @@ export interface UseLaynOptions<TData = unknown> {
   readonly overscan?: number
   readonly label?: string
   readonly measurements?: MeasurementsOptions
+  readonly direction?: Direction
+  readonly stickyHeaders?: (item: LayoutItem) => boolean
   readonly animate?: AnimateOption
   readonly onReachEnd?: () => void
   readonly reachEndThreshold?: number

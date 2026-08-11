@@ -20,6 +20,7 @@ export const renderToString = <TData>(options: RenderOptions<TData>): string => 
       gap: options.gap,
       viewport: options.viewport,
       measurements: options.measurements,
+      direction: options.direction,
     }),
   )
   const snapshot = engine.getSnapshot()

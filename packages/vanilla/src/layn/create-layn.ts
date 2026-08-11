@@ -31,6 +31,7 @@ export const createLayn = <TData = unknown>(
       gap: options.gap,
       viewport: options.viewport,
       measurements: options.measurements,
+      direction: options.direction,
     }),
   )
   const store = createStore(engine, axis, overscan)

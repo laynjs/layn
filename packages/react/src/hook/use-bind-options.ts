@@ -1,3 +1,4 @@
+import type { LayoutItem } from '@laynjs/core'
 import type { AnimateOption, DragOptions } from '@laynjs/dom'
 import { useEffect, useMemo, useRef } from 'react'
 import type { UseLaynOptions } from '../types/index.js'
@@ -47,5 +48,18 @@ export const useBindOptions = <TData>(options: UseLaynOptions<TData>): StableBin
     [wantsDrag],
   )
 
-  return { animate, onReachEnd, reachEndThreshold: options.reachEndThreshold, drag }
+  const wantsSticky = options.stickyHeaders !== undefined
+  const stickyHeaders = useMemo(
+    () =>
+      wantsSticky ? (item: LayoutItem) => latest.current.stickyHeaders?.(item) === true : undefined,
+    [wantsSticky],
+  )
+
+  return {
+    animate,
+    onReachEnd,
+    reachEndThreshold: options.reachEndThreshold,
+    drag,
+    stickyHeaders,
+  }
 }

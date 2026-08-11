@@ -36,7 +36,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
   const overscan = options.overscan ?? 0
   const environment = options.environment
   const scroll = options.scroll
-  const { animate, onReachEnd, reachEndThreshold, drag } = useBindOptions(options)
+  const { animate, onReachEnd, reachEndThreshold, drag, stickyHeaders } = useBindOptions(options)
 
   const engine = useConstant<LayoutEngine>(() =>
     createEngine(
@@ -46,6 +46,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
         gap: options.gap,
         viewport: options.viewport,
         measurements: options.measurements,
+        direction: options.direction,
       }),
     ),
   )
@@ -105,6 +106,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
         ...(animate !== undefined ? { animate } : {}),
         ...(onReachEnd !== undefined ? { onReachEnd } : {}),
         ...(reachEndThreshold !== undefined ? { reachEndThreshold } : {}),
+        ...(stickyHeaders !== undefined ? { stickyHeaders } : {}),
         ...(drag !== undefined ? { drag } : {}),
         ...(environment !== undefined ? { environment } : {}),
       }
@@ -120,6 +122,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
       animate,
       onReachEnd,
       reachEndThreshold,
+      stickyHeaders,
       drag,
       environment,
       scroll,

@@ -45,6 +45,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): LaynRe
       gap: options.gap,
       viewport: options.viewport,
       measurements: options.measurements,
+      direction: options.direction,
     }),
   )
   const store = createStore(engine, axis, overscan)
@@ -79,6 +80,7 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): LaynRe
 
         ...(onReachEnd !== undefined ? { onReachEnd } : {}),
         ...(reachEndThreshold !== undefined ? { reachEndThreshold } : {}),
+        ...(options.stickyHeaders !== undefined ? { stickyHeaders: options.stickyHeaders } : {}),
         ...(drag !== undefined ? { drag } : {}),
         ...(environment !== undefined ? { environment } : {}),
       }

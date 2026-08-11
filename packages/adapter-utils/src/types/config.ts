@@ -1,4 +1,11 @@
-import type { Gap, LayoutAlgorithm, LayoutItem, MeasurementsOptions, Viewport } from '@laynjs/core'
+import type {
+  Direction,
+  Gap,
+  LayoutAlgorithm,
+  LayoutItem,
+  MeasurementsOptions,
+  Viewport,
+} from '@laynjs/core'
 
 export interface EngineInput<TData = unknown> {
   readonly algorithm: LayoutAlgorithm
@@ -6,4 +13,5 @@ export interface EngineInput<TData = unknown> {
   readonly gap?: Gap | undefined
   readonly viewport?: Viewport | undefined
   readonly measurements?: MeasurementsOptions | undefined
+  readonly direction?: Direction | undefined
 }

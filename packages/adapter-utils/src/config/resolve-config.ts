@@ -7,4 +7,5 @@ export const resolveEngineConfig = <TData>(input: EngineInput<TData>): EngineCon
   ...(input.gap !== undefined ? { gap: input.gap } : {}),
   ...(input.viewport !== undefined ? { viewport: input.viewport } : {}),
   ...(input.measurements !== undefined ? { measurements: input.measurements } : {}),
+  ...(input.direction !== undefined ? { direction: input.direction } : {}),
 })

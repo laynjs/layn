@@ -1,5 +1,6 @@
 import type { ScrollMode } from '@laynjs/adapter-utils'
 import type {
+  Direction,
   Gap,
   ItemId,
   LayoutAlgorithm,
@@ -19,6 +20,8 @@ export interface LaynOptions<TData = unknown> {
   readonly overscan?: number
   readonly label?: string
   readonly measurements?: MeasurementsOptions
+  readonly direction?: Direction
+  readonly stickyHeaders?: (item: LayoutItem) => boolean
   readonly animate?: AnimateOption
   readonly scroll?: ScrollMode
   readonly onReachEnd?: () => void
@@ -39,5 +42,6 @@ export interface RenderOptions<TData = unknown> {
   readonly overscan?: number
   readonly label?: string
   readonly measurements?: MeasurementsOptions
+  readonly direction?: Direction
   readonly renderItem?: (item: LayoutItem<TData>) => string
 }

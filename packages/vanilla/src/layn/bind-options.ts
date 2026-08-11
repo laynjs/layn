@@ -28,6 +28,7 @@ export const bindOptionsFor = <TData>(
     overscan,
     ...(targets.origin !== undefined ? { origin: targets.origin } : {}),
     ...(options.animate !== undefined ? { animate: options.animate } : {}),
+    ...(options.stickyHeaders !== undefined ? { stickyHeaders: options.stickyHeaders } : {}),
     ...(options.onReachEnd !== undefined ? { onReachEnd: options.onReachEnd } : {}),
     ...(options.reachEndThreshold !== undefined
       ? { reachEndThreshold: options.reachEndThreshold }
