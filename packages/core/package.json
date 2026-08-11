@@ -1,6 +1,6 @@
 {
   "name": "@laynjs/core",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Framework-agnostic, dependency-free layout engine core with SSR-deterministic positioning.",
   "keywords": [
     "layout",

@@ -1,6 +1,6 @@
 {
   "name": "@laynjs/adapter-utils",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Framework-agnostic building blocks shared by every layn adapter: engine store, config resolver, visible-item mapper.",
   "keywords": [
     "layout",

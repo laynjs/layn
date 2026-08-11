@@ -1,5 +1,69 @@
 # @laynjs/vue
 
+## 0.4.0
+
+### Minor Changes
+
+- 52485d8: Right-to-left layouts. Pass `direction: 'rtl'` and the grid is mirrored across the container: the
+  first item sits against the right edge, columns fill leftwards, and any ragged edge falls on the left.
+
+  ```ts
+  useLayn({ items, algorithm: masonry({ columns: 4 }), direction: 'rtl' })
+  ```
+
+  The mirroring happens in the engine rather than in CSS, which is what keeps everything else working:
+  virtualization, `scrollToItem`, hit-testing and drag-to-reorder all run on the same coordinates the
+  browser paints, so a dragged tile still lands where you dropped it. Only `x` flips - `y`, `width`,
+  `height` and the content size are untouched, so a right-to-left grid is exactly as tall as its
+  left-to-right twin. The direction is carried through `serialize`/`hydrateEngine`, so SSR stays
+  deterministic.
+
+  Supported by every algorithm except `horizontalMasonry`, whose content grows past the container: there
+  is no fixed width to mirror against, and every append would shift everything already placed. Reverse a
+  horizontal scroller with CSS `direction: rtl` on the scroll container instead.
+
+  `direction` is read when the engine is created and does not change afterwards.
+
+- 635e0a9: Sections with sticky headers. Wrap any algorithm in `sections` and the grid is laid out one group at a
+  time, each under its own header - photos by month, tasks by status, products by category.
+
+  ```ts
+  const isHeader = (item) => item.data?.kind === 'header'
+
+  useLayn({
+    items,
+    algorithm: sections(masonry({ columns: 4 }), { isHeader }),
+    stickyHeaders: isHeader,
+  })
+  ```
+
+  The inner algorithm restarts for every group, so a section's columns begin level instead of continuing
+  from wherever the previous one ended. Any algorithm composes.
+
+  A header is an ordinary item that your predicate recognises, and everything after it belongs to its
+  section until the next header. There is no separate header list and no new field on `LayoutItem`, so
+  headers are virtualized, measured, animated and serialized like every other item.
+
+  `stickyHeaders` pins the current section's header to the top of the scroll container and lets the next
+  one push it out. It writes the CSS `translate` property, leaving `transform` to the layout, and keeps
+  the pinned header mounted after its own rectangle has scrolled out of view - which plain
+  virtualization would otherwise unmount, and which `position: sticky` cannot do for absolutely
+  positioned items. The held header carries `data-layn-stuck` for styling.
+
+  Sticky headers are unavailable in Qwik, which renders without per-item element refs; `sections` itself
+  works there.
+
+### Patch Changes
+
+- Updated dependencies [ee34763]
+- Updated dependencies [dd26d83]
+- Updated dependencies [7f42bd2]
+- Updated dependencies [52485d8]
+- Updated dependencies [635e0a9]
+  - @laynjs/core@0.4.0
+  - @laynjs/adapter-utils@0.4.0
+  - @laynjs/dom@0.4.0
+
 ## 0.3.1
 
 ### Patch Changes

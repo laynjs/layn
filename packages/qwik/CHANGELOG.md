@@ -1,5 +1,43 @@
 # @laynjs/qwik
 
+## 0.4.0
+
+### Minor Changes
+
+- a6dc808: Version bumped in lockstep with `@laynjs/core`. Qwik gained the `direction` option; sticky headers and
+  per-item drag remain unavailable there, because the adapter renders without per-item element refs to
+  stay resumable.
+- 52485d8: Right-to-left layouts. Pass `direction: 'rtl'` and the grid is mirrored across the container: the
+  first item sits against the right edge, columns fill leftwards, and any ragged edge falls on the left.
+
+  ```ts
+  useLayn({ items, algorithm: masonry({ columns: 4 }), direction: 'rtl' })
+  ```
+
+  The mirroring happens in the engine rather than in CSS, which is what keeps everything else working:
+  virtualization, `scrollToItem`, hit-testing and drag-to-reorder all run on the same coordinates the
+  browser paints, so a dragged tile still lands where you dropped it. Only `x` flips - `y`, `width`,
+  `height` and the content size are untouched, so a right-to-left grid is exactly as tall as its
+  left-to-right twin. The direction is carried through `serialize`/`hydrateEngine`, so SSR stays
+  deterministic.
+
+  Supported by every algorithm except `horizontalMasonry`, whose content grows past the container: there
+  is no fixed width to mirror against, and every append would shift everything already placed. Reverse a
+  horizontal scroller with CSS `direction: rtl` on the scroll container instead.
+
+  `direction` is read when the engine is created and does not change afterwards.
+
+### Patch Changes
+
+- Updated dependencies [ee34763]
+- Updated dependencies [dd26d83]
+- Updated dependencies [7f42bd2]
+- Updated dependencies [52485d8]
+- Updated dependencies [635e0a9]
+  - @laynjs/core@0.4.0
+  - @laynjs/adapter-utils@0.4.0
+  - @laynjs/dom@0.4.0
+
 ## 0.3.1
 
 ### Patch Changes
