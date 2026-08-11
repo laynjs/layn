@@ -8,6 +8,7 @@ import type {
   LayoutResult,
   Measurements,
 } from '../types/index.js'
+import { mirrorExtent } from './direction.js'
 
 const measureRow = (
   items: readonly LayoutItem[],
@@ -50,7 +51,7 @@ export const justified = (options: JustifiedOptions = {}): LayoutAlgorithm => ({
     const { viewport, gap, measurements } = context
     const targetHeight = resolveTargetHeight(options)
     const maxHeight = options.maxRowHeight ?? Number.POSITIVE_INFINITY
-    const builder = positionsBuilder(items.length)
+    const builder = positionsBuilder(items.length, mirrorExtent(context))
 
     let top = 0
     let start = 0

@@ -1,5 +1,5 @@
 import type { LayoutAlgorithm } from './algorithm.js'
-import type { Gap, ItemId, Size, Viewport } from './common.js'
+import type { Direction, Gap, ItemId, Size, Viewport } from './common.js'
 import type { LayoutItem } from './item.js'
 import type { MeasuredEntry, MeasurementsOptions } from './measurement.js'
 import type { Positions, SerializedPositions } from './positions.js'
@@ -12,6 +12,7 @@ export interface EngineConfig {
   readonly items?: readonly LayoutItem[]
   readonly measurements?: MeasurementsOptions
   readonly measured?: ReadonlyArray<readonly [ItemId, Size]>
+  readonly direction?: Direction
 }
 
 export interface EngineSnapshot {
@@ -42,6 +43,7 @@ export interface SerializedLayout {
   readonly gap: Gap
   readonly viewport: Viewport
   readonly items: readonly LayoutItem[]
+  readonly direction?: Direction
   readonly measured: ReadonlyArray<readonly [ItemId, Size]>
   readonly positions: SerializedPositions
   readonly contentSize: Size

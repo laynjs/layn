@@ -1,5 +1,6 @@
 import { positionsBuilder } from '../positions/positions.js'
 import type { LayoutContext, LayoutItem, LayoutResult } from '../types/index.js'
+import { mirrorExtent } from './direction.js'
 import type { Packer } from './types.js'
 
 export const runPacking = (
@@ -11,7 +12,7 @@ export const runPacking = (
   const { viewport, gap, measurements } = context
   const containerWidth = Math.max(1, viewport.width)
   const packer = makePacker(containerWidth + gap.x)
-  const builder = positionsBuilder(items.length)
+  const builder = positionsBuilder(items.length, mirrorExtent(context))
   let bottom = 0
 
   for (let i = 0; i < items.length; i += 1) {

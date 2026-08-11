@@ -7,6 +7,7 @@ import type {
   MasonryOptions,
 } from '../types/index.js'
 import { resolveColumnCount, resolveTrackSize } from './column-count.js'
+import { mirrorExtent } from './direction.js'
 import type { MasonryState } from './types.js'
 
 const shortestColumnIndex = (heights: readonly number[]): number => {
@@ -79,7 +80,7 @@ export const masonry = (options: MasonryOptions = {}): LayoutAlgorithm => ({
 
     const carried = continueFrom(previous, columnCount, columnWidth, items.length)
     const columnHeights = carried?.columnHeights ?? new Array<number>(columnCount).fill(0)
-    const builder = carried?.builder ?? positionsBuilder(items.length)
+    const builder = carried?.builder ?? positionsBuilder(items.length, mirrorExtent(context))
     const startIndex = carried?.startIndex ?? 0
 
     for (let i = startIndex; i < items.length; i += 1) {

@@ -1,4 +1,4 @@
-import type { Gap, Size, Viewport } from './common.js'
+import type { Direction, Gap, Size, Viewport } from './common.js'
 import type { LayoutItem } from './item.js'
 import type { Measurements } from './measurement.js'
 import type { Positions } from './positions.js'
@@ -7,6 +7,7 @@ export interface LayoutContext {
   readonly viewport: Viewport
   readonly gap: Gap
   readonly measurements: Measurements
+  readonly direction?: Direction
 }
 
 export interface LayoutResult {

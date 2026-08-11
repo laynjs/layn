@@ -36,10 +36,14 @@ export const createEngine = (config: EngineConfig): LayoutEngine => {
   let items = config.items ?? []
   let viewport = config.viewport ?? DEFAULT_VIEWPORT
   let gap = config.gap ?? DEFAULT_GAP
+  const direction = config.direction
   let version = 0
 
   const listeners = new Set<() => void>()
-  const contextOf = (): LayoutContext => ({ viewport, gap, measurements })
+  const contextOf = (): LayoutContext =>
+    direction === undefined
+      ? { viewport, gap, measurements }
+      : { viewport, gap, measurements, direction }
 
   let lastResult = algorithm.layout(items, contextOf())
 
@@ -113,6 +117,7 @@ export const createEngine = (config: EngineConfig): LayoutEngine => {
       gap,
       viewport,
       items,
+      ...(direction !== undefined ? { direction } : {}),
       measured: measured.entries(),
       positions: {
         ids,

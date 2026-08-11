@@ -8,6 +8,7 @@ export interface PositionData {
   hs: Float64Array
   count: number
   capacity: number
+  mirror: number | undefined
 }
 
 export interface PositionsBuilder {

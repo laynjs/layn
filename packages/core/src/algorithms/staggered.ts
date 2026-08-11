@@ -8,6 +8,7 @@ import type {
   StaggeredOptions,
 } from '../types/index.js'
 import { resolveColumnCount, resolveTrackSize } from './column-count.js'
+import { mirrorExtent } from './direction.js'
 
 export const staggered = (options: StaggeredOptions = {}): LayoutAlgorithm => ({
   name: 'staggered',
@@ -19,7 +20,7 @@ export const staggered = (options: StaggeredOptions = {}): LayoutAlgorithm => ({
     const stagger = options.stagger ?? DEFAULT_STAGGER
     const offset = stagger * columnWidth
     const columnHeights = Array.from({ length: columnCount }, (_, c) => (c % 2 === 1 ? offset : 0))
-    const builder = positionsBuilder(items.length)
+    const builder = positionsBuilder(items.length, mirrorExtent(context))
 
     for (let i = 0; i < items.length; i += 1) {
       const item = items[i]

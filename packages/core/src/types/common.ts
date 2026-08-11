@@ -1,5 +1,7 @@
 export type ItemId = string | number
 
+export type Direction = 'ltr' | 'rtl'
+
 export interface Size {
   readonly width: number
   readonly height: number

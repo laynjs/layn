@@ -289,6 +289,61 @@ describe('engine', () => {
     expect(client.getSnapshot().contentSize).toEqual(server.getSnapshot().contentSize)
   })
 
+  it('lays out right-to-left when the config asks for it', () => {
+    const ltr = createEngine({
+      algorithm: masonry({ columns: 2 }),
+      gap: { x: 20, y: 20 },
+      viewport: { width: 320, height: 800 },
+      items: squares(4),
+    })
+    const rtl = createEngine({
+      algorithm: masonry({ columns: 2 }),
+      gap: { x: 20, y: 20 },
+      viewport: { width: 320, height: 800 },
+      items: squares(4),
+      direction: 'rtl',
+    })
+
+    expect(ltr.getSnapshot().positions.rectOf(0)?.x).toBe(0)
+    expect(rtl.getSnapshot().positions.rectOf(0)?.x).toBe(170)
+    expect(rtl.getSnapshot().contentSize).toEqual(ltr.getSnapshot().contentSize)
+  })
+
+  it('carries the direction through serialize and hydrate', () => {
+    const server = createEngine({
+      algorithm: masonry({ columns: 3 }),
+      gap: { x: 12, y: 12 },
+      viewport: { width: 600, height: 800 },
+      items: squares(30),
+      direction: 'rtl',
+    })
+    const serialized = server.serialize()
+
+    expect(serialized.direction).toBe('rtl')
+
+    const client = hydrateEngine(serialized, { algorithm: masonry({ columns: 3 }), verify: true })
+
+    expect(entriesOf(client.getSnapshot().positions)).toEqual(
+      entriesOf(server.getSnapshot().positions),
+    )
+  })
+
+  it('keeps a right-to-left layout stable across an incremental append', () => {
+    const engine = createEngine({
+      algorithm: masonry({ columns: 3 }),
+      gap: { x: 12, y: 12 },
+      viewport: { width: 600, height: 800 },
+      items: squares(12),
+      direction: 'rtl',
+    })
+    const before = engine.getSnapshot().positions.rectOf(0)
+
+    engine.appendItems(squaresFrom(12, 6))
+
+    expect(engine.getSnapshot().positions.rectOf(0)).toEqual(before)
+    expect(engine.getSnapshot().positions.count).toBe(18)
+  })
+
   it('rejects hydrating an unknown serialization version', () => {
     const server = createEngine({
       algorithm: masonry({ columns: 3 }),

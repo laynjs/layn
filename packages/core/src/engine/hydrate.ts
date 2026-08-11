@@ -53,6 +53,7 @@ export const hydrateEngine = (
     viewport: serialized.viewport,
     items: serialized.items,
     measured: serialized.measured,
+    ...(serialized.direction !== undefined ? { direction: serialized.direction } : {}),
   })
 
   if (options.verify === true) {

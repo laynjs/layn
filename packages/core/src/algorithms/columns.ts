@@ -7,6 +7,7 @@ import type {
   LayoutResult,
 } from '../types/index.js'
 import { resolveColumnCount, resolveTrackSize } from './column-count.js'
+import { mirrorExtent } from './direction.js'
 
 export const columns = (options: ColumnsOptions = {}): LayoutAlgorithm => ({
   name: 'columns',
@@ -16,7 +17,7 @@ export const columns = (options: ColumnsOptions = {}): LayoutAlgorithm => ({
     const columnCount = resolveColumnCount(options, viewport.width, gap.x)
     const columnWidth = resolveTrackSize(viewport.width, columnCount, gap.x)
     const columnHeights = new Array<number>(columnCount).fill(0)
-    const builder = positionsBuilder(items.length)
+    const builder = positionsBuilder(items.length, mirrorExtent(context))
 
     for (let i = 0; i < items.length; i += 1) {
       const item = items[i]

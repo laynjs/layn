@@ -8,6 +8,7 @@ import type {
   MagazineOptions,
   MagazineRow,
 } from '../types/index.js'
+import { mirrorExtent } from './direction.js'
 
 const resolveUnit = (options: MagazineOptions): number =>
   options.rowHeight !== undefined && options.rowHeight > 0
@@ -29,7 +30,7 @@ export const magazine = (options: MagazineOptions = {}): LayoutAlgorithm => ({
     const { viewport, gap } = context
     const unit = resolveUnit(options)
     const templates: readonly MagazineRow[] = options.templates ?? DEFAULT_MAGAZINE_TEMPLATES
-    const builder = positionsBuilder(items.length)
+    const builder = positionsBuilder(items.length, mirrorExtent(context))
 
     let top = 0
     let start = 0

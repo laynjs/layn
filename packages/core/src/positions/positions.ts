@@ -91,7 +91,7 @@ const builderFor = (data: PositionData): PositionsBuilder => ({
     }
     const index = data.count
     data.ids[index] = id
-    data.xs[index] = x
+    data.xs[index] = data.mirror === undefined ? x : data.mirror - x - width
     data.ys[index] = y
     data.ws[index] = width
     data.hs[index] = height
@@ -102,7 +102,7 @@ const builderFor = (data: PositionData): PositionsBuilder => ({
   },
 })
 
-export const positionsBuilder = (capacity: number): PositionsBuilder => {
+export const positionsBuilder = (capacity: number, mirror?: number): PositionsBuilder => {
   const size = Math.max(MIN_CAPACITY, capacity)
   return builderFor({
     ids: [],
@@ -112,6 +112,7 @@ export const positionsBuilder = (capacity: number): PositionsBuilder => {
     hs: new Float64Array(size),
     count: 0,
     capacity: size,
+    mirror,
   })
 }
 
