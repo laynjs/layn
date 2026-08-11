@@ -23,6 +23,14 @@ export function Inspector({ spec, settings, onChange }: InspectorProps) {
 
       <Section title="Geometry">
         {spec.usesCount && (
+          <SwitchRow
+            label="Responsive"
+            hint="Pick the track count from a breakpoint map read against the container size, instead of a fixed number."
+            checked={settings.responsive}
+            onChange={(responsive) => onChange({ responsive })}
+          />
+        )}
+        {spec.usesCount && !settings.responsive && (
           <NumberField
             label={spec.axis === 'horizontal' ? 'Rows' : 'Columns'}
             hint={
@@ -57,6 +65,16 @@ export function Inspector({ spec, settings, onChange }: InspectorProps) {
           suffix="px"
           onChange={(gap) => onChange({ gap })}
         />
+        {spec.usesSpan && (
+          <NumberField
+            label="Hero every"
+            hint="Give every Nth item span: 2, making it a 2x2 block instead of following the pattern. 0 turns hero tiles off."
+            value={settings.heroEvery}
+            min={0}
+            max={20}
+            onChange={(heroEvery) => onChange({ heroEvery })}
+          />
+        )}
       </Section>
 
       <Section title="Data">
@@ -79,6 +97,14 @@ export function Inspector({ spec, settings, onChange }: InspectorProps) {
           suffix="px"
           onChange={(overscan) => onChange({ overscan })}
         />
+        {spec.axis === 'vertical' && (
+          <SwitchRow
+            label="Sections"
+            hint="Group the items under headers that stick to the top while their section scrolls."
+            checked={settings.sections}
+            onChange={(value) => onChange({ sections: value })}
+          />
+        )}
       </Section>
 
       <Section title="Appearance">
@@ -102,6 +128,12 @@ export function Inspector({ spec, settings, onChange }: InspectorProps) {
       </Section>
 
       <Section title="Behavior">
+        <SwitchRow
+          label="Right to left"
+          hint="Mirror the layout across the container. The engine flips the coordinates, so scrolling and dragging stay correct."
+          checked={settings.rtl}
+          onChange={(rtl) => onChange({ rtl })}
+        />
         <SwitchRow
           label="Animate"
           hint="Animate items to their new positions on every layout change."

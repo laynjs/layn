@@ -1,7 +1,9 @@
 import type { ItemId } from '@laynjs/core'
+import { sections } from '@laynjs/core'
 import { useLayn } from '@laynjs/react'
 import { type CSSProperties, type MutableRefObject, useEffect, useMemo, useState } from 'react'
-import { type AlgoSpec, makeTiles, toneOf } from '../lib/layouts'
+import { RESPONSIVE_COLUMNS } from '../lib/constants'
+import { type AlgoSpec, isHeader, makeTiles, toneOf } from '../lib/layouts'
 import type { Settings } from '../lib/settings'
 
 interface GridProps {
@@ -16,10 +18,16 @@ export function Grid({ spec, settings, scrollApi, onRendered, onLoadMore }: Grid
   const { columns, size, gap, count, overscan, showImages, animate, shuffleSeed, prepended } =
     settings
   const total = count + settings.loaded
-  const algorithm = useMemo(() => spec.make({ columns, size }), [spec, columns, size])
+  const tracks = settings.responsive ? RESPONSIVE_COLUMNS : columns
+  const grouped = settings.sections && spec.axis === 'vertical'
+  const algorithm = useMemo(() => {
+    const base = spec.make({ columns: tracks, size })
+    return grouped ? sections(base, { isHeader }) : base
+  }, [spec, tracks, size, grouped])
+  const heroEvery = spec.usesSpan ? settings.heroEvery : 0
   const base = useMemo(
-    () => makeTiles(total, shuffleSeed, prepended, settings.removed),
-    [total, shuffleSeed, prepended, settings.removed],
+    () => makeTiles(total, shuffleSeed, prepended, settings.removed, heroEvery, grouped),
+    [total, shuffleSeed, prepended, settings.removed, heroEvery, grouped],
   )
   const [items, setItems] = useState(base)
   useEffect(() => {
@@ -43,9 +51,11 @@ export function Grid({ spec, settings, scrollApi, onRendered, onLoadMore }: Grid
     axis: spec.axis,
     overscan,
     animate,
+    ...(settings.rtl ? { direction: 'rtl' as const } : {}),
     label: `${spec.label} layout`,
     ...(settings.infinite ? { onReachEnd: onLoadMore } : {}),
     ...(settings.reorder ? { onReorder: reorder } : {}),
+    ...(grouped ? { stickyHeaders: isHeader } : {}),
   })
 
   useEffect(() => {
@@ -74,7 +84,17 @@ export function Grid({ spec, settings, scrollApi, onRendered, onLoadMore }: Grid
     <div {...layn.containerProps} className={scrollClass}>
       <div {...layn.contentProps}>
         {layn.items.map((entry) =>
-          showImages ? (
+          entry.item.data?.header === true ? (
+            <div
+              key={entry.id}
+              ref={entry.ref}
+              className="tile-header"
+              {...entry.a11y}
+              style={entry.style}
+            >
+              <span>{entry.item.data.label}</span>
+            </div>
+          ) : showImages ? (
             <div
               key={entry.id}
               ref={entry.ref}

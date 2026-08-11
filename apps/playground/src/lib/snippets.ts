@@ -1,8 +1,9 @@
+import type { TrackCount } from '@laynjs/core'
 import type { AlgoSpec } from './layouts'
 
 export interface SnippetContext {
   readonly spec: AlgoSpec
-  readonly columns: number
+  readonly columns: TrackCount
   readonly size: number
   readonly gap: number
   readonly overscan: number

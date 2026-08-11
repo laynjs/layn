@@ -4,17 +4,27 @@ import {
   horizontalMasonry,
   justified,
   type LayoutAlgorithm,
+  type LayoutItem,
   magazine,
   masonry,
   packing,
   quilt,
   staggered,
+  type TrackCount,
 } from '@laynjs/core'
+import { HEADER_HEIGHT, HERO_SPAN, NO_SPAN, PLAIN_SPAN, SECTION_SIZE } from './constants'
 
 export interface AlgoParams {
-  readonly columns: number
+  readonly columns: TrackCount
   readonly size: number
 }
+
+const trackCode = (columns: TrackCount): string =>
+  typeof columns === 'number'
+    ? String(columns)
+    : `{ ${Object.entries(columns)
+        .map(([at, count]) => `${at}: ${count}`)
+        .join(', ')} }`
 
 export interface AlgoSpec {
   readonly id: string
@@ -22,6 +32,7 @@ export interface AlgoSpec {
   readonly axis: 'vertical' | 'horizontal'
   readonly usesCount: boolean
   readonly usesSize: boolean
+  readonly usesSpan: boolean
   readonly short?: string
   readonly sizeLabel?: string
   readonly codeName: string
@@ -36,9 +47,10 @@ export const ALGORITHMS: AlgoSpec[] = [
     axis: 'vertical',
     usesCount: true,
     usesSize: false,
+    usesSpan: false,
     codeName: 'masonry',
     make: ({ columns }) => masonry({ columns }),
-    code: ({ columns }) => `masonry({ columns: ${columns} })`,
+    code: ({ columns }) => `masonry({ columns: ${trackCode(columns)} })`,
   },
   {
     id: 'columns',
@@ -46,9 +58,10 @@ export const ALGORITHMS: AlgoSpec[] = [
     axis: 'vertical',
     usesCount: true,
     usesSize: false,
+    usesSpan: false,
     codeName: 'columns',
     make: ({ columns }) => columnsAlgorithm({ columns }),
-    code: ({ columns }) => `columns({ columns: ${columns} })`,
+    code: ({ columns }) => `columns({ columns: ${trackCode(columns)} })`,
   },
   {
     id: 'justified',
@@ -56,6 +69,7 @@ export const ALGORITHMS: AlgoSpec[] = [
     axis: 'vertical',
     usesCount: false,
     usesSize: true,
+    usesSpan: false,
     sizeLabel: 'Row height',
     codeName: 'justified',
     make: ({ size }) => justified({ targetRowHeight: size }),
@@ -67,9 +81,10 @@ export const ALGORITHMS: AlgoSpec[] = [
     axis: 'vertical',
     usesCount: true,
     usesSize: false,
+    usesSpan: false,
     codeName: 'staggered',
     make: ({ columns }) => staggered({ columns }),
-    code: ({ columns }) => `staggered({ columns: ${columns} })`,
+    code: ({ columns }) => `staggered({ columns: ${trackCode(columns)} })`,
   },
   {
     id: 'packing',
@@ -77,6 +92,7 @@ export const ALGORITHMS: AlgoSpec[] = [
     axis: 'vertical',
     usesCount: false,
     usesSize: true,
+    usesSpan: false,
     sizeLabel: 'Tile size',
     codeName: 'packing',
     make: ({ size }) => packing({ baseSize: size }),
@@ -89,6 +105,7 @@ export const ALGORITHMS: AlgoSpec[] = [
     axis: 'vertical',
     usesCount: false,
     usesSize: true,
+    usesSpan: false,
     sizeLabel: 'Tile size',
     codeName: 'binPacking',
     make: ({ size }) => binPacking({ baseSize: size }),
@@ -100,9 +117,10 @@ export const ALGORITHMS: AlgoSpec[] = [
     axis: 'vertical',
     usesCount: true,
     usesSize: false,
+    usesSpan: true,
     codeName: 'quilt',
     make: ({ columns }) => quilt({ columns }),
-    code: ({ columns }) => `quilt({ columns: ${columns} })`,
+    code: ({ columns }) => `quilt({ columns: ${trackCode(columns)} })`,
   },
   {
     id: 'magazine',
@@ -110,6 +128,7 @@ export const ALGORITHMS: AlgoSpec[] = [
     axis: 'vertical',
     usesCount: false,
     usesSize: true,
+    usesSpan: false,
     sizeLabel: 'Row height',
     codeName: 'magazine',
     make: ({ size }) => magazine({ rowHeight: size }),
@@ -122,9 +141,10 @@ export const ALGORITHMS: AlgoSpec[] = [
     axis: 'horizontal',
     usesCount: true,
     usesSize: false,
+    usesSpan: false,
     codeName: 'horizontalMasonry',
     make: ({ columns }) => horizontalMasonry({ rows: columns }),
-    code: ({ columns }) => `horizontalMasonry({ rows: ${columns} })`,
+    code: ({ columns }) => `horizontalMasonry({ rows: ${trackCode(columns)} })`,
   },
 ]
 
@@ -242,11 +262,14 @@ export const toneOf = (index: number): number =>
 export interface TileData {
   readonly src: string
   readonly label: string
+  readonly header?: boolean
 }
 
 export interface Tile {
   readonly id: number
-  readonly aspectRatio: number
+  readonly aspectRatio?: number
+  readonly span?: number
+  readonly height?: number
   readonly data: TileData
 }
 
@@ -265,27 +288,66 @@ const shuffled = (tiles: Tile[], seed: number): Tile[] => {
   return tiles
 }
 
-const tileOf = (id: number, label: string): Tile => {
+const tileOf = (id: number, label: string, span = NO_SPAN): Tile => {
   const aspectRatio = ratioSeed(id)
   const width = 420
   const height = Math.round(width / aspectRatio)
-  return {
-    id,
-    aspectRatio,
-    data: { src: `https://picsum.photos/seed/layn${id}/${width}/${height}`, label },
-  }
+  const data = { src: `https://picsum.photos/seed/layn${id}/${width}/${height}`, label }
+  return span === NO_SPAN ? { id, aspectRatio, data } : { id, aspectRatio, span, data }
 }
 
 const PREPEND_ID_BASE = 100000
 
-const makePrepended = (count: number): Tile[] =>
-  Array.from({ length: count }, (_, index) => tileOf(PREPEND_ID_BASE + index, `+${index + 1}`))
+const makePrepended = (count: number, heroEvery: number): Tile[] =>
+  Array.from({ length: count }, (_, index) =>
+    tileOf(PREPEND_ID_BASE + index, `+${index + 1}`, heroEvery > 0 ? PLAIN_SPAN : NO_SPAN),
+  )
 
-export const makeTiles = (count: number, seed = 0, prepended = 0, removed = 0): Tile[] => {
+const spanOf = (index: number, heroEvery: number): number => {
+  if (heroEvery === 0) {
+    return NO_SPAN
+  }
+  return index % heroEvery === 0 ? HERO_SPAN : PLAIN_SPAN
+}
+
+export const isHeader = (item: LayoutItem): boolean =>
+  (item.data as TileData | undefined)?.header === true
+
+const headerAt = (index: number): Tile => ({
+  id: -1 - index,
+  height: HEADER_HEIGHT,
+  data: { src: '', label: `Section ${index + 1}`, header: true },
+})
+
+const withSections = (tiles: Tile[]): Tile[] => {
+  const out: Tile[] = []
+  for (let i = 0; i < tiles.length; i += 1) {
+    if (i % SECTION_SIZE === 0) {
+      out.push(headerAt(i / SECTION_SIZE))
+    }
+    const tile = tiles[i]
+    if (tile !== undefined) {
+      out.push(tile)
+    }
+  }
+  return out
+}
+
+export const makeTiles = (
+  count: number,
+  seed = 0,
+  prepended = 0,
+  removed = 0,
+  heroEvery = 0,
+  grouped = false,
+): Tile[] => {
   const tiles = [
-    ...makePrepended(prepended),
-    ...Array.from({ length: count }, (_, index) => tileOf(index, String(index))),
+    ...makePrepended(prepended, heroEvery),
+    ...Array.from({ length: count }, (_, index) =>
+      tileOf(index, String(index), spanOf(index, heroEvery)),
+    ),
   ]
   const kept = removed === 0 ? tiles : tiles.slice(removed)
-  return seed === 0 ? kept : shuffled(kept, seed)
+  const ordered = seed === 0 ? kept : shuffled(kept, seed)
+  return grouped ? withSections(ordered) : ordered
 }

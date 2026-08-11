@@ -5,6 +5,10 @@ export interface Settings {
   readonly count: number
   readonly size: number
   readonly overscan: number
+  readonly responsive: boolean
+  readonly rtl: boolean
+  readonly sections: boolean
+  readonly heroEvery: number
   readonly radius: number
   readonly showImages: boolean
   readonly animate: boolean
@@ -23,6 +27,10 @@ export const DEFAULT_SETTINGS: Settings = {
   count: 400,
   size: 200,
   overscan: 400,
+  responsive: false,
+  rtl: false,
+  sections: false,
+  heroEvery: 0,
   radius: 10,
   showImages: false,
   animate: true,

@@ -5,7 +5,12 @@ import { Grid } from './components/Grid'
 import { Inspector } from './components/Inspector'
 import { Toolbar } from './components/Toolbar'
 import { TopBar } from './components/TopBar'
-import { INFINITE_PAGE_SIZE, PREPEND_BATCH_SIZE, REMOVE_BATCH_SIZE } from './lib/constants'
+import {
+  INFINITE_PAGE_SIZE,
+  PREPEND_BATCH_SIZE,
+  REMOVE_BATCH_SIZE,
+  RESPONSIVE_COLUMNS,
+} from './lib/constants'
 import { ALGORITHMS, type Preset } from './lib/layouts'
 import { DEFAULT_SETTINGS, type Settings } from './lib/settings'
 import { applyTheme, readTheme, watchSystemTheme } from './lib/theme'
@@ -66,7 +71,7 @@ export function Playground() {
           <Toolbar activePreset={preset} total={total} rendered={rendered} onPreset={applyPreset} />
           <main className="stage">
             <Grid
-              key={spec.axis}
+              key={`${spec.axis}-${settings.rtl}`}
               spec={spec}
               settings={settings}
               scrollApi={scrollApi}
@@ -95,7 +100,7 @@ export function Playground() {
           onClose={() => setCodeOpen(false)}
           ctx={{
             spec,
-            columns: settings.columns,
+            columns: settings.responsive ? RESPONSIVE_COLUMNS : settings.columns,
             size: settings.size,
             gap: settings.gap,
             overscan: settings.overscan,
