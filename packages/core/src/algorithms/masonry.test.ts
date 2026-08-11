@@ -32,6 +32,17 @@ describe('masonry', () => {
     expect(result.positions.rectOf(0)?.width).toBeCloseTo(155)
   })
 
+  it('changes its column count with the container width when given breakpoints', () => {
+    const algorithm = masonry({ columns: { 0: 1, 600: 2, 1000: 4 } })
+    const narrow = algorithm.layout(squares(4), context(400, 0))
+    const wide = algorithm.layout(squares(4), context(1200, 0))
+
+    expect(narrow.positions.rectOf(0)?.width).toBe(400)
+    expect(narrow.positions.rectOf(1)?.x).toBe(0)
+    expect(wide.positions.rectOf(0)?.width).toBe(300)
+    expect(wide.positions.rectOf(1)?.x).toBe(300)
+  })
+
   it('incremental append reproduces a full layout exactly', () => {
     const ctx = context(600, 12)
     const all = squares(40)
