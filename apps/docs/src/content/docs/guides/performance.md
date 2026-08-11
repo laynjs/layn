@@ -24,6 +24,11 @@ Time to compute a complete layout for a given item count (single recompute):
 `binPacking` is the deliberate premium tight-packer. When you need speed at very large counts, use
 `packing`, which is O(n).
 
+[`sections`](/guides/sections/) wraps another algorithm and runs it once per group, then merges the
+results, so it costs roughly 3-4x the algorithm it wraps: a 50,000-item grouped masonry layout is
+about 3.9 ms against 1.1 ms ungrouped. It stays linear in the number of items. Pinning a header costs
+nothing measurable - under a microsecond per scroll frame, even with two thousand sections.
+
 ## Engine primitives
 
 On the masonry path, at 100,000 items:

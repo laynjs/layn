@@ -69,6 +69,7 @@ export default defineConfig({
           label: 'Guides',
           items: [
             { label: 'Styling', slug: 'guides/styling' },
+            { label: 'Sections', slug: 'guides/sections' },
             { label: 'Animations', slug: 'guides/animations' },
             { label: 'Scrolling', slug: 'guides/scrolling' },
             { label: 'Infinite scroll', slug: 'guides/infinite-scroll' },
@@ -76,6 +77,14 @@ export default defineConfig({
             { label: 'SSR & hydration', slug: 'guides/ssr' },
             { label: 'Accessibility', slug: 'guides/accessibility' },
             { label: 'Performance', slug: 'guides/performance' },
+          ],
+        },
+        {
+          label: 'Recipes',
+          items: [
+            { label: 'Photo gallery', slug: 'recipes/gallery' },
+            { label: 'Infinite feed', slug: 'recipes/feed' },
+            { label: 'Dashboard', slug: 'recipes/dashboard' },
           ],
         },
         {

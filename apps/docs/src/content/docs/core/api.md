@@ -23,6 +23,7 @@ Creates a stateful engine. See [the engine](/core/engine/).
 | `gap` | `Gap` | no | `{ x, y }` spacing. Defaults to `{ x: 0, y: 0 }`. |
 | `viewport` | `Viewport` | no | `{ width, height }` of the container. |
 | `measurements` | `MeasurementsOptions` | no | Estimator and fallback ratio. |
+| `direction` | `Direction` | no | `'rtl'` mirrors the layout. Defaults to `'ltr'`. |
 
 ## LayoutEngine
 
@@ -103,14 +104,19 @@ interface LayoutItem<TData = unknown> {
   aspectRatio?: number;
   width?: number;
   height?: number;
+  span?: number;
   data?: TData;
 }
+
+type Breakpoints = Readonly<Record<number, number>>;
+type TrackCount = number | Breakpoints;
 
 interface Rect { x: number; y: number; width: number; height: number; }
 interface Size { width: number; height: number; }
 interface Gap { x: number; y: number; }
 type Viewport = Size;
 type ScrollAxis = 'vertical' | 'horizontal';
+type Direction = 'ltr' | 'rtl';
 
 interface EngineSnapshot {
   version: number;
@@ -120,6 +126,17 @@ interface EngineSnapshot {
   items: readonly LayoutItem[];
 }
 ```
+
+`span` makes an item a square block that many cells wide and tall in `quilt`, overriding that
+algorithm's own pattern. Every other algorithm ignores it - see
+[hero tiles](/core/algorithms/#hero-tiles) for why.
+
+`TrackCount` is what every `columns` (and `rows`) option accepts: a fixed number, or a map of
+container width to count. See [responsive column counts](/core/algorithms/#responsive-column-counts).
+
+`Direction` set to `'rtl'` mirrors every rect across the container in the engine, so virtualization
+and drag stay correct. It is carried through `serialize`/`hydrateEngine`. See
+[right-to-left](/core/algorithms/#right-to-left).
 
 ## LaynError
 

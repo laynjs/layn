@@ -48,6 +48,8 @@ Every `useLayn` accepts these (Vue and Solid also accept reactive wrappers for t
 | `onReorder` | `(from, to) => void` | Enables drag-to-reorder. See the [drag and drop guide](/guides/drag-and-drop/). Not available in Qwik. |
 | `onDragStart` / `onDragEnd` | `(id) => void` | Drag lifecycle callbacks. |
 | `measurements` | `MeasurementsOptions` | Estimator and fallback ratio. |
+| `direction` | `'ltr' \| 'rtl'` | Mirror the layout for [right-to-left](/core/algorithms/#right-to-left). Read once, at creation. |
+| `stickyHeaders` | `(item) => boolean` | Pin the current [section](/guides/sections/) header while it scrolls. Not in Qwik. |
 
 Every adapter also returns **`scrollToItem(id, options?)`** and **`scrollToIndex(index, options?)`**
 for programmatic scrolling, with `align: 'start' | 'center' | 'end'` and an optional smooth
