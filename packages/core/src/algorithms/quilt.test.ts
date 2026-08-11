@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { entriesOf, plain } from '../__fixtures__/items.js'
 import { createMeasurements } from '../measurement/index.js'
-import type { LayoutContext } from '../types/index.js'
+import type { LayoutContext, LayoutItem } from '../types/index.js'
 import { quilt } from './quilt.js'
 
 const context = (width: number, gap: number): LayoutContext => ({
@@ -71,6 +71,53 @@ describe('quilt', () => {
           cells.add(key)
           expect(col0 + dc).toBeLessThan(columns)
         }
+      }
+    }
+  })
+
+  it('lets an item override the pattern with its own square span', () => {
+    const items: LayoutItem[] = [{ id: 0, span: 2 }, { id: 1 }, { id: 2 }]
+    const result = quilt({ columns: 4, pattern: [[1, 1]] }).layout(items, context(400, 0))
+
+    expect(result.positions.rectOf(0)).toEqual({ x: 0, y: 0, width: 200, height: 200 })
+    expect(result.positions.rectOf(1)).toEqual({ x: 200, y: 0, width: 100, height: 100 })
+    expect(result.positions.rectOf(2)).toEqual({ x: 300, y: 0, width: 100, height: 100 })
+  })
+
+  it('clamps an item span wider than the grid, keeping it square', () => {
+    const items: LayoutItem[] = [{ id: 0, span: 9 }]
+    const result = quilt({ columns: 3, pattern: [[1, 1]] }).layout(items, context(300, 0))
+
+    expect(result.positions.rectOf(0)).toEqual({ x: 0, y: 0, width: 300, height: 300 })
+  })
+
+  it('leaves no empty cell when item spans and the pattern are mixed', () => {
+    const columns = 4
+    const cellSize = 100
+    const items: LayoutItem[] = Array.from({ length: 300 }, (_, index) =>
+      index % 5 === 0 ? { id: index, span: index % 15 === 0 ? 3 : 2 } : { id: index },
+    )
+    const result = quilt({ columns }).layout(items, context(400, 0))
+    const cells = new Set<string>()
+
+    for (let i = 0; i < result.positions.count; i += 1) {
+      const rect = result.positions.rectAt(i)
+      const col0 = Math.round(rect.x / cellSize)
+      const row0 = Math.round(rect.y / cellSize)
+      for (let dr = 0; dr < Math.round(rect.height / cellSize); dr += 1) {
+        for (let dc = 0; dc < Math.round(rect.width / cellSize); dc += 1) {
+          const key = `${row0 + dr}:${col0 + dc}`
+          expect(cells.has(key)).toBe(false)
+          cells.add(key)
+          expect(col0 + dc).toBeLessThan(columns)
+        }
+      }
+    }
+
+    const rows = Math.round(result.contentSize.height / cellSize)
+    for (let row = 0; row < rows - 3; row += 1) {
+      for (let column = 0; column < columns; column += 1) {
+        expect(cells.has(`${row}:${column}`)).toBe(true)
       }
     }
   })

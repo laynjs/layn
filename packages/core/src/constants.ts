@@ -6,6 +6,8 @@ export const MEASURED_WIDTH_EPSILON = 0.5
 
 export const MIN_COLUMN_COUNT = 1
 
+export const MIN_SPAN = 1
+
 export const DEFAULT_COLUMN_COUNT = 1
 
 export const SERIALIZATION_VERSION = 1

@@ -9,6 +9,8 @@ import type {
   QuiltSpan,
 } from '../types/index.js'
 import { resolveColumnCount, resolveTrackSize } from './column-count.js'
+import { mirrorExtent } from './direction.js'
+import { blockSpan } from './span.js'
 
 const createGrid = (columns: number) => {
   const rows: boolean[][] = []
@@ -66,6 +68,14 @@ const spanAt = (pattern: readonly QuiltSpan[], index: number, columns: number): 
   return [Math.max(1, Math.min(columns, span[0])), Math.max(1, span[1])]
 }
 
+const spanOf = (
+  item: LayoutItem,
+  pattern: readonly QuiltSpan[],
+  index: number,
+  columns: number,
+): QuiltSpan =>
+  item.span === undefined ? spanAt(pattern, index, columns) : blockSpan(item.span, columns)
+
 export const quilt = (options: QuiltOptions = {}): LayoutAlgorithm => ({
   name: 'quilt',
   capabilities: { incremental: false, requiresMeasuredHeight: false },
@@ -75,7 +85,7 @@ export const quilt = (options: QuiltOptions = {}): LayoutAlgorithm => ({
     const cell = resolveTrackSize(viewport.width, columns, gap.x)
     const pattern = options.pattern ?? DEFAULT_QUILT_PATTERN
     const grid = createGrid(columns)
-    const builder = positionsBuilder(items.length)
+    const builder = positionsBuilder(items.length, mirrorExtent(context))
     let bottom = 0
 
     for (let i = 0; i < items.length; i += 1) {
@@ -83,7 +93,7 @@ export const quilt = (options: QuiltOptions = {}): LayoutAlgorithm => ({
       if (item === undefined) {
         continue
       }
-      const [cs, rs] = spanAt(pattern, i, columns)
+      const [cs, rs] = spanOf(item, pattern, i, columns)
       const { row, column } = grid.claim(cs, rs)
       const left = column * (cell + gap.x)
       const top = row * (cell + gap.y)
