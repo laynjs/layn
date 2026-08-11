@@ -3,6 +3,7 @@ import { createDragController } from '../dnd/index.js'
 import { resolveEnvironment } from '../environment/index.js'
 import { createSizeObserver } from '../measure/index.js'
 import { createReachEndWatcher, rafThrottle, scrollOffsetFor } from '../scroll/index.js'
+import { stickyFor, withPinned } from '../sticky/index.js'
 import { isElement, readOrigin, readScrollWindow, readViewportSize } from '../target/index.js'
 import { createTransitionRunner, resolveTransitionConfig } from '../transitions/index.js'
 import type {
@@ -48,7 +49,8 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
     const extent = axis === 'vertical' ? content.height : content.width
     const start = Math.min(window.start, Math.max(0, extent - window.size))
     reachEnd?.check(start, window.size, extent)
-    return engine.getVisible({ start, size: window.size }, { axis, overscan })
+    const indices = engine.getVisible({ start, size: window.size }, { axis, overscan })
+    return withPinned(indices, sticky, start)
   }
 
   const notify = (): void => {
@@ -64,6 +66,7 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
     const itemsChanged = snapshot.items !== lastItems
     lastPositions = next
     lastItems = snapshot.items
+    sticky?.refresh()
     visible = readVisible()
     const dragged = drag?.activeId()
     runner?.play({
@@ -106,6 +109,7 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
   }
 
   const sizeObserver = createSizeObserver(environment, (entries) => engine.measure(entries))
+  const sticky = stickyFor(engine, sizeObserver.elementOf, options.stickyHeaders)
   const runner = createTransitionRunner(environment, options.animate)
   const reachEnd = createReachEndWatcher(environment, options.onReachEnd, options.reachEndThreshold)
   const drag = createDragController({
@@ -143,6 +147,7 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
   scrollTarget.addEventListener('scroll', scroll.run, { passive: true })
 
   applyViewport()
+  sticky?.refresh()
   lastPositions = engine.getSnapshot().positions
   lastItems = engine.getSnapshot().items
   const unsubscribeEngine = engine.subscribe(onLayoutChange)
@@ -173,6 +178,7 @@ export const bindEngine = (engine: LayoutEngine, options: BindOptions): EngineBi
     },
     destroy: () => {
       drag?.stop()
+      sticky?.release()
       runner?.stop()
       reachEnd?.stop()
       scrollTarget.removeEventListener('scroll', scroll.run)

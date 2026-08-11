@@ -1,4 +1,4 @@
-import type { ItemId, ScrollAxis } from '@laynjs/core'
+import type { ItemId, LayoutItem, ScrollAxis } from '@laynjs/core'
 import type { DragOptions } from './dnd.js'
 import type { DomEnvironment } from './environment.js'
 import type { ScrollTarget } from './target.js'
@@ -14,6 +14,7 @@ export interface BindOptions {
   readonly onReachEnd?: () => void
   readonly reachEndThreshold?: number
   readonly drag?: DragOptions
+  readonly stickyHeaders?: (item: LayoutItem) => boolean
   readonly environment?: Partial<DomEnvironment>
 }
 

@@ -15,3 +15,7 @@ export const DEFAULT_REACH_END_THRESHOLD = 200
 export const DRAGGING_ATTR = 'data-layn-dragging'
 
 export const DRAG_Z_INDEX = 1
+
+export const STICKY_ATTR = 'data-layn-stuck'
+
+export const STICKY_Z_INDEX = 2
