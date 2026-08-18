@@ -152,6 +152,12 @@ export function Inspector({ spec, settings, onChange }: InspectorProps) {
           checked={settings.infinite}
           onChange={(infinite) => onChange({ infinite, loaded: 0 })}
         />
+        <SwitchRow
+          label="Devtools"
+          hint="Draw the engine's own rectangles over the grid: green where a tile has been measured, amber where its size is still derived from data."
+          checked={settings.devtools}
+          onChange={(devtools) => onChange({ devtools })}
+        />
       </Section>
     </aside>
   )

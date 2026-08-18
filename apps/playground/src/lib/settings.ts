@@ -17,6 +17,7 @@ export interface Settings {
   readonly removed: number
   readonly reorder: boolean
   readonly infinite: boolean
+  readonly devtools: boolean
   readonly loaded: number
 }
 
@@ -39,5 +40,6 @@ export const DEFAULT_SETTINGS: Settings = {
   removed: 0,
   reorder: false,
   infinite: false,
+  devtools: false,
   loaded: 0,
 }

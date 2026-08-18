@@ -1,7 +1,16 @@
 import type { ItemId } from '@laynjs/core'
 import { sections } from '@laynjs/core'
+import { createDevtools } from '@laynjs/dom'
 import { useLayn } from '@laynjs/react'
-import { type CSSProperties, type MutableRefObject, useEffect, useMemo, useState } from 'react'
+import {
+  type CSSProperties,
+  type MutableRefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { RESPONSIVE_COLUMNS } from '../lib/constants'
 import { type AlgoSpec, isHeader, makeTiles, toneOf } from '../lib/layouts'
 import type { Settings } from '../lib/settings'
@@ -59,15 +68,41 @@ export function Grid({ spec, settings, scrollApi, onRendered, onLoadMore }: Grid
   })
 
   useEffect(() => {
-    scrollApi.current = (id) => layn.scrollToItem(id, { align: 'center', behavior: 'smooth' })
+    scrollApi.current = (index) =>
+      layn.scrollToIndex(index, { align: 'center', behavior: 'smooth' })
     return () => {
       scrollApi.current = undefined
     }
-  }, [scrollApi, layn.scrollToItem])
+  }, [scrollApi, layn.scrollToIndex])
 
   useEffect(() => {
     onRendered(layn.items.length)
   }, [onRendered, layn.items.length])
+
+  const containerElement = useRef<HTMLElement | null>(null)
+  const attachContainer = layn.containerProps.ref
+  const setContainer = useCallback(
+    (element: HTMLElement | null) => {
+      containerElement.current = element
+      attachContainer(element)
+    },
+    [attachContainer],
+  )
+
+  useEffect(() => {
+    const element = containerElement.current
+    if (!settings.devtools || element === null) {
+      return
+    }
+    const devtools = createDevtools({
+      engine: layn.engine,
+      container: element,
+      axis: spec.axis,
+      overscan,
+    })
+    devtools.show()
+    return () => devtools.destroy()
+  }, [settings.devtools, layn.engine, spec.axis, overscan])
 
   const scrollClass = spec.axis === 'horizontal' ? 'grid-scroll horizontal' : 'grid-scroll'
   const tileClass = settings.reorder ? 'tile draggable' : 'tile'
@@ -81,7 +116,7 @@ export function Grid({ spec, settings, scrollApi, onRendered, onLoadMore }: Grid
       : {}
 
   return (
-    <div {...layn.containerProps} className={scrollClass}>
+    <div {...layn.containerProps} ref={setContainer} className={scrollClass}>
       <div {...layn.contentProps}>
         {layn.items.map((entry) =>
           entry.item.data?.header === true ? (

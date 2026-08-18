@@ -27,7 +27,10 @@ export function Playground() {
   useEffect(() => watchSystemTheme(setTheme), [])
 
   const spec = ALGORITHMS.find((algorithm) => algorithm.id === settings.algoId) ?? ALGORITHMS[0]
-  const total = settings.count + settings.loaded
+  const total = Math.max(
+    0,
+    settings.count + settings.loaded + settings.prepended - settings.removed,
+  )
 
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark'
