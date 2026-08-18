@@ -4,7 +4,7 @@ Thanks for your interest in improving layn. This document covers the development
 
 ## Prerequisites
 
-- **Node.js** >= 20
+- **Node.js** >= 22.13 (pnpm needs `node:sqlite`; published packages themselves run on Node 20+)
 - **pnpm** (the repository is a pnpm workspace; do not use npm or yarn)
 
 ## Getting started
@@ -16,6 +16,7 @@ pnpm typecheck   # tsc across every package, includes test files
 pnpm test        # Vitest unit tests
 pnpm build       # tsc -b per package
 pnpm test:e2e    # Playwright e2e (run `pnpm build` first; needs Chromium)
+pnpm bench       # the benchmark behind every number in the performance guide
 ```
 
 ## Repository layout

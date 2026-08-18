@@ -13,6 +13,7 @@
     "clean": "pnpm -r run clean",
     "typecheck": "pnpm -r run typecheck && tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
+    "bench": "pnpm build && node --expose-gc scripts/bench.mjs",
     "test:watch": "vitest",
     "check": "biome check . && prettier --check \"**/*.{astro,vue,svelte,html}\" && node scripts/check-loc.mjs",
     "check:fix": "biome check --write . && prettier --write \"**/*.{astro,vue,svelte,html}\"",
