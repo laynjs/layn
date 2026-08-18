@@ -1,6 +1,7 @@
 import starlight from '@astrojs/starlight'
 import { defineConfig } from 'astro/config'
 import starlightLlmsTxt from 'starlight-llms-txt'
+import { LLMS_DETAILS, LLMS_SETS } from './llms.config.mjs'
 
 const HOME_URL = process.env.LAYN_HOME_URL ?? 'https://layn.io'
 const PLAYGROUND_URL = process.env.LAYN_PLAYGROUND_URL ?? 'https://play.layn.io'
@@ -16,6 +17,19 @@ export default defineConfig({
           projectName: 'layn',
           description:
             'Headless, framework-agnostic web layout engine. SSR-deterministic masonry, justified, packing, quilt and more, with first-class virtualization.',
+          details: LLMS_DETAILS,
+          customSets: LLMS_SETS,
+          optionalLinks: [
+            { label: 'Playground', url: PLAYGROUND_URL, description: 'every algorithm, live' },
+            {
+              label: 'Runnable template',
+              url: 'https://stackblitz.com/github/laynjs/layn/tree/main/templates/react',
+              description: 'a working React project on StackBlitz',
+            },
+            { label: 'Source', url: REPO_URL, description: 'MIT, monorepo, all ten packages' },
+          ],
+          exclude: ['404'],
+          customSelectors: { all: ['.sl-anchor-link'] },
         }),
       ],
       description:
