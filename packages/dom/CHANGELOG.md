@@ -1,5 +1,44 @@
 # @laynjs/dom
 
+## 0.5.0
+
+### Minor Changes
+
+- a276e6f: The published type declarations are now documented, so your editor explains the API without a trip
+  to the website.
+
+  Every public type, option and entry point carries documentation: what an option does, what it
+  defaults to, and, where it matters, why it works the way it does. Hovering `useLayn` shows a
+  complete example. Hovering `entry.ref` tells you to attach it to a wrapper rather than to an
+  `<img>`. Hovering `onReachEnd` explains that it is latched against the content size, so you do not
+  need a guard flag of your own. `binPacking` says outright that it is the expensive one and points at
+  `packing` instead.
+
+  Nothing about the runtime changed; this is documentation shipped inside the `.d.ts` files.
+
+- a276e6f: Custom layout algorithms are now a supported, documented API, and there is a devtools overlay.
+
+  `@laynjs/core` exports the primitives the built-in algorithms are made of, so a third-party algorithm
+  is a first-class one: `createPositionsBuilder` writes rectangles straight into the engine's flat
+  buffers, `mirrorExtent` gives right-to-left support in a single argument, and `resolveColumnCount`,
+  `resolveRowCount` and `resolveTrackSize` bring responsive breakpoint maps along. The full walkthrough
+  is in the new "Write your own algorithm" guide, and the example it teaches is locked by a test.
+
+  `engine.isMeasured(id)` reports whether a real DOM measurement has been recorded for an item, which
+  is useful on its own (a skeleton until a tile is measured) and is what the overlay reads.
+
+  `@laynjs/dom` adds `createDevtools`, an overlay that draws every item rectangle over your grid,
+  marks which tiles are measured rather than estimated, shows the overscan band, and prints how many
+  of your items are actually in the DOM. It is a canvas with `pointer-events: none`, so it never
+  interferes, and it disappears from production builds when the call is unreachable.
+
+### Patch Changes
+
+- Updated dependencies [a276e6f]
+- Updated dependencies [a276e6f]
+- Updated dependencies [a276e6f]
+  - @laynjs/core@0.5.0
+
 ## 0.4.0
 
 ### Minor Changes
