@@ -1,5 +1,36 @@
 # @laynjs/adapter-utils
 
+## 0.5.0
+
+### Minor Changes
+
+- a276e6f: No functional changes. Released in lockstep with the core so every `@laynjs/*` package stays on the
+  same version.
+
+  Everything new in this release lives in `@laynjs/core` and `@laynjs/dom`, and reaches the adapters
+  through the engine they already use: the stricter `LayoutItem<TData>` typing applies wherever you
+  pass items, and `createDevtools` works with the `engine` each adapter exposes.
+
+- a276e6f: The published type declarations are now documented, so your editor explains the API without a trip
+  to the website.
+
+  Every public type, option and entry point carries documentation: what an option does, what it
+  defaults to, and, where it matters, why it works the way it does. Hovering `useLayn` shows a
+  complete example. Hovering `entry.ref` tells you to attach it to a wrapper rather than to an
+  `<img>`. Hovering `onReachEnd` explains that it is latched against the content size, so you do not
+  need a guard flag of your own. `binPacking` says outright that it is the expensive one and points at
+  `packing` instead.
+
+  Nothing about the runtime changed; this is documentation shipped inside the `.d.ts` files.
+
+### Patch Changes
+
+- Updated dependencies [a276e6f]
+- Updated dependencies [a276e6f]
+- Updated dependencies [a276e6f]
+  - @laynjs/core@0.5.0
+  - @laynjs/dom@0.5.0
+
 ## 0.4.0
 
 ### Minor Changes

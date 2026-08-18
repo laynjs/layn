@@ -1,5 +1,58 @@
 # @laynjs/core
 
+## 0.5.0
+
+### Minor Changes
+
+- a276e6f: The published type declarations are now documented, so your editor explains the API without a trip
+  to the website.
+
+  Every public type, option and entry point carries documentation: what an option does, what it
+  defaults to, and, where it matters, why it works the way it does. Hovering `useLayn` shows a
+  complete example. Hovering `entry.ref` tells you to attach it to a wrapper rather than to an
+  `<img>`. Hovering `onReachEnd` explains that it is latched against the content size, so you do not
+  need a guard flag of your own. `binPacking` says outright that it is the expensive one and points at
+  `packing` instead.
+
+  Nothing about the runtime changed; this is documentation shipped inside the `.d.ts` files.
+
+- a276e6f: Custom layout algorithms are now a supported, documented API, and there is a devtools overlay.
+
+  `@laynjs/core` exports the primitives the built-in algorithms are made of, so a third-party algorithm
+  is a first-class one: `createPositionsBuilder` writes rectangles straight into the engine's flat
+  buffers, `mirrorExtent` gives right-to-left support in a single argument, and `resolveColumnCount`,
+  `resolveRowCount` and `resolveTrackSize` bring responsive breakpoint maps along. The full walkthrough
+  is in the new "Write your own algorithm" guide, and the example it teaches is locked by a test.
+
+  `engine.isMeasured(id)` reports whether a real DOM measurement has been recorded for an item, which
+  is useful on its own (a skeleton until a tile is measured) and is what the overlay reads.
+
+  `@laynjs/dom` adds `createDevtools`, an overlay that draws every item rectangle over your grid,
+  marks which tiles are measured rather than estimated, shows the overscan band, and prints how many
+  of your items are actually in the DOM. It is a canvas with `pointer-events: none`, so it never
+  interferes, and it disappears from production builds when the call is unreachable.
+
+- a276e6f: `LayoutItem<TData>` now requires `data` when you name the data type.
+
+  Previously `data` was optional whatever you did, so `entry.item.data.src` failed to typecheck under
+  `strict` even for a grid where every item carries data, and every example in the documentation had
+  to be read as untyped. Now `LayoutItem` on its own is unchanged (`data` stays optional and
+  `unknown`), while `LayoutItem<Photo>` means what it says: `data` is present and typed.
+
+  ```ts
+  const items: LayoutItem<Photo>[] = photos.map((photo) => ({
+    id: photo.id,
+    aspectRatio: photo.width / photo.height,
+    data: photo,
+  }))
+
+  entry.item.data.src // string, no optional chaining
+  ```
+
+  This is a compile-time change only, and runtime behaviour is identical. If you had annotated items
+  as `LayoutItem<Something>` while omitting `data` on some of them, widen the type to
+  `LayoutItem<Something | undefined>` or drop the type argument.
+
 ## 0.4.0
 
 ### Minor Changes
