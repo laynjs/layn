@@ -3,11 +3,10 @@ import {
   containerAria,
   contentAria,
   createStore,
-  resolveBindTargets,
   resolveEngineConfig,
 } from '@laynjs/adapter-utils'
 import { createEngine, diffItems, type ItemId, type LayoutEngine } from '@laynjs/core'
-import { type BindOptions, bindEngine, type EngineBinding } from '@laynjs/dom'
+import type { EngineBinding } from '@laynjs/dom'
 import {
   type CSSProperties,
   useCallback,
@@ -20,6 +19,7 @@ import { buildItems } from '../items/index.js'
 import type { UseLaynOptions, UseLaynResult } from '../types/index.js'
 import { useBindOptions } from './use-bind-options.js'
 import { useConstant } from './use-constant.js'
+import { useContainerRef } from './use-container-ref.js'
 
 const containerStyle: CSSProperties = { position: 'relative', overflow: 'auto' }
 
@@ -31,6 +31,26 @@ const contentStyle = (width: number, height: number): CSSProperties => ({
   height,
 })
 
+/**
+ * Lays out `items` and returns only the ones on screen, already positioned.
+ *
+ * The engine is created eagerly, so a server render is fully positioned and hydration cannot
+ * mismatch. The scroll binding attaches when `containerProps.ref` runs.
+ *
+ * ```tsx
+ * const layn = useLayn({ items, algorithm: masonry({ columns: 4 }), gap: { x: 12, y: 12 } });
+ *
+ * return (
+ *   <div {...layn.containerProps} style={{ height: 600 }}>
+ *     <div {...layn.contentProps}>
+ *       {layn.items.map((entry) => (
+ *         <div key={entry.id} ref={entry.ref} style={entry.style} {...entry.a11y} />
+ *       ))}
+ *     </div>
+ *   </div>
+ * );
+ * ```
+ */
 export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLaynResult<TData> => {
   const axis = options.axis ?? 'vertical'
   const overscan = options.overscan ?? 0
@@ -89,45 +109,17 @@ export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLay
     [store],
   )
 
-  const containerRef = useCallback(
-    (element: HTMLElement | null): void => {
-      if (element === null) {
-        store.detach()
-        bindingRef.current?.destroy()
-        bindingRef.current = undefined
-        return
-      }
-      const targets = resolveBindTargets(scroll, element)
-      const bindOptions: BindOptions = {
-        scroll: targets.scroll,
-        axis,
-        overscan,
-        ...(targets.origin !== undefined ? { origin: targets.origin } : {}),
-        ...(animate !== undefined ? { animate } : {}),
-        ...(onReachEnd !== undefined ? { onReachEnd } : {}),
-        ...(reachEndThreshold !== undefined ? { reachEndThreshold } : {}),
-        ...(stickyHeaders !== undefined ? { stickyHeaders } : {}),
-        ...(drag !== undefined ? { drag } : {}),
-        ...(environment !== undefined ? { environment } : {}),
-      }
-      const binding = bindEngine(engine, bindOptions)
-      bindingRef.current = binding
-      store.attach(binding)
-    },
-    [
-      engine,
-      store,
-      axis,
-      overscan,
-      animate,
-      onReachEnd,
-      reachEndThreshold,
-      stickyHeaders,
-      drag,
-      environment,
-      scroll,
-    ],
-  )
+  const containerRef = useContainerRef(engine, store, bindingRef, {
+    axis,
+    overscan,
+    scroll,
+    environment,
+    animate,
+    onReachEnd,
+    reachEndThreshold,
+    drag,
+    stickyHeaders,
+  })
 
   const scrollToIndex = useCallback<UseLaynResult<TData>['scrollToIndex']>(
     (index, scrollOptions) => bindingRef.current?.scrollToIndex(index, scrollOptions),
