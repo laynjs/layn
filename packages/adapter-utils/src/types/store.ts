@@ -6,6 +6,13 @@ export interface EngineStoreState {
   readonly visible: readonly number[]
 }
 
+/**
+ * Bridges the eagerly created engine to the binding that only exists after mount, which is what
+ * makes every adapter SSR-safe.
+ *
+ * It remembers observed elements and replays them on every `attach`, because frameworks attach child
+ * refs before parent refs: without the replay the first screenful is never measured.
+ */
 export interface EngineStore {
   subscribe(listener: () => void): () => void
   getState(): EngineStoreState

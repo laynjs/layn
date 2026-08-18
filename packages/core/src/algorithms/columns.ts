@@ -9,6 +9,10 @@ import type {
 import { resolveColumnCount, resolveTrackSize } from './column-count.js'
 import { mirrorExtent } from './direction.js'
 
+/**
+ * Fixed columns filled round-robin, so source order reads down the page predictably. The
+ * order-preserving alternative to `masonry`, at the cost of a ragged bottom edge.
+ */
 export const columns = (options: ColumnsOptions = {}): LayoutAlgorithm => ({
   name: 'columns',
   capabilities: { incremental: false, requiresMeasuredHeight: true },

@@ -21,6 +21,10 @@ const shortestRowIndex = (widths: readonly number[]): number => {
   return index
 }
 
+/**
+ * Masonry transposed: fixed-height rows, each item placed in the shortest, content growing to the
+ * right. Pair it with `axis: 'horizontal'` on the adapter so scrolling and virtualization follow.
+ */
 export const horizontalMasonry = (options: HorizontalMasonryOptions = {}): LayoutAlgorithm => ({
   name: 'horizontal-masonry',
   capabilities: { incremental: false, requiresMeasuredHeight: false },

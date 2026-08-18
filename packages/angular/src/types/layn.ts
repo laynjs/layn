@@ -16,6 +16,12 @@ import type {
 import type { AnimateOption, DomEnvironment, ScrollToItemOptions } from '@laynjs/dom'
 import type { LaynItem } from './item.js'
 
+/**
+ * Options for `useLayn`. Only `items` and `algorithm` are required.
+ *
+ * Give each item an `aspectRatio` (or explicit dimensions) so the first render is already correctly
+ * positioned, with no measure-then-jump.
+ */
 export interface UseLaynOptions<TData = unknown> {
   readonly items: readonly LayoutItem<TData>[]
   readonly algorithm: LayoutAlgorithm
@@ -52,6 +58,7 @@ export interface LaynItemBinding {
   readonly rect: Rect
 }
 
+/** What `useLayn` gives you: the container and content bindings, and the items on screen. */
 export interface LaynRef<TData = unknown> extends LaynItemTarget, LaynContainerTarget {
   readonly items: Signal<readonly LaynItem<TData>[]>
   readonly contentStyle: Signal<Record<string, string>>

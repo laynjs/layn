@@ -13,6 +13,12 @@ import { computed, onBeforeUnmount, shallowRef, toValue, watch } from 'vue'
 import { buildItems } from '../items/index.js'
 import type { LaynElementRef, UseLaynOptions, UseLaynResult } from '../types/index.js'
 
+/**
+ * Lays out `items` and exposes only the ones on screen, already positioned.
+ *
+ * Reactive inputs are accepted as refs, getters or plain values, and the engine is created eagerly
+ * so a server render is fully positioned. The binding attaches when `containerRef` runs on mount.
+ */
 export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLaynResult<TData> => {
   const axis = options.axis ?? 'vertical'
   const overscan = options.overscan ?? 0

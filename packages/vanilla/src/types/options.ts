@@ -11,6 +11,10 @@ import type {
 } from '@laynjs/core'
 import type { AnimateOption, DomEnvironment } from '@laynjs/dom'
 
+/**
+ * Options for `createLayn`. You supply `renderItem`, which fills an element layn has already
+ * created, sized and positioned.
+ */
 export interface LaynOptions<TData = unknown> {
   readonly items: readonly LayoutItem<TData>[]
   readonly algorithm: LayoutAlgorithm

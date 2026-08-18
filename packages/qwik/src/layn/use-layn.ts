@@ -42,6 +42,16 @@ const reachEndOptions = (
   ...(threshold !== undefined ? { reachEndThreshold: threshold } : {}),
 })
 
+/**
+ * Lays out `items` and exposes only the ones on screen, already positioned, as Qwik signals.
+ *
+ * The engine is held in `noSerialize` and the binding is created in a single visible task.
+ * Reactivity is consumer-driven: call the setters from your own task tracking your signals.
+ *
+ * Sizing is data-only here - there are no per-item refs, because measurement refs conflict with
+ * resumability - so give every item an `aspectRatio` or explicit dimensions. For the same reason
+ * this adapter has no `animate`, drag or sticky-header support.
+ */
 export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLaynResult<TData> => {
   const axis = options.axis ?? 'vertical'
   const overscan = options.overscan ?? 0

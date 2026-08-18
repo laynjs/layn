@@ -14,6 +14,10 @@ const explicitAspectRatio = (item: LayoutItem): number | undefined => {
 const hasOnlyFixedHeight = (item: LayoutItem): boolean =>
   item.height !== undefined && item.width === undefined && item.aspectRatio === undefined
 
+/**
+ * Builds the size resolver: measurement cache, then explicit dimensions, then aspect ratio, then
+ * your estimator, then a default.
+ */
 export const createMeasurements = (options: MeasurementsOptions = {}): Measurements => {
   const fallbackRatio =
     options.defaultAspectRatio !== undefined && options.defaultAspectRatio > 0

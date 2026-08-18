@@ -23,6 +23,7 @@ const sumWeights = (weights: readonly number[], count: number): number => {
   return total
 }
 
+/** Rows cycling through editorial templates: a hero, a triptych, a duo, a feature. */
 export const magazine = (options: MagazineOptions = {}): LayoutAlgorithm => ({
   name: 'magazine',
   capabilities: { incremental: false, requiresMeasuredHeight: false },

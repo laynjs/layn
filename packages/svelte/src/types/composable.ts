@@ -16,6 +16,12 @@ import type { Action } from 'svelte/action'
 import type { Readable } from 'svelte/store'
 import type { ItemActionParams, LaynItem } from './item.js'
 
+/**
+ * Options for `useLayn`. Only `items` and `algorithm` are required.
+ *
+ * Give each item an `aspectRatio` (or explicit dimensions) so the first render is already correctly
+ * positioned, with no measure-then-jump.
+ */
 export interface UseLaynOptions<TData = unknown> {
   readonly items: readonly LayoutItem<TData>[]
   readonly algorithm: LayoutAlgorithm
@@ -37,6 +43,7 @@ export interface UseLaynOptions<TData = unknown> {
   readonly environment?: Partial<DomEnvironment>
 }
 
+/** What `useLayn` gives you: the container and content bindings, and the items on screen. */
 export interface UseLaynResult<TData = unknown> {
   readonly container: Action<HTMLElement>
   readonly containerStyle: Record<string, string>

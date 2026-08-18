@@ -22,6 +22,12 @@ import type {
 const access = <T>(value: MaybeAccessor<T>): T =>
   typeof value === 'function' ? (value as Accessor<T>)() : value
 
+/**
+ * Lays out `items` and exposes only the ones on screen, already positioned.
+ *
+ * Reactive inputs are accepted as accessors or plain values. `items()` keeps a stable object
+ * reference while a tile's rectangle is unchanged, so `<For>` reuses DOM across virtualization.
+ */
 export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLaynResult<TData> => {
   const axis = options.axis ?? 'vertical'
   const overscan = options.overscan ?? 0

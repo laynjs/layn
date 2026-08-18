@@ -76,6 +76,12 @@ const spanOf = (
 ): QuiltSpan =>
   item.span === undefined ? spanAt(pattern, index, columns) : blockSpan(item.span, columns)
 
+/**
+ * A grid of uniform cells filled by a repeating pattern of interlocking blocks.
+ *
+ * The only algorithm that honours `LayoutItem.span`, and the only one where hero tiles leave no
+ * gaps: because the cells are uniform there is always a flat line for a larger block to sit on.
+ */
 export const quilt = (options: QuiltOptions = {}): LayoutAlgorithm => ({
   name: 'quilt',
   capabilities: { incremental: false, requiresMeasuredHeight: false },

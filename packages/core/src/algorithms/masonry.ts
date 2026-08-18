@@ -66,6 +66,13 @@ const continueFrom = (
   }
 }
 
+/**
+ * Columns of equal width; each item goes into the shortest column at that moment. The classic
+ * variable-height grid.
+ *
+ * Appending is incremental: the algorithm continues from stored column state, so adding a page to a
+ * hundred thousand items costs the same as adding it to none.
+ */
 export const masonry = (options: MasonryOptions = {}): LayoutAlgorithm => ({
   name: 'masonry',
   capabilities: { incremental: true, requiresMeasuredHeight: true },

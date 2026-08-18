@@ -20,6 +20,13 @@ import { type BindOptions, bindEngine, type DragOptions, type EngineBinding } fr
 import { buildItems } from '../items/index.js'
 import type { LaynRef, UseLaynOptions } from '../types/index.js'
 
+/**
+ * Lays out `items` and exposes only the ones on screen, already positioned, as Angular signals.
+ *
+ * Call it in an injection context, such as a field initialiser. Pair it with the `[laynContainer]`
+ * and `[laynItem]` directives, which attach the binding and the measurement at the right moments.
+ * Zoneless: the signals drive change detection.
+ */
 export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): LaynRef<TData> => {
   const destroyRef = inject(DestroyRef)
   const axis = options.axis ?? 'vertical'

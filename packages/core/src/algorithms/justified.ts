@@ -44,6 +44,10 @@ const resolveTargetHeight = (options: JustifiedOptions): number =>
     ? options.targetRowHeight
     : DEFAULT_ROW_HEIGHT
 
+/**
+ * Rows filled greedily, then scaled so every full row spans the container exactly, preserving each
+ * item's aspect ratio. Both edges stay flush. The trailing row is left unstretched.
+ */
 export const justified = (options: JustifiedOptions = {}): LayoutAlgorithm => ({
   name: 'justified',
   capabilities: { incremental: false, requiresMeasuredHeight: false },

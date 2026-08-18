@@ -35,6 +35,14 @@ const runsOf = (
   return runs
 }
 
+/**
+ * Runs `inner` once per group and stacks the results, so each section's columns begin level instead
+ * of continuing from the section above.
+ *
+ * A section starts at any item `isHeader` returns true for. Headers are ordinary items, which is
+ * what lets them virtualize, animate and serialize like everything else, and lets
+ * `stickyHeaders` pin them.
+ */
 export const sections = (inner: LayoutAlgorithm, options: SectionsOptions): LayoutAlgorithm => ({
   name: `sections(${inner.name})`,
   capabilities: {

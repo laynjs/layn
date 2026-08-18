@@ -22,6 +22,13 @@ import { derived, writable } from 'svelte/store'
 import { buildItems } from '../items/index.js'
 import type { ItemActionParams, UseLaynOptions, UseLaynResult } from '../types/index.js'
 
+/**
+ * Lays out `items` and exposes only the ones on screen, already positioned.
+ *
+ * Returns readable stores plus two actions: `use:container` on the scroll element and `use:item` on
+ * each tile. The actions run after mount, which is what keeps measurement correct. Works in both
+ * runes mode and legacy reactive statements.
+ */
 export const useLayn = <TData = unknown>(options: UseLaynOptions<TData>): UseLaynResult<TData> => {
   const axis = options.axis ?? 'vertical'
   const overscan = options.overscan ?? 0

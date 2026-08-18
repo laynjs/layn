@@ -30,6 +30,13 @@ const verifyHydration = (serialized: SerializedLayout, snapshot: EngineSnapshot)
   }
 }
 
+/**
+ * Rebuilds an engine on the client from a layout serialized on the server.
+ *
+ * It recomputes the layout from the serialized items rather than trusting the serialized geometry,
+ * so a tampered payload cannot drive allocation; determinism is what makes the result identical.
+ * Throws a `LaynError` when the client is configured differently from the server.
+ */
 export const hydrateEngine = (
   serialized: SerializedLayout,
   options: HydrateOptions,

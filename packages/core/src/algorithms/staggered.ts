@@ -10,6 +10,7 @@ import type {
 import { resolveColumnCount, resolveTrackSize } from './column-count.js'
 import { mirrorExtent } from './direction.js'
 
+/** Round-robin columns with alternate columns offset downwards, for a brickwork rhythm. */
 export const staggered = (options: StaggeredOptions = {}): LayoutAlgorithm => ({
   name: 'staggered',
   capabilities: { incremental: false, requiresMeasuredHeight: true },

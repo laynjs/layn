@@ -13,6 +13,7 @@ export interface StickySetup {
   readonly elementOf: (index: number) => HTMLElement | undefined
 }
 
+/** Pins the header of whichever section is currently under the top of the viewport. */
 export interface StickyHeaders {
   refresh(): void
   update(start: number): void

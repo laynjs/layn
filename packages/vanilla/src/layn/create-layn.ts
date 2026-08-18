@@ -15,6 +15,12 @@ import { CONTENT_ATTR, ITEM_ID_ATTR } from '../constants.js'
 import type { LaynInstance, LaynOptions } from '../types/index.js'
 import { bindOptionsFor } from './bind-options.js'
 
+/**
+ * Creates, positions, virtualizes and measures the item elements for you, with no framework.
+ *
+ * You fill each element in `renderItem`. Existing `[data-layn-content]` server markup is adopted
+ * rather than recreated, so this pairs with `renderToString` for SSR.
+ */
 export const createLayn = <TData = unknown>(
   container: HTMLElement,
   options: LaynOptions<TData>,

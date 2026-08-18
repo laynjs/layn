@@ -17,6 +17,12 @@ import type { LaynElementRef, LaynItem } from './item.js'
 
 export type MaybeAccessor<T> = T | Accessor<T>
 
+/**
+ * Options for `useLayn`. Only `items` and `algorithm` are required.
+ *
+ * Give each item an `aspectRatio` (or explicit dimensions) so the first render is already correctly
+ * positioned, with no measure-then-jump.
+ */
 export interface UseLaynOptions<TData = unknown> {
   readonly items: MaybeAccessor<readonly LayoutItem<TData>[]>
   readonly algorithm: MaybeAccessor<LayoutAlgorithm>
@@ -38,6 +44,7 @@ export interface UseLaynOptions<TData = unknown> {
   readonly environment?: Partial<DomEnvironment>
 }
 
+/** What `useLayn` gives you: the container and content bindings, and the items on screen. */
 export interface UseLaynResult<TData = unknown> {
   readonly containerRef: LaynElementRef
   readonly containerStyle: JSX.CSSProperties
