@@ -1,4 +1,4 @@
-import type { ItemId, Positions } from '../types/index.js'
+import type { ItemId, PositionsBuilder } from '../types/index.js'
 
 export interface PositionData {
   ids: ItemId[]
@@ -11,8 +11,6 @@ export interface PositionData {
   mirror: number | undefined
 }
 
-export interface PositionsBuilder {
+export interface PositionsSink extends PositionsBuilder {
   readonly data: PositionData
-  push(id: ItemId, x: number, y: number, width: number, height: number): void
-  build(): Positions
 }

@@ -1,6 +1,10 @@
 import { DEFAULT_COLUMN_COUNT, MIN_COLUMN_COUNT } from '../constants.js'
-import type { Breakpoints, TrackCount } from '../types/index.js'
-import type { ColumnCountOptions, RowCountOptions } from './types.js'
+import type {
+  Breakpoints,
+  ColumnCountOptions,
+  RowCountOptions,
+  TrackCount,
+} from '../types/index.js'
 
 const clampCount = (count: number): number =>
   Number.isNaN(count) ? MIN_COLUMN_COUNT : Math.max(MIN_COLUMN_COUNT, Math.floor(count))
@@ -66,6 +70,10 @@ const resolveCount = (
   return DEFAULT_COLUMN_COUNT
 }
 
+/**
+ * Resolves a column count from options and the container width: an explicit count, a breakpoint
+ * map, or a count derived from a target `columnWidth`.
+ */
 export const resolveColumnCount = (
   options: ColumnCountOptions,
   viewportWidth: number,
@@ -73,11 +81,13 @@ export const resolveColumnCount = (
 ): number =>
   resolveCount(options.columns, options.columnWidth, options.maxColumns, viewportWidth, gapX)
 
+/** The horizontal-axis counterpart of `resolveColumnCount`. */
 export const resolveRowCount = (
   options: RowCountOptions,
   viewportHeight: number,
   gapY: number,
 ): number => resolveCount(options.rows, options.rowHeight, options.maxRows, viewportHeight, gapY)
 
+/** The width (or height) of one track once gaps are subtracted. Never negative. */
 export const resolveTrackSize = (extent: number, count: number, gap: number): number =>
   Math.max(0, (extent - gap * (count - 1)) / count)

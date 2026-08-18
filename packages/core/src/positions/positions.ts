@@ -1,6 +1,6 @@
 import { LaynError } from '../errors/index.js'
-import type { ItemId, Positions, Rect } from '../types/index.js'
-import type { PositionData, PositionsBuilder } from './types.js'
+import type { ItemId, Positions, PositionsBuilder, Rect } from '../types/index.js'
+import type { PositionData, PositionsSink } from './types.js'
 
 const MIN_CAPACITY = 8
 
@@ -83,7 +83,7 @@ const growData = (data: PositionData, needed: number): void => {
   data.capacity = capacity
 }
 
-const builderFor = (data: PositionData): PositionsBuilder => ({
+const builderFor = (data: PositionData): PositionsSink => ({
   data,
   push(id, x, y, width, height) {
     if (data.count === data.capacity) {
@@ -102,7 +102,7 @@ const builderFor = (data: PositionData): PositionsBuilder => ({
   },
 })
 
-export const positionsBuilder = (capacity: number, mirror?: number): PositionsBuilder => {
+export const positionsBuilder = (capacity: number, mirror?: number): PositionsSink => {
   const size = Math.max(MIN_CAPACITY, capacity)
   return builderFor({
     ids: [],
@@ -116,11 +116,22 @@ export const positionsBuilder = (capacity: number, mirror?: number): PositionsBu
   })
 }
 
-export const extendPositions = (previous: PositionData, additional: number): PositionsBuilder => {
+/**
+ * Allocates a write-only positions buffer for a custom algorithm. Push each item once, in item
+ * order, then call `build()`.
+ *
+ * Pass `mirror` (the container width) to have every rectangle mirrored as it is written, which is
+ * how right-to-left layouts stay correct without a second pass over the arrays.
+ */
+export const createPositionsBuilder = (capacity: number, mirror?: number): PositionsBuilder =>
+  positionsBuilder(capacity, mirror)
+
+export const extendPositions = (previous: PositionData, additional: number): PositionsSink => {
   growData(previous, previous.count + additional)
   return builderFor(previous)
 }
 
+/** Whether two position sets hold identical geometry. */
 export const samePositions = (a: Positions, b: Positions): boolean => {
   if (a.count !== b.count) {
     return false
@@ -135,6 +146,10 @@ export const samePositions = (a: Positions, b: Positions): boolean => {
   return true
 }
 
+/**
+ * Builds `Positions` from `[id, rect]` pairs. Convenient, but it allocates a rectangle per item;
+ * `createPositionsBuilder` is the fast path for an algorithm.
+ */
 export const createPositions = (entries: Iterable<readonly [ItemId, Rect]>): Positions => {
   const list = [...entries]
   const builder = positionsBuilder(list.length)

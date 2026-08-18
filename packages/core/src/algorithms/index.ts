@@ -1,5 +1,7 @@
 export * from './bin-packing.js'
+export { resolveColumnCount, resolveRowCount, resolveTrackSize } from './column-count.js'
 export * from './columns.js'
+export { mirrorExtent } from './direction.js'
 export * from './horizontal-masonry.js'
 export * from './justified.js'
 export * from './magazine.js'

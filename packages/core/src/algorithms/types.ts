@@ -1,17 +1,4 @@
 import type { PositionData } from '../positions/types.js'
-import type { TrackCount } from '../types/index.js'
-
-export interface ColumnCountOptions {
-  readonly columns?: TrackCount
-  readonly columnWidth?: number
-  readonly maxColumns?: number
-}
-
-export interface RowCountOptions {
-  readonly rows?: TrackCount
-  readonly rowHeight?: number
-  readonly maxRows?: number
-}
 
 export interface SkylineNode {
   x: number

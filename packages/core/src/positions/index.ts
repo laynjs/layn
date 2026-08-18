@@ -1,1 +1,1 @@
-export { createPositions, samePositions } from './positions.js'
+export { createPositions, createPositionsBuilder, samePositions } from './positions.js'
