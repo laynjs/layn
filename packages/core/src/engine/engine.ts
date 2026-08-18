@@ -25,6 +25,13 @@ import { createSpatialIndex } from '../virtualization/index.js'
 import { createMeasuredCache } from './measured-cache.js'
 import type { IndexCache } from './types.js'
 
+/**
+ * Creates the layout engine: the stateful holder of items, config and measurements that recomputes
+ * positions and notifies subscribers.
+ *
+ * Safe to call on the server, where the first snapshot is already fully positioned. If you are
+ * using a framework adapter, that adapter calls this for you.
+ */
 export const createEngine = (config: EngineConfig): LayoutEngine => {
   let algorithm = config.algorithm
   const measured = createMeasuredCache(config.measured)
@@ -132,6 +139,7 @@ export const createEngine = (config: EngineConfig): LayoutEngine => {
 
   return {
     getSnapshot: () => snapshot,
+    isMeasured: (id) => measured.get(id) !== undefined,
     subscribe: (listener) => {
       listeners.add(listener)
       return () => {
