@@ -95,3 +95,30 @@ const layn = useLayn({
 The hook renders correct positions on the server with no extra setup. `getServerSnapshot` supplies the
 data-driven layout, so `renderToString` output matches the client and hydrates cleanly. See the
 [SSR guide](/guides/ssr/).
+
+## Preact
+
+`@laynjs/react` works in Preact through `preact/compat`, with no separate adapter and no changes to
+your code. With Vite, `@preact/preset-vite` already sets the aliases up:
+
+```ts
+import preact from '@preact/preset-vite';
+import { defineConfig } from 'vite';
+
+export default defineConfig({ plugins: [preact()] });
+```
+
+```tsx
+import { masonry } from '@laynjs/core';
+import { useLayn } from '@laynjs/react';
+import { render } from 'preact';
+
+function Grid({ items }) {
+  const layn = useLayn({ items, algorithm: masonry({ columns: 4 }), gap: { x: 8, y: 8 } });
+  // identical to the React usage above
+}
+```
+
+Verified against Preact 10 with virtualization, measurement, animation and the accessibility
+attributes all behaving as they do in React. Without a bundler alias, configure `react` and
+`react-dom` to resolve to `preact/compat` however your toolchain does it.

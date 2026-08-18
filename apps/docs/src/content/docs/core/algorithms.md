@@ -230,6 +230,7 @@ container and let the browser flip the scroll axis.
 | Interlocking mosaic, or hero tiles with no empty space | `quilt` |
 | Editorial hero layouts | `magazine` |
 | Horizontal scroller | `horizontalMasonry` |
+| None of the above | [write your own](/guides/custom-algorithms/) |
 
 ## Performance
 

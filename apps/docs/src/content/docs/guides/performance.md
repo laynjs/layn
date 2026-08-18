@@ -7,8 +7,15 @@ layn is fast because of how it stores data, not because of low-level tricks. Pos
 `Float64Array` buffers, appends reuse shared buffers, and virtualization queries a spatial index. It is
 all plain TypeScript with a zero-dependency core.
 
-All numbers below are from our own benchmark suite, measured on Node with Apple Silicon, best of five
-runs. Reproduce them with `pnpm bench` in the repository.
+Every number on this page comes from the benchmark in the repository, and you can run it yourself:
+
+```bash
+git clone https://github.com/laynjs/layn.git
+cd layn && pnpm install && pnpm bench
+```
+
+The figures below were measured on Node 24 on Apple Silicon, best of five runs (three at 50k). Your
+machine will differ; the shape of the curve will not.
 
 ## Full-layout time per algorithm
 
@@ -16,18 +23,32 @@ Time to compute a complete layout for a given item count (single recompute):
 
 | algorithm | 1k | 5k | 10k | 50k | complexity |
 | --- | --- | --- | --- | --- | --- |
-| masonry, columns, justified, staggered, magazine, horizontal | ~0.1 ms | ~0.1 ms | ~0.2 ms | up to 0.5 ms | O(n) |
-| packing (skyline) | 0.2 ms | 0.5 ms | 0.7 ms | 3.6 ms | O(n) amortized |
-| quilt | 0.1 ms | 0.4 ms | 0.4 ms | 1.9 ms | near O(n) |
-| bin-packing (maxrects) | 4.5 ms | 27 ms | 55 ms | 279 ms | O(n * cap^2) |
+| masonry, columns, justified, staggered, magazine, horizontal | 0.04-0.10 ms | ~0.1 ms | 0.2-0.4 ms | 0.4-0.6 ms | O(n) |
+| packing (skyline) | 0.13 ms | 0.40 ms | 0.78 ms | 3.6 ms | O(n) amortized |
+| quilt | 0.10 ms | 0.45 ms | 0.44 ms | 2.2 ms | near O(n) |
+| bin-packing (maxrects) | 4.4 ms | 27 ms | 54 ms | 277 ms | O(n * cap^2) |
 
 `binPacking` is the deliberate premium tight-packer. When you need speed at very large counts, use
 `packing`, which is O(n).
 
-[`sections`](/guides/sections/) wraps another algorithm and runs it once per group, then merges the
-results, so it costs roughly 3-4x the algorithm it wraps: a 50,000-item grouped masonry layout is
-about 3.9 ms against 1.1 ms ungrouped. It stays linear in the number of items. Pinning a header costs
-nothing measurable - under a microsecond per scroll frame, even with two thousand sections.
+## Sections and sticky headers
+
+[`sections`](/guides/sections/) wraps another algorithm, runs it once per group and merges the
+results, so it costs more than the algorithm alone. At 50,000 items in 500 groups that is 2.2 ms
+against 1.3 ms ungrouped, about 1.7x. The overhead follows the number of groups rather than the
+number of items, so it is flat across realistic groupings and only becomes noticeable when groups
+get very small:
+
+| groups (50k items) | time |
+| --- | --- |
+| none (plain masonry) | 1.3 ms |
+| 50 | 1.9 ms |
+| 250 | 2.1 ms |
+| 1,000 | 2.2 ms |
+| 5,000 | 7.2 ms |
+
+Pinning a header is not measured in layout at all. It recomputes section bounds once per layout
+(0.4 ms with 2,000 sections) and then costs about a microsecond per scroll frame.
 
 ## Engine primitives
 
@@ -35,10 +56,15 @@ On the masonry path, at 100,000 items:
 
 | operation | time |
 | --- | --- |
-| Build the spatial index | 2.3 ms |
-| 1,000 scroll queries | 1.6 ms (about 1.5 microseconds each) |
-| Append one item | 0.22 ms (amortized O(added)) |
-| Memory (items plus index) | about 27 MB |
+| Build the spatial index | 2.5 ms |
+| 1,000 scroll queries | 0.9 ms (about 0.9 microseconds each) |
+| Append one item | 0.14 ms (amortized O(added)) |
+| Memory retained (items plus index) | about 12 MB |
+
+The memory figure is what is still held after a collection, which works out at roughly 120 bytes per
+item for the item records, the four position arrays and the spatial index together. `pnpm bench`
+measures it with `--expose-gc` so the number is the retained heap rather than whatever garbage the
+layout run happened to leave behind.
 
 ## Why no WebAssembly
 

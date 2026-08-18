@@ -39,6 +39,7 @@ export default defineConfig({
             { label: 'Installation', slug: 'getting-started/installation' },
             { label: 'Quick start', slug: 'getting-started/quick-start' },
             { label: 'Core concepts', slug: 'getting-started/concepts' },
+            { label: 'Design decisions', slug: 'getting-started/design-decisions' },
           ],
         },
         {
@@ -74,9 +75,12 @@ export default defineConfig({
             { label: 'Scrolling', slug: 'guides/scrolling' },
             { label: 'Infinite scroll', slug: 'guides/infinite-scroll' },
             { label: 'Drag and drop', slug: 'guides/drag-and-drop' },
+            { label: 'Write your own algorithm', slug: 'guides/custom-algorithms' },
+            { label: 'Devtools overlay', slug: 'guides/devtools' },
             { label: 'SSR & hydration', slug: 'guides/ssr' },
             { label: 'Accessibility', slug: 'guides/accessibility' },
             { label: 'Performance', slug: 'guides/performance' },
+            { label: 'Run the benchmark', slug: 'guides/benchmark' },
           ],
         },
         {

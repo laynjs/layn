@@ -37,6 +37,7 @@ Creates a stateful engine. See [the engine](/core/engine/).
 | `setGap` | `(gap: Gap) => void` | Change spacing. |
 | `setViewport` | `(viewport: Viewport) => void` | Change the container size. |
 | `measure` | `(entries: MeasureEntry[]) => void` | Feed measured sizes back. |
+| `isMeasured` | `(id: ItemId) => boolean` | Whether a real DOM measurement has been recorded for that item. |
 | `getVisible` | `(window, options) => number[]` | Visible item indices for a scroll window. |
 | `serialize` | `() => SerializedLayout` | Payload for SSR. |
 
@@ -93,6 +94,38 @@ The struct-of-arrays store on `snapshot.positions`.
 | `idAt` | `(index: number) => ItemId` | Id at an index. |
 | `indexOf` | `(id: ItemId) => number` | Index for an id. |
 | `x`, `y`, `width`, `height` | `Float64Array` | Raw buffers, indexed by item order. |
+
+## Authoring an algorithm
+
+These are the primitives the built-in algorithms are made of. See
+[write your own algorithm](/guides/custom-algorithms/).
+
+| Export | Type | Description |
+| --- | --- | --- |
+| `createPositionsBuilder` | `(capacity: number, mirror?: number) => PositionsBuilder` | Writes rectangles straight into the engine's flat buffers. |
+| `mirrorExtent` | `(context: LayoutContext) => number \| undefined` | The mirror extent for the context, so RTL is one argument. |
+| `resolveColumnCount` | `(options: ColumnCountOptions, width: number, gapX: number) => number` | Column count from `columns` / `columnWidth` / `maxColumns`, breakpoints included. |
+| `resolveRowCount` | `(options: RowCountOptions, height: number, gapY: number) => number` | The horizontal twin. |
+| `resolveTrackSize` | `(extent: number, count: number, gap: number) => number` | Track width for a count, never negative. |
+
+```ts
+interface PositionsBuilder {
+  push(id: ItemId, x: number, y: number, width: number, height: number): void;
+  build(): Positions;
+}
+
+interface ColumnCountOptions {
+  columns?: TrackCount;
+  columnWidth?: number;
+  maxColumns?: number;
+}
+
+interface RowCountOptions {
+  rows?: TrackCount;
+  rowHeight?: number;
+  maxRows?: number;
+}
+```
 
 ## Types
 

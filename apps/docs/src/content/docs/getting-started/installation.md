@@ -6,6 +6,9 @@ description: Install the layn core engine and the adapter for your framework.
 layn is published as a small set of scoped packages. You always install the core engine plus the
 adapter for your framework. Everything is ESM-only and ships with TypeScript types.
 
+In a hurry? [Open the React template in StackBlitz](https://stackblitz.com/github/laynjs/layn/tree/main/templates/react)
+and you have a running virtualized grid in the browser, with nothing to install.
+
 ## Packages
 
 | Package | What it is |

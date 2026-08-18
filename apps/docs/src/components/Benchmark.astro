@@ -1,0 +1,302 @@
+---
+const algorithms = [
+  { name: 'masonry', heavy: false },
+  { name: 'columns', heavy: false },
+  { name: 'justified', heavy: false },
+  { name: 'staggered', heavy: false },
+  { name: 'packing', heavy: false },
+  { name: 'bin-packing', heavy: true },
+  { name: 'quilt', heavy: false },
+  { name: 'magazine', heavy: false },
+  { name: 'horizontal', heavy: false },
+]
+const sizes = [1000, 5000, 10000, 50000]
+---
+
+<div class="bench">
+  <div class="bench-bar">
+    <button type="button" id="bench-run">Run the benchmark</button>
+    <span id="bench-status">Nothing has run yet. Takes a few seconds.</span>
+  </div>
+
+  <div class="bench-progress" id="bench-progress"><span></span></div>
+
+  <div class="bench-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>algorithm</th>
+          {sizes.map((size) => <th>{size.toLocaleString('en-US')}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        {
+          algorithms.map((algorithm) => (
+            <tr data-algorithm={algorithm.name}>
+              <th scope="row">
+                {algorithm.name}
+                {algorithm.heavy && <span class="bench-tag">heaviest by design</span>}
+              </th>
+              {sizes.map((size) => (
+                <td data-size={size}>-</td>
+              ))}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <p class="bench-note">
+    Every cell runs a full layout of that many items, on the main thread, so the page stops
+    responding while a cell is timed. <strong>bin-packing</strong> is the outlier on purpose: it is a
+    maximal-rectangles packer that backfills earlier holes with later items, which costs O(n &middot;
+    cap<sup>2</sup>) rather than O(n). Its 50,000 cell is hundreds of milliseconds on its own, so
+    the run pauses visibly there. If you want a tight pack at that scale,
+    <strong>packing</strong>{' '}(skyline) is the linear alternative.
+  </p>
+
+  <p class="bench-note" id="bench-env"></p>
+</div>
+
+<style>
+  .bench {
+    margin: 1.5rem 0;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .bench-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--sl-color-gray-5);
+    background: var(--sl-color-gray-7, transparent);
+  }
+
+  .bench-bar button {
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--sl-color-accent);
+    border-radius: 0.4rem;
+    background: var(--sl-color-accent);
+    color: var(--sl-color-white);
+    font: inherit;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+
+  .bench-bar button[disabled] {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  .bench-bar span {
+    font-size: 0.8125rem;
+    color: var(--sl-color-gray-3);
+  }
+
+  .bench-progress {
+    height: 3px;
+    background: var(--sl-color-gray-6);
+  }
+
+  .bench-progress span {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--sl-color-accent);
+    transition: width 0.15s linear;
+  }
+
+  .bench-tag {
+    margin-left: 0.5rem;
+    padding: 0.05rem 0.35rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 400;
+    color: var(--sl-color-gray-3);
+    white-space: nowrap;
+  }
+
+  .bench-scroll {
+    overflow-x: auto;
+  }
+
+  .bench table {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  .bench th,
+  .bench td {
+    padding: 0.4rem 0.75rem;
+    text-align: right;
+    border-bottom: 1px solid var(--sl-color-gray-6);
+    white-space: nowrap;
+  }
+
+  .bench thead th:first-child,
+  .bench tbody th {
+    text-align: left;
+    font-weight: 500;
+    width: 100%;
+  }
+
+  .bench td {
+    font-variant-numeric: tabular-nums;
+    font-family: var(--sl-font-mono, monospace);
+  }
+
+  .bench td[data-state='running'] {
+    color: var(--sl-color-accent);
+  }
+
+  .bench-note {
+    margin: 0;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.75rem;
+    color: var(--sl-color-gray-3);
+    border-top: 1px solid var(--sl-color-gray-6);
+  }
+</style>
+
+<script>
+  import type { LayoutAlgorithm, LayoutItem } from '@laynjs/core'
+  import {
+    binPacking,
+    columns,
+    createMeasurements,
+    horizontalMasonry,
+    justified,
+    magazine,
+    masonry,
+    packing,
+    quilt,
+    staggered,
+  } from '@laynjs/core'
+
+  const algorithms: Record<string, LayoutAlgorithm> = {
+    masonry: masonry({ columns: 5 }),
+    columns: columns({ columns: 5 }),
+    justified: justified({ targetRowHeight: 220 }),
+    staggered: staggered({ columns: 5 }),
+    packing: packing({ baseSize: 180 }),
+    'bin-packing': binPacking({ baseSize: 180 }),
+    quilt: quilt({ columns: 5 }),
+    magazine: magazine({ rowHeight: 240 }),
+    horizontal: horizontalMasonry({ rows: 5 }),
+  }
+
+  const context = {
+    viewport: { width: 1200, height: 800 },
+    gap: { x: 12, y: 12 },
+    measurements: createMeasurements(),
+  }
+
+  const ratio = (index: number) => 0.6 + ((index * 2654435761) % 1000) / 1000
+  const itemsFor = (count: number): LayoutItem[] =>
+    Array.from({ length: count }, (_, index) => ({ id: index, aspectRatio: ratio(index) }))
+
+  const yieldToPaint = () =>
+    new Promise((resolve) => {
+      requestAnimationFrame(() => setTimeout(resolve, 0))
+    })
+
+  const MIN_SAMPLE_MS = 8
+  const MAX_ITERATIONS = 512
+  const SLOW_MS = 60
+
+  const once = (run: () => void) => {
+    const started = performance.now()
+    run()
+    return performance.now() - started
+  }
+
+  const sample = (run: () => void) => {
+    let iterations = 1
+    while (iterations <= MAX_ITERATIONS) {
+      const started = performance.now()
+      for (let i = 0; i < iterations; i += 1) {
+        run()
+      }
+      const elapsed = performance.now() - started
+      if (elapsed >= MIN_SAMPLE_MS || iterations === MAX_ITERATIONS) {
+        return elapsed / iterations
+      }
+      iterations *= 2
+    }
+    return Number.POSITIVE_INFINITY
+  }
+
+  const best = (run: () => void) => {
+    const warmup = once(run)
+    if (warmup >= SLOW_MS) {
+      return Math.min(warmup, once(run))
+    }
+    let fastest = Number.POSITIVE_INFINITY
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      fastest = Math.min(fastest, sample(run))
+    }
+    return fastest
+  }
+
+  const format = (value: number) => (value < 1 ? `${value.toFixed(3)}ms` : `${value.toFixed(1)}ms`)
+
+  const button = document.getElementById('bench-run')
+  const status = document.getElementById('bench-status')
+  const environment = document.getElementById('bench-env')
+  const progress = document.querySelector<HTMLElement>('#bench-progress span')
+
+  if (button && status && environment && progress) {
+    environment.textContent = `Cores reported: ${navigator.hardwareConcurrency ?? 'unknown'}. Fast cells are repeated until the sample is long enough to time accurately and reported best of 3; cells slower than ${SLOW_MS}ms are already well above the clock's resolution, so those run twice. Everything runs on this page, in your browser.`
+
+    button.addEventListener('click', async () => {
+      button.setAttribute('disabled', '')
+      const cells = document.querySelectorAll('.bench td')
+      for (const cell of cells) {
+        cell.textContent = '-'
+        cell.removeAttribute('data-state')
+      }
+
+      const rows = document.querySelectorAll('.bench tbody tr')
+      const started = performance.now()
+      let done = 0
+
+      for (const row of rows) {
+        const name = row.getAttribute('data-algorithm')
+        const algorithm = algorithms[name ?? '']
+        if (algorithm === undefined) {
+          continue
+        }
+        for (const cell of row.querySelectorAll('td')) {
+          const count = Number(cell.getAttribute('data-size'))
+          cell.setAttribute('data-state', 'running')
+          cell.textContent = '...'
+          const size = count.toLocaleString('en-US')
+          status.textContent =
+            name === 'bin-packing' && count >= 10000
+              ? `Running ${name} at ${size} items - this is the slow one, the page will freeze for a moment`
+              : `Running ${name} at ${size} items`
+          await yieldToPaint()
+
+          const items = itemsFor(count)
+          const time = best(() => algorithm.layout(items, context))
+
+          cell.removeAttribute('data-state')
+          cell.textContent = format(time)
+          done += 1
+          progress.style.width = `${(done / cells.length) * 100}%`
+          await yieldToPaint()
+        }
+      }
+
+      status.textContent = `Done in ${((performance.now() - started) / 1000).toFixed(1)}s`
+      button.removeAttribute('disabled')
+    })
+  }
+</script>

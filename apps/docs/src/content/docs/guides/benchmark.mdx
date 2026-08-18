@@ -1,0 +1,54 @@
+---
+title: Run the benchmark
+description: Measure every layn algorithm in your own browser, on your own machine, right here on this page.
+---
+
+import Benchmark from '../../../components/Benchmark.astro';
+
+Published performance numbers are worth exactly as much as your ability to check them. This page runs
+the real engine in your browser and times it, using the same items and the same configuration as the
+benchmark in the repository.
+
+<Benchmark />
+
+Each cell is the time for one complete layout of that many items: the algorithm receives the whole
+array and returns the position of every single item. It is not amortised across frames and it is not
+a partial update.
+
+## What is being measured
+
+- Items are plain data with an `aspectRatio`, the same deterministic sequence at every size.
+- A container 1,200 by 800 with a 12 pixel gap, and five columns or rows where that applies.
+- Best of three runs after a warm-up, so the first-call cost of JIT compilation is excluded. Cells
+  that already take longer than 60ms are measured twice instead, because at that scale the clock is
+  not the problem and a third run only makes you wait.
+- No DOM. This is the engine alone, which is the part layn is responsible for.
+
+The whole suite takes a few seconds. Layout runs on the main thread, so the page genuinely stops
+responding while a cell is timed - every row except `bin-packing` is far too fast to notice, and the
+50,000 item `bin-packing` cell is the one place you will see the page hold still.
+
+These usually land close to the Node numbers in the [performance guide](/guides/performance/), since
+both run the same code on the same JavaScript engine family. They will move with your machine and
+with whatever else it is doing, so compare the shape rather than chasing the last decimal, and expect
+`binPacking` to stand apart from everything else.
+
+## Running it outside the browser
+
+```bash
+git clone https://github.com/laynjs/layn.git
+cd layn && pnpm install && pnpm bench
+```
+
+That script adds what a page cannot conveniently measure: the spatial index, scroll queries,
+incremental appends, memory, and the cost of grouping with `sections`.
+
+## Reading the result
+
+A full recompute in under a millisecond is the reason layn does not need incremental relayout for
+most changes. When you add, remove or reorder items, the engine can simply lay the whole thing out
+again, which is far simpler to reason about than a partial update and, at these numbers, free.
+
+Appending is the exception that is genuinely incremental: `masonry` continues from stored column
+state, so adding a page of items to a list of a hundred thousand costs the same as adding it to an
+empty one. That is the path infinite scroll takes.
