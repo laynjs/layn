@@ -6,6 +6,11 @@ description: Render only the items on screen at any scale with layn's spatial in
 Virtualization is a layer on top of layout. Layout decides where every item would go; virtualization
 decides which of them are actually on screen right now. Only those are rendered.
 
+![A photo grid with the devtools overlay on: 240 items in the layout, 26 of them in the DOM, and dashed lines marking the overscan band](/media/devtools.webp)
+
+Above: 240 photos laid out, 26 in the DOM. The [devtools overlay](/guides/devtools/) draws the
+engine's own rectangles, so you can see the visible set rather than infer it.
+
 ## The visible set
 
 `getVisible` takes a scroll window and returns the **indices** of the items that intersect it. It
